@@ -1,0 +1,17 @@
+{
+  "version": "0.29.20",
+  "exportedAt": "2026-10-18T05:41:21.767Z",
+  "includedFiles": 789,
+  "excluded": [
+    "private Git history",
+    "model-library/",
+    "docs/artifacts/",
+    "docs/research/",
+    "docs/assets/",
+    "verification/",
+    "local accounts and chats",
+    "runtime/",
+    "private regression fixtures"
+  ],
+  "tests": "A selected regression suite using only synthetic/public inputs; historical private-fixture regressions are not included."
+}

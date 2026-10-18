@@ -1,0 +1,68 @@
+* CC0 1.0. Author: gsuberland. Source original and license are included.
+* Extracted 8 distinct forward I-V fits from CREE_XLamp_XP_E2.txt; electrical parameters unchanged.
+* RED_ORANGE has the same electrical model as RED and is not counted again.
+* Fits the datasheet 25 C forward curves only; not a full thermal, optical or switching model.
+
+.model CREE_XLAMP_XP_E2_ROYAL_BLUE D
++ Is=1.6073e-11
++ N=4.62529
++ Rs=0.259979
++ Iave=350m
++ Mfg=CREE
++ Type=LED
+
+.model CREE_XLAMP_XP_E2_BLUE D
++ Is=9.0747e-12
++ N=4.37367
++ Rs=0.272602
++ Iave=350m
++ Mfg=CREE
++ Type=LED
+
+.model CREE_XLAMP_XP_E2_GREEN D
++ Is=1.93238e-6
++ N=8.55048
++ Rs=0.102086
++ Iave=350m
++ Mfg=CREE
++ Type=LED
+
+.model CREE_XLAMP_XP_E2_PC_AMBER D
++ Is=1.2029e-12
++ N=4.15573
++ Rs=0.320364
++ Iave=350m
++ Mfg=CREE
++ Type=LED
+
+.model CREE_XLAMP_XP_E2_AMBER D
++ Is=5.2855e-13
++ N=2.86414
++ Rs=0.481144
++ Iave=350m
++ Mfg=CREE
++ Type=LED
+
+.model CREE_XLAMP_XP_E2_RED D
++ Is=7.1891e-14
++ N=2.63208
++ Rs=0.556396
++ Iave=350m
++ Mfg=CREE
++ Type=LED
+
+.model CREE_XLAMP_XP_E2_PHOTO_RED D
++ Is=1.4896e-10
++ N=3.40491
++ Rs=0.567662
++ Iave=350m
++ Mfg=CREE
++ Type=LED
+
+.model CREE_XLAMP_XP_E2_FAR_RED D
++ Is=1.5512e-15
++ N=2.0658
++ Rs=0.335864
++ Iave=350m
++ Mfg=CREE
++ Type=LED

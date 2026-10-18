@@ -1,0 +1,39 @@
+.hapi-assistant { display:flex; flex:1; min-height:0; min-width:0; flex-direction:column; color:var(--ui-ink); }
+.hapi-status { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:11px; }
+.hapi-status>span { display:flex; align-items:center; gap:6px; }
+.hapi-status i { width:6px; height:6px; background:var(--ui-muted); border-radius:50%; }
+.hapi-status [data-ready=true] i { background:var(--ui-accent); }
+.ai-assistant .hapi-status button { padding:4px; }
+.hapi-intro,.hapi-canvas-sync { margin:6px 0; font-size:11px; line-height:1.65; color:var(--ui-muted); overflow-wrap:anywhere; }
+.hapi-canvas-sync { display:flex; flex-wrap:wrap; align-items:center; gap:5px; }
+.ai-assistant .hapi-canvas-sync button { font-size:10px; padding:4px 7px; }
+.hapi-connection-details { font-size:10px; color:var(--ui-muted); }
+.hapi-connection-details[open] { max-height:190px; overflow:auto; }
+.hapi-connection-details summary { cursor:pointer; }
+.hapi-connection-details code,.hapi-connection-details small { display:block; overflow-wrap:anywhere; margin:6px 0; }
+.hapi-connection-details a { display:inline-flex; align-items:center; gap:4px; color:var(--ui-accent); }
+.hapi-connect { margin:6px 0; }
+.hapi-scroll { flex:1; min-height:0; overflow:auto; overflow-anchor:none; overscroll-behavior:contain; scrollbar-width:thin; padding-right:3px; }
+.hapi-scroll-content { min-height:100%; }
+.ai-assistant .hapi-jump-latest { display:inline-flex; flex:none; align-self:center; align-items:center; gap:4px; margin:3px 0; padding:4px 10px; font-size:10px; border-radius:14px; color:var(--ui-accent); background:var(--ui-accent-soft); }
+.hapi-empty,.hapi-working { font-size:11px; color:var(--ui-muted); line-height:1.7; padding:12px 0; }
+.hapi-approval,.hapi-circuit-task { margin:12px 0; padding:10px; border:1px solid var(--ui-border); border-radius:6px; background:var(--ui-raised); font-size:11px; overflow-wrap:anywhere; }
+.hapi-approval { border-color:var(--ui-warning); }
+.hapi-approval pre { white-space:pre-wrap; max-height:150px; overflow:auto; font-size:10px; }
+.hapi-approval fieldset { padding:8px; margin:8px 0; border:1px solid var(--ui-border); }
+.hapi-approval fieldset label { display:flex; gap:6px; margin:6px 0; }
+.hapi-approval fieldset small { display:block; color:var(--ui-muted); }
+.hapi-circuit-task>summary { font-weight:600; cursor:pointer; }
+.hapi-tool-events { list-style:none; margin:10px 0; padding:0; }
+.hapi-tool-events li { display:flex; flex-wrap:wrap; gap:4px; margin:6px 0; padding-top:5px; border-top:1px solid var(--ui-border); }
+.hapi-tool-events span { margin-left:auto; color:var(--ui-muted); }
+.hapi-tool-events p { flex-basis:100%; margin:2px 0; color:var(--ui-muted); white-space:pre-wrap; }
+.hapi-simulation,.hapi-candidate-state { line-height:1.6; }
+.hapi-delivery,.hapi-pending { display:block; color:var(--ui-warning); font-size:10px; line-height:1.6; }
+.hapi-compose { flex:none; padding-top:8px; border-top:1px solid var(--ui-border); }
+.hapi-compose>label { font-size:10px; color:var(--ui-muted); }
+.assistant-sidebar .ai-assistant .hapi-compose textarea { box-sizing:border-box; width:100%; min-height:68px; max-height:160px; height:74px; margin:5px 0; padding:8px; font-size:12px; line-height:1.6; }
+.hapi-compose>div { display:flex; align-items:center; gap:6px; }
+.hapi-compose>div>small { flex:1; color:var(--ui-muted); font-size:9px; }
+.ai-assistant .hapi-compose button { display:inline-flex; align-items:center; gap:4px; padding:6px 8px; font-size:11px; }
+.hapi-legacy-note { font-size:12px; line-height:1.7; color:var(--ui-muted); }

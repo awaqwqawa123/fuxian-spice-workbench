@@ -1,0 +1,7 @@
+# Keep reviewed model excerpts byte-stable for their recorded SHA-256 evidence.
+docs/artifacts/drawing-learning-full-20261004/**/*.txt text eol=lf
+# Keep reviewed evidence byte-stable when synchronized across checkouts.
+docs/artifacts/drawing-learning-full-20261004/** -text
+# Vendor originals and compiled checksums must survive Windows/Linux checkouts.
+model-library/** -text -diff
+model-library/README.md diff

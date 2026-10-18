@@ -1,0 +1,12 @@
+* Pinned Qucs-S community reference; GPL-2.0-or-later; NOT a manufacturer original.
+* Z-Diodes/1N4733A; e0c0e154edb4f8403d53c5c5601c2ee133c9e970
+* Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp
+* 5.10V, 1.00W (available voltages <= 10V)
+* Manufacturer: Diodes Inc.
+.subckt 1N4733A_QUCS K A
+D1 A K Z1246e71e2b_QUCS
+.model Z1246e71e2b_QUCS D(IS=80.8p N=1.1 CJO=189p M=0.33 VJ=0.75 FC=0.5 ISR=0.0 NR=2.0 RS=0.62 TT=50.1n KF=0.0 AF=1.0 BV=1000 IBV=1m XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85)
+DZ K _net3 Z2a6551a62a_QUCS
+.model Z2a6551a62a_QUCS D(IS=16.2f N=1.87 CJO=1e-14 M=0.5 VJ=0.7 FC=0.5 ISR=0.0 NR=2.0 RS=0.296 TT=0.0p KF=0.0 AF=1.0 BV=1000 IBV=1m XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85)
+VZ _net3 A DC 3.69
+.ends 1N4733A_QUCS

@@ -1,0 +1,59 @@
+/* Shared visual scales for the local engineering workbench. */
+:root {
+  --ui-font-scale: 1;
+  --ui-control-height: 36px;
+  --ui-space-unit: 8px;
+  --ui-font-body: calc(13px * var(--ui-font-scale));
+  --ui-font-reading: calc(14px * var(--ui-font-scale));
+  --ui-font-command: calc(13px * var(--ui-font-scale));
+  --ui-font-tool: calc(12px * var(--ui-font-scale));
+  --ui-font-meta: calc(12px * var(--ui-font-scale));
+  --ui-font-heading: calc(18px * var(--ui-font-scale));
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-6: 24px;
+  --ui-radius-control: 7px;
+  --ui-radius-card: 10px;
+  --ui-radius-dialog: 14px;
+  --ui-font-interface: 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei', system-ui, sans-serif;
+}
+.workspace-shell {
+  font-family: var(--ui-font-interface);
+  font-size: var(--ui-font-body);
+  line-height: 1.5;
+}
+:root[data-workbench-theme] {
+  --sans: var(--ui-font-interface);
+  font-family: var(--ui-font-interface);
+  -webkit-font-smoothing: antialiased;
+}
+:root[data-workbench-theme] :is(input, textarea, select) { font-family: var(--ui-font-interface); }
+:root[data-workbench-theme] :is(code, pre, kbd) { font-family: var(--mono); }
+:root[data-workbench-theme] * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ui-border-strong) transparent;
+}
+:root[data-workbench-theme] input::placeholder,
+:root[data-workbench-theme] textarea::placeholder { color: var(--ui-faint); }
+:is(.workspace-shell, .workbench-window, .extension-library-window, .spice-library-dialog, .model-editor-dialog) :is(button, select) {
+  font-family: inherit;
+}
+:is(.workspace-shell, .workbench-window, .extension-library-window, .spice-library-dialog, .model-editor-dialog) :focus-visible {
+  outline: 2px solid var(--ui-accent, #1c715e);
+  outline-offset: 2px;
+}
+.workspace-shell :is(button, summary) {
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.workspace-shell ::selection {
+  color: var(--ui-accent-ink, #195d4e);
+  background: var(--ui-accent-soft, #e1f0e9);
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace-shell :is(button, summary),
+  :is(.workbench-window, .extension-library-window, .spice-library-dialog, .model-editor-dialog) :is(button, summary) {
+    transition: none;
+  }
+}

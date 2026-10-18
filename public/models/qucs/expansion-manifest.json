@@ -1,0 +1,4426 @@
+{
+  "revision": "e0c0e154edb4f8403d53c5c5601c2ee133c9e970",
+  "license": "GPL-2.0-or-later",
+  "files": [
+    {
+      "file": "upstream/DiodesSchottky.lib",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+      "bytes": 14101,
+      "sha256": "cc74ebc2105666be7ba38a1e73846443f0d5fc0b38fff932dc1690df1c00934d",
+      "gitBlobSha1": "c7a06eb60d47351d006d88cc262b5b47050fc4e6"
+    },
+    {
+      "file": "upstream/Z-Diodes.lib",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+      "bytes": 38196,
+      "sha256": "aa2517a28dae89832416f987ced667f18a5468d67f6b6a31a2c37b839d07a2dd",
+      "gitBlobSha1": "1e6b788d1285dfc89a74ca8b8d81f8b4ae6b8a1e"
+    },
+    {
+      "file": "upstream/volt_dc.cpp",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/qucs/components/volt_dc.cpp",
+      "bytes": 2836,
+      "sha256": "309ea1a1c289c5fc8bfd5f6f98a10753214c88d22d73cd2746747e9792fafec6",
+      "gitBlobSha1": "a5b6f72a189b08648f6db01fcf8f4ca3409ca1db"
+    },
+    {
+      "file": "expanded/schottky-1n5711.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 566,
+      "sha256": "a595f74202a9695ec3606063cc01db11508ee75257d370bdfdf5ca9a64926b4d",
+      "models": [
+        {
+          "id": "1N5711_QUCS",
+          "part": "1N5711",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-1n5711w.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 568,
+      "sha256": "d124f38fedfbeacf99e1e8cf1d063589bdf9508e366101785e805c5e9fa5f7e4",
+      "models": [
+        {
+          "id": "1N5711W_QUCS",
+          "part": "1N5711W",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-1n5711ws.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 570,
+      "sha256": "252c4e3f516a6901678f6f9a419b2360e181b7bcbbf2e2bbbdcb415c8d4e207f",
+      "models": [
+        {
+          "id": "1N5711WS_QUCS",
+          "part": "1N5711WS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-1n6263w.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 572,
+      "sha256": "dc5868a040c08088d1fd0d1c8b974b4529437459d83807a98755b0ab73db9187",
+      "models": [
+        {
+          "id": "1N6263W_QUCS",
+          "part": "1N6263W",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-bat42.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 568,
+      "sha256": "251ec9abbae00ac48a8c98b361452dba10398bd8c03378a8913056d9dde3b6a0",
+      "models": [
+        {
+          "id": "BAT42_QUCS",
+          "part": "BAT42",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-bat42ws.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 574,
+      "sha256": "8ca36caf14212485cc9a2c69d59ce37316e15a60d788e749f9626e0417e84a70",
+      "models": [
+        {
+          "id": "BAT42WS_QUCS",
+          "part": "BAT42WS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-bat43ws.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 574,
+      "sha256": "66213cb3732a87f97f867a71a8a3992696f6a48f80ce84dc3224bda1fdac674e",
+      "models": [
+        {
+          "id": "BAT43WS_QUCS",
+          "part": "BAT43WS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-bat46.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 566,
+      "sha256": "3c5996d6005fcfb61f7ca41daf8043c25cbba69bb706fac218663185c1dfd021",
+      "models": [
+        {
+          "id": "BAT46_QUCS",
+          "part": "BAT46",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-bat54.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 567,
+      "sha256": "eed3424cb550bdd3ca08d3cabe2987ec41841c68f0d6a7712005f5aabf53cff5",
+      "models": [
+        {
+          "id": "BAT54_QUCS",
+          "part": "BAT54",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-bat54dw.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 570,
+      "sha256": "dfdf3a832dcc5dd0a7dab57b74853af2ca321fb0a01098e20185fc92939eeb5c",
+      "models": [
+        {
+          "id": "BAT54DW_QUCS",
+          "part": "BAT54DW",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-bat54ws.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 571,
+      "sha256": "ac6ad0ab0b4d7070c0b9f0683d8229016b24c04331cf99a638c85fc3180b0252",
+      "models": [
+        {
+          "id": "BAT54WS_QUCS",
+          "part": "BAT54WS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sd101aw.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 572,
+      "sha256": "8581a834530d08093d73af3ba9cd469f60fe143f1171dce5faa62249c5e30524",
+      "models": [
+        {
+          "id": "SD101AW_QUCS",
+          "part": "SD101AW",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sd101aws.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 572,
+      "sha256": "ae8aa193aa1347c77859870df9c597f52e33569fa802a9e332036fb5a693e53c",
+      "models": [
+        {
+          "id": "SD101AWS_QUCS",
+          "part": "SD101AWS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sd101bw.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 572,
+      "sha256": "16a8fc538526eba4cdd60355335413ef9c8207205857ca1b3fe48c11ab675ffe",
+      "models": [
+        {
+          "id": "SD101BW_QUCS",
+          "part": "SD101BW",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sd101cw.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 572,
+      "sha256": "427650ca3b6a5e3c7e2997e50098d99338f714e4852069e3c6808db7e247b6b9",
+      "models": [
+        {
+          "id": "SD101CW_QUCS",
+          "part": "SD101CW",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sd103aw.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 569,
+      "sha256": "ec3f9371f8514b2b7f73d04e44a4a2b1302cf1f1b3802771f3b05937e6cc960d",
+      "models": [
+        {
+          "id": "SD103AW_QUCS",
+          "part": "SD103AW",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sd103aws.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 571,
+      "sha256": "55f0640e50e2269ecbab287ebe1750a2a4a4dfed00129e882a13367db5c902ea",
+      "models": [
+        {
+          "id": "SD103AWS_QUCS",
+          "part": "SD103AWS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sd103bws.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 571,
+      "sha256": "9a57a9ba7dba6a0b885b786182f80012364cc4ef57d7b69bd2d697a9ed1dfc26",
+      "models": [
+        {
+          "id": "SD103BWS_QUCS",
+          "part": "SD103BWS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sd103cw.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 569,
+      "sha256": "4f3b35fb619203a94c767555c06cd4533e7ea12043cd4c60ed05ecabd8814db9",
+      "models": [
+        {
+          "id": "SD103CW_QUCS",
+          "part": "SD103CW",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sd103cws.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 571,
+      "sha256": "dfd355fc36665850eeafbcf02985d2f445d337811edfd4ab4f2625b16daedb28",
+      "models": [
+        {
+          "id": "SD103CWS_QUCS",
+          "part": "SD103CWS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdm03mt40.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 573,
+      "sha256": "596c87556d8a2685cebdcba61237fba9b3b96a2789199f750526f32e85c994d7",
+      "models": [
+        {
+          "id": "SDM03MT40_QUCS",
+          "part": "SDM03MT40",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdm03u40.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 575,
+      "sha256": "7f05c73315ad3c03a45f264ebed4e8e42c0cf5173a2cec0e56505c6de29aa8cc",
+      "models": [
+        {
+          "id": "SDM03U40_QUCS",
+          "part": "SDM03U40",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdm10m45sd.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 577,
+      "sha256": "1e3df01a69a5f0fedbdd7c15445e1c3f00779c875b400243e8363f3b86a4525d",
+      "models": [
+        {
+          "id": "SDM10M45SD_QUCS",
+          "part": "SDM10M45SD",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdm10p45.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 573,
+      "sha256": "9b6b6b98fd58b35650ed94c929ca72edd731ece3ad9fe2148a3e8cd246e54eee",
+      "models": [
+        {
+          "id": "SDM10P45_QUCS",
+          "part": "SDM10P45",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdm10u45.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 573,
+      "sha256": "77b17cfe63f1ff49bff0e26cb22baf8de0bf63cdd73accae2cd512a867b2511b",
+      "models": [
+        {
+          "id": "SDM10U45_QUCS",
+          "part": "SDM10U45",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdm20e40c.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 577,
+      "sha256": "dd563e9a275ff46d98d034b2236003d038c0e0d68892702f780f090e146e97c1",
+      "models": [
+        {
+          "id": "SDM20E40C_QUCS",
+          "part": "SDM20E40C",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdm20u30.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 574,
+      "sha256": "1e3f6bae16ac70f62631e9ae616648cd1e7152594858f15db87537c144425042",
+      "models": [
+        {
+          "id": "SDM20U30_QUCS",
+          "part": "SDM20U30",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdm20u40.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 574,
+      "sha256": "df73a438e89e97cbd0c0d6fbc8583da8e46efde381ff33172c6cf6a7c717b045",
+      "models": [
+        {
+          "id": "SDM20U40_QUCS",
+          "part": "SDM20U40",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdm40e20ls.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 579,
+      "sha256": "ab4c24a5a68e728cf8348298d7bca731cd9267d208852921b141f4649fb150f0",
+      "models": [
+        {
+          "id": "SDM40E20LS_QUCS",
+          "part": "SDM40E20LS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sbmg0340l.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 577,
+      "sha256": "8657b64e9cbbccecd2aed271951208637c47ff1ad40c79ca34e52260219c78ac",
+      "models": [
+        {
+          "id": "SBMG0340L_QUCS",
+          "part": "SBMG0340L",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sbmg0340la.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 579,
+      "sha256": "faf0cff626364bddceafdebc25483509f816901e9bb9bd4619a484e5bdd52f6e",
+      "models": [
+        {
+          "id": "SBMG0340LA_QUCS",
+          "part": "SBMG0340LA",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sbmg0340lc.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 579,
+      "sha256": "87e4d391a044349c1539b17ce60366eaeb8c57a40193f73f6acc92dbdfda2dcb",
+      "models": [
+        {
+          "id": "SBMG0340LC_QUCS",
+          "part": "SBMG0340LC",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sbmg0340ls.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 579,
+      "sha256": "9c67bf5c498656d4873aff6e05d4ae72285df7a6db9c2a77ed45d84331c06546",
+      "models": [
+        {
+          "id": "SBMG0340LS_QUCS",
+          "part": "SBMG0340LS",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdmk0340l.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 578,
+      "sha256": "65760c3c24df6b20ef6e4bd451553fd6b855a8d3ded5084c8a091a50bbba65a2",
+      "models": [
+        {
+          "id": "SDMK0340L_QUCS",
+          "part": "SDMK0340L",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdmp0340lat.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 578,
+      "sha256": "e466383dee114befa38ce14f5a72c0e128fabcfe3e2dc5533e7688e6821e2b14",
+      "models": [
+        {
+          "id": "SDMP0340LAT_QUCS",
+          "part": "SDMP0340LAT",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdmp0340lct.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 578,
+      "sha256": "49d32665156fc864838a18e0ff13565a2d7b6d4cc525467b6ec9475eb8d0fcc5",
+      "models": [
+        {
+          "id": "SDMP0340LCT_QUCS",
+          "part": "SDMP0340LCT",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdmp0340lst.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 578,
+      "sha256": "210941d1c693029f5ecf2d16c8f30795254787fde526e84fb67bfc97970d95c2",
+      "models": [
+        {
+          "id": "SDMP0340LST_QUCS",
+          "part": "SDMP0340LST",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/schottky-sdmp0340lt.lib",
+      "upstream": "DiodesSchottky.lib",
+      "bytes": 576,
+      "sha256": "7cad4ec02d401ee49f18f1a11503c28a61ae3992a65b600b5891611109aae0c7",
+      "models": [
+        {
+          "id": "SDMP0340LT_QUCS",
+          "part": "SDMP0340LT",
+          "type": "D",
+          "pins": [
+            "阳极 A",
+            "阴极 K"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-bzt52c10t.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 877,
+      "sha256": "344c16ba91bea945fd7e277b2ef951e18b0d2e98a631c77f6f6e9a4d73316d7c",
+      "models": [
+        {
+          "id": "BZT52C10T_QUCS",
+          "part": "BZT52C10T",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-bzt52c10s.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 877,
+      "sha256": "26ef3c84e1fecc534779b3eb5de209ea1bc424245642ab480f4d6a879cb90d3a",
+      "models": [
+        {
+          "id": "BZT52C10S_QUCS",
+          "part": "BZT52C10S",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-bzt52c10.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 874,
+      "sha256": "658e5621c61a092cbef88ddab301211fefbe71a9265a4dd08091a42e359b6cc2",
+      "models": [
+        {
+          "id": "BZT52C10_QUCS",
+          "part": "BZT52C10",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4728a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 865,
+      "sha256": "e8240820c466103a94ddc2a764c581d071288753c69ed7e6b766ca76ad92a37a",
+      "models": [
+        {
+          "id": "1N4728A_QUCS",
+          "part": "1N4728A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4729a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 866,
+      "sha256": "c5497408c610ae4dc8b788f87a5c6f921e3e0f0db07e8b4cfc46d399f82bed67",
+      "models": [
+        {
+          "id": "1N4729A_QUCS",
+          "part": "1N4729A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4730a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 867,
+      "sha256": "b1bbc1c299fcb0f78ffd4ec6e07b22ddffeb02e481d4945238aebf52847445ce",
+      "models": [
+        {
+          "id": "1N4730A_QUCS",
+          "part": "1N4730A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4731a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 871,
+      "sha256": "0f4e807cd8ee42989e0c45400fded152d61a3ab179ccefd279f33ffed3808df4",
+      "models": [
+        {
+          "id": "1N4731A_QUCS",
+          "part": "1N4731A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4732a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 871,
+      "sha256": "3081281bddb0cc5c3d277ed20128c1aa86720144e21b6cc23c327dcd177c013d",
+      "models": [
+        {
+          "id": "1N4732A_QUCS",
+          "part": "1N4732A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4733a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 871,
+      "sha256": "f1c71d090c19df6758fb23f54493e8369e5980ccd2729008dc7b9a4b494368ee",
+      "models": [
+        {
+          "id": "1N4733A_QUCS",
+          "part": "1N4733A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4734a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 871,
+      "sha256": "9ceb22b68a902babc75171ce63524f924650cd90ce655a7c9ff28e64b80f1cda",
+      "models": [
+        {
+          "id": "1N4734A_QUCS",
+          "part": "1N4734A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4735a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 871,
+      "sha256": "36ab836dff2fbaf797e9fe253d24e3cbf4b42e9787076458cd0f3b3d2b03ff0d",
+      "models": [
+        {
+          "id": "1N4735A_QUCS",
+          "part": "1N4735A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4741a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 869,
+      "sha256": "f5ee524de932c19cff1775fc2b547fab0a77173fe2f70e90d1cd5d044574e328",
+      "models": [
+        {
+          "id": "1N4741A_QUCS",
+          "part": "1N4741A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4742a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 869,
+      "sha256": "6fdfcfef4f8d6d296ff8a3d1a18ac704077e2c4c8736330feb05487716dc331b",
+      "models": [
+        {
+          "id": "1N4742A_QUCS",
+          "part": "1N4742A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4743a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 869,
+      "sha256": "6b6a1afe5fd70197659b182b8241847b785fe343d86befd9ae5a9110a80708ae",
+      "models": [
+        {
+          "id": "1N4743A_QUCS",
+          "part": "1N4743A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4744a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 870,
+      "sha256": "f8f091d3b03454221eab060c510fc61a55d5db5c55b1781a2eb8e6d981ddf6fd",
+      "models": [
+        {
+          "id": "1N4744A_QUCS",
+          "part": "1N4744A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4745a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 869,
+      "sha256": "9a163ab9b2f3843cdb5720ac3a4189b6ee11e48954f60c1a3e461dc5bcf247ee",
+      "models": [
+        {
+          "id": "1N4745A_QUCS",
+          "part": "1N4745A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4746a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 868,
+      "sha256": "3c3f8beabee599f9970abf6491a9c66303e60129bd01c5f5c3739e138c89af74",
+      "models": [
+        {
+          "id": "1N4746A_QUCS",
+          "part": "1N4746A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4747a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 869,
+      "sha256": "05e196c67be61f9ed35d1b63fb24d15a983d07132fb3da14af91d8ffdea7d786",
+      "models": [
+        {
+          "id": "1N4747A_QUCS",
+          "part": "1N4747A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4757a.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 863,
+      "sha256": "e9d90b716d69d0cc09ee9b614cf0b68789b59b94d3988fdb0394ffe5623b184d",
+      "models": [
+        {
+          "id": "1N4757A_QUCS",
+          "part": "1N4757A",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n746.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "b96d29afeb9c15b2cc77c331098060e5d1624cc47a09b1120083e3f46797d4ce",
+      "models": [
+        {
+          "id": "1N746_QUCS",
+          "part": "1N746",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n747.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 672,
+      "sha256": "14a22a4ebf84f63d0f99d05f1d40045267f44ce332feca248aab2883703072b7",
+      "models": [
+        {
+          "id": "1N747_QUCS",
+          "part": "1N747",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n748.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "5f0fe90b83d4ac3a73ec0d18c29d27f517b0894dee9fd071f947bbd8eed8f3f3",
+      "models": [
+        {
+          "id": "1N748_QUCS",
+          "part": "1N748",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n749.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "932b0543b7b360f074ba6ca3242c6daa0f0305a2ac2b8ec71a6b5e1ffd16fef8",
+      "models": [
+        {
+          "id": "1N749_QUCS",
+          "part": "1N749",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n750.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "d569baa061c08d9e632f1eca520937c2c6e0cbe71be939f789368b3d6c79a457",
+      "models": [
+        {
+          "id": "1N750_QUCS",
+          "part": "1N750",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n751.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "568537d274846dae53298638d48458a3ac7ef7328666018f4d354ea2eeca0e2b",
+      "models": [
+        {
+          "id": "1N751_QUCS",
+          "part": "1N751",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n752.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "b5f03ab61f39d0684e89a6f49a030378d635916020b0170753cdb587038ba17b",
+      "models": [
+        {
+          "id": "1N752_QUCS",
+          "part": "1N752",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n753.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "2352539b9d70d8786a553e76afdfddefc06d90ca4669a9f3a45988f9b55931ad",
+      "models": [
+        {
+          "id": "1N753_QUCS",
+          "part": "1N753",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n754.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "b4fc07661b19fe15f4048316aed303b1e4789a101ec22010efcfb6c47fd67433",
+      "models": [
+        {
+          "id": "1N754_QUCS",
+          "part": "1N754",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n755.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "a45cb46b80ba8e9f0ba45fcc73fe47a836c4f8bc7b437341232d56e154b21f5a",
+      "models": [
+        {
+          "id": "1N755_QUCS",
+          "part": "1N755",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n756.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "050bdff7ff213320dc3a97520d0e3919cc231961db1ab5c2b9fd964ba29f1c9c",
+      "models": [
+        {
+          "id": "1N756_QUCS",
+          "part": "1N756",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n757.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 673,
+      "sha256": "e64b3b34ca3347f1ea5c4f18142a7bbbcdea7f7d7bc75128c586287ef870f3df",
+      "models": [
+        {
+          "id": "1N757_QUCS",
+          "part": "1N757",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n758.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 671,
+      "sha256": "8d5ca4f90403ed9f2326d6f7da4b2f611cb80306c449dda533a50e0e0d249c31",
+      "models": [
+        {
+          "id": "1N758_QUCS",
+          "part": "1N758",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n759.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 671,
+      "sha256": "2fdea6e59543e1060d032eeba34344583dc5957750e0194f0e16d67210da3c0c",
+      "models": [
+        {
+          "id": "1N759_QUCS",
+          "part": "1N759",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4728.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 679,
+      "sha256": "b5f840cd93f9eb27aa6815394baf4c71cc60d00ad97600646cb0fe02d0d85f8b",
+      "models": [
+        {
+          "id": "1N4728_QUCS",
+          "part": "1N4728",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4729.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 679,
+      "sha256": "ab10e3628329ae08e969493234e2897d4cb2596f23c03b7678ad1536dac6769c",
+      "models": [
+        {
+          "id": "1N4729_QUCS",
+          "part": "1N4729",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4730.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 679,
+      "sha256": "64c80df5513371f8049dec2e0d6d45eb84fcccd4608456cc25c2b4a47f6e4e53",
+      "models": [
+        {
+          "id": "1N4730_QUCS",
+          "part": "1N4730",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4731.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 679,
+      "sha256": "5c4b21075ab3601046ec2dbcdc5124d74c5ba8367e577cd632c2a8288b8b15b6",
+      "models": [
+        {
+          "id": "1N4731_QUCS",
+          "part": "1N4731",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4732.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 679,
+      "sha256": "f65c6048f18572256549856d79aedbb86440d35a639da3cac351d822c1ce3e46",
+      "models": [
+        {
+          "id": "1N4732_QUCS",
+          "part": "1N4732",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4733.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 679,
+      "sha256": "48811b9d6bfdb6544e0bcbc3ac016f7eae3ef6d60de4d22ba6e4561bf2542dd1",
+      "models": [
+        {
+          "id": "1N4733_QUCS",
+          "part": "1N4733",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4734.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 679,
+      "sha256": "fe7bbc1de2edeb49a3f9d83f047ff8d807c16b7c6a2caa1516a129fb07fff0bc",
+      "models": [
+        {
+          "id": "1N4734_QUCS",
+          "part": "1N4734",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4735.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 679,
+      "sha256": "36fa1104749bde03891a30a9f0fc0a0d590101ec9bd4cdfd48b1778e216845d5",
+      "models": [
+        {
+          "id": "1N4735_QUCS",
+          "part": "1N4735",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4736.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 675,
+      "sha256": "b6ce2be9fca334742fb2e1a87d94a0f3e0d9230a870b93080b1f5f8adb63210a",
+      "models": [
+        {
+          "id": "1N4736_QUCS",
+          "part": "1N4736",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4737.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 678,
+      "sha256": "df93ccd43029333f4675b840743167e49d7deecae3ffd4bbed7c9516c41a805e",
+      "models": [
+        {
+          "id": "1N4737_QUCS",
+          "part": "1N4737",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4738.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "cf78a6206da64eae0852499eeeab3baccd0ec1fbabbd0b6310d21ceb91dcd6c8",
+      "models": [
+        {
+          "id": "1N4738_QUCS",
+          "part": "1N4738",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4739.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 678,
+      "sha256": "c6aed7292ede7fc43127fcd9d420b4e8acf3d0e3fec5d54fa61922d7a338e4db",
+      "models": [
+        {
+          "id": "1N4739_QUCS",
+          "part": "1N4739",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4740.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "2e531d16832376361042e54403fdee26a238235bf5943a1bed7348e030bedb0b",
+      "models": [
+        {
+          "id": "1N4740_QUCS",
+          "part": "1N4740",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4741.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "e82968fcaa472b38f89110029eee733dd99c0d3800231b434042a27b765f0c2d",
+      "models": [
+        {
+          "id": "1N4741_QUCS",
+          "part": "1N4741",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4742.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "2e7273876915e8383fc8333daf4842d92cfd76d97f179c9b35bfef955e828bd6",
+      "models": [
+        {
+          "id": "1N4742_QUCS",
+          "part": "1N4742",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4743.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "d6a2722a180f5725cdd3f7568c04ddf64e353110393fdb90381f3cecc3e38c92",
+      "models": [
+        {
+          "id": "1N4743_QUCS",
+          "part": "1N4743",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4744.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "1f2c0c29fa3c425678f700a04c3d76ebc1fcac31ff8b6a3d1390fd49d9a7ebcf",
+      "models": [
+        {
+          "id": "1N4744_QUCS",
+          "part": "1N4744",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4745.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 678,
+      "sha256": "6ab0ac39200d91b6e16b3d0f6b089ee875de75d3f6b01449752a3d4147cdd57f",
+      "models": [
+        {
+          "id": "1N4745_QUCS",
+          "part": "1N4745",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4746.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "d829b35ac9b9acd348aefcaa0a4fd0005741ec3cb913cc73241483cb7d2fa87e",
+      "models": [
+        {
+          "id": "1N4746_QUCS",
+          "part": "1N4746",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4747.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 678,
+      "sha256": "0aa044f298fad7711d2a4a2ed09e0d26f6071feec193ac00a39b55b2ba787059",
+      "models": [
+        {
+          "id": "1N4747_QUCS",
+          "part": "1N4747",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4748.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 678,
+      "sha256": "166dc105b8409581c8653faab8e068c2b30b9e07c9f7d3bd52ff19306035c14c",
+      "models": [
+        {
+          "id": "1N4748_QUCS",
+          "part": "1N4748",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4749.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 678,
+      "sha256": "711b24dbdb9482763c7ad9946c880428df2e5a258434fd5c728c9e0bf2f837f3",
+      "models": [
+        {
+          "id": "1N4749_QUCS",
+          "part": "1N4749",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4750.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 678,
+      "sha256": "6b2a725253d0ddad68fd51c020480224c30a2226eee339ea6a31ae38189b7035",
+      "models": [
+        {
+          "id": "1N4750_QUCS",
+          "part": "1N4750",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4751.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "51125ece44a35976d5aeaef3b5ff14cfa2c296d5297acb59a34f8abb3d8841c9",
+      "models": [
+        {
+          "id": "1N4751_QUCS",
+          "part": "1N4751",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4752.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "7092c24582e566431130a148cfc32dcd7af21d926db042a846d403ba95d552c2",
+      "models": [
+        {
+          "id": "1N4752_QUCS",
+          "part": "1N4752",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4753.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 676,
+      "sha256": "4ef7c1530b96ce67781ba6733f13b64a2049d8b6f32a31ea59a80ba867350a64",
+      "models": [
+        {
+          "id": "1N4753_QUCS",
+          "part": "1N4753",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4754.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 675,
+      "sha256": "cca78dd01a6a2f274a2702a98de0ae268d8b7a0641a81f8c2d56cbd6d84c65ef",
+      "models": [
+        {
+          "id": "1N4754_QUCS",
+          "part": "1N4754",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4755.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 676,
+      "sha256": "aa2a22d696066bb457f8ebbf34fbf18d811ded750efc8795f8c71bce7157ace8",
+      "models": [
+        {
+          "id": "1N4755_QUCS",
+          "part": "1N4755",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4756.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "6f614f8d87204ee01055195f7ff7240dc8b8ac447ff5610cdb69b1db601cd6ae",
+      "models": [
+        {
+          "id": "1N4756_QUCS",
+          "part": "1N4756",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4757.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 676,
+      "sha256": "7d65265d475ea4ee831ed8060684ed9d4c0f3f7db6a09e8187e5efe12df5bd43",
+      "models": [
+        {
+          "id": "1N4757_QUCS",
+          "part": "1N4757",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4758.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "3b37642a38b33724c0720e378cd09615dc7fdd13c116948fb72d94e878dffc51",
+      "models": [
+        {
+          "id": "1N4758_QUCS",
+          "part": "1N4758",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4759.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 676,
+      "sha256": "f8244d90139b82fc6e39e1e5e0d6c81a906546a56193acba23596477b975d1a3",
+      "models": [
+        {
+          "id": "1N4759_QUCS",
+          "part": "1N4759",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4760.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 675,
+      "sha256": "e63ed49d92f74987d65afe9965b102be23937e57a8e9ec5d2e48b7547860e3bf",
+      "models": [
+        {
+          "id": "1N4760_QUCS",
+          "part": "1N4760",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4761.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 676,
+      "sha256": "999b7f5b9b0a336951feab82977b556e91317e6c37b61c81c5363275ca256225",
+      "models": [
+        {
+          "id": "1N4761_QUCS",
+          "part": "1N4761",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4762.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 675,
+      "sha256": "7170d3e38513d7098df80ed2e08ad0d4de1429de494c6e96d95303be631a6260",
+      "models": [
+        {
+          "id": "1N4762_QUCS",
+          "part": "1N4762",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4763.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 676,
+      "sha256": "5a764767aaeda118d487e493cba8701245519cb1310c3e2c64ac12045d71c362",
+      "models": [
+        {
+          "id": "1N4763_QUCS",
+          "part": "1N4763",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n4764.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 677,
+      "sha256": "f4dbd12315c527f87f3efd922df2b19bbf0d4d3141af9e00998f83f31ebfbc93",
+      "models": [
+        {
+          "id": "1N4764_QUCS",
+          "part": "1N4764",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5342b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 693,
+      "sha256": "2bee45c459f9aca1908ca964ae0b907852e730de79aa827cd609c5e6c8a8a9e5",
+      "models": [
+        {
+          "id": "1N5342B_QUCS",
+          "part": "1N5342B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5344b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 692,
+      "sha256": "209617b2e3d4345a2a9b4a23b619aa4c504d6ffa7c31830e2b8e3f222dceef6f",
+      "models": [
+        {
+          "id": "1N5344B_QUCS",
+          "part": "1N5344B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5346b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 690,
+      "sha256": "11a17b89e1bc1e365d4e6a67cb7b3cac3decc027b9bfc9b38af6ea0f9bee6769",
+      "models": [
+        {
+          "id": "1N5346B_QUCS",
+          "part": "1N5346B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5348b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 691,
+      "sha256": "11932733c8783a1153245e207fc543ae78b5e1c76de8cfac9ecba4c956229135",
+      "models": [
+        {
+          "id": "1N5348B_QUCS",
+          "part": "1N5348B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5350b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 690,
+      "sha256": "0cd05bdeb92e836e702fae8e6743bde2a7bdb222e12fbb62effd364e161004e1",
+      "models": [
+        {
+          "id": "1N5350B_QUCS",
+          "part": "1N5350B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5351b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 691,
+      "sha256": "9b960496d9f5ac2ffb131a55b47ebdd54428503444e4ce98641d569d8346faeb",
+      "models": [
+        {
+          "id": "1N5351B_QUCS",
+          "part": "1N5351B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5353b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 692,
+      "sha256": "555f626f14ec6eafddd413431c4b6cbb6bb4ba0a76b13872af25f9685c9b4785",
+      "models": [
+        {
+          "id": "1N5353B_QUCS",
+          "part": "1N5353B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5355b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 690,
+      "sha256": "3df3fc76fee62e0c9690417b5b190a997086541dabc72756f63486ecce969561",
+      "models": [
+        {
+          "id": "1N5355B_QUCS",
+          "part": "1N5355B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5357b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 689,
+      "sha256": "989aadb183038c974a423bf751eb6e138d346e1de193e9b5cacce2374d2837c6",
+      "models": [
+        {
+          "id": "1N5357B_QUCS",
+          "part": "1N5357B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5359b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 690,
+      "sha256": "56612b32b988061839e363458f762f1ac842111d8015b0d1fe476d86aa933255",
+      "models": [
+        {
+          "id": "1N5359B_QUCS",
+          "part": "1N5359B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5361b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 690,
+      "sha256": "aaf36a0eda904042d5b6ca9cbd764becffc67432c2f11c3f239a1788193ad8a1",
+      "models": [
+        {
+          "id": "1N5361B_QUCS",
+          "part": "1N5361B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5363b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 691,
+      "sha256": "b045596178a2be7f36253fe7fd26447c1c301bf71e680d88cde2a578eff4e433",
+      "models": [
+        {
+          "id": "1N5363B_QUCS",
+          "part": "1N5363B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5365b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 690,
+      "sha256": "357b8c4eff649ce082071c737287696806094b097b3ae6d99f15ade940f9b30c",
+      "models": [
+        {
+          "id": "1N5365B_QUCS",
+          "part": "1N5365B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5367b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 691,
+      "sha256": "29b6c111a9dcb2c4ef7eebdfc34d9b16b27db1337c55d5d5569f78a495a6e920",
+      "models": [
+        {
+          "id": "1N5367B_QUCS",
+          "part": "1N5367B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5369b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 691,
+      "sha256": "a0dfd60c5949bf329181774449d76a6863bad7cfd4b9bc8f67777cf1359f7298",
+      "models": [
+        {
+          "id": "1N5369B_QUCS",
+          "part": "1N5369B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5371b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 690,
+      "sha256": "04712c7dfa62a590d063c5b3e989d9f123ddbfff40d3cc291079c44cad552fd9",
+      "models": [
+        {
+          "id": "1N5371B_QUCS",
+          "part": "1N5371B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5373b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 690,
+      "sha256": "0c82269d0d33ff90e466c9aa865c87038669ac9d86c6d6a556a5a6aaf302fc67",
+      "models": [
+        {
+          "id": "1N5373B_QUCS",
+          "part": "1N5373B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5375b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 691,
+      "sha256": "7c7d9f2936a7806835c9992949aff1ca33f4dc657404a6223b88695dc81230d7",
+      "models": [
+        {
+          "id": "1N5375B_QUCS",
+          "part": "1N5375B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5377b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 691,
+      "sha256": "5b9101333e55c018f344f47ca53e4ee3b02b683c750795624929beed84ffc714",
+      "models": [
+        {
+          "id": "1N5377B_QUCS",
+          "part": "1N5377B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5379b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 691,
+      "sha256": "472d7f51232daacf3a324874a3c7b8a87506ffc13da2c3e9199ab5277d83717f",
+      "models": [
+        {
+          "id": "1N5379B_QUCS",
+          "part": "1N5379B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5381b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 690,
+      "sha256": "42ef7f59e9e1d15059e7bcc052ac91e87dcfccee38aa606cb83960f21944f779",
+      "models": [
+        {
+          "id": "1N5381B_QUCS",
+          "part": "1N5381B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5383b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 693,
+      "sha256": "63773dd3a01de53f22da8e9325c3eb5011d225bad747880aa905e9f35bf417d2",
+      "models": [
+        {
+          "id": "1N5383B_QUCS",
+          "part": "1N5383B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5385b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 693,
+      "sha256": "449a46d26d965f350bb2c2dbe8805d0eda6ba02cb5ec306de3e31491725533f7",
+      "models": [
+        {
+          "id": "1N5385B_QUCS",
+          "part": "1N5385B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "expanded/zener-1n5387b.lib",
+      "upstream": "Z-Diodes.lib",
+      "bytes": 688,
+      "sha256": "ba2e5c88bc6edc0d22d53d2dcb239364fa4d4e70cc1647cbfa6aed2c4949fdda",
+      "models": [
+        {
+          "id": "1N5387B_QUCS",
+          "part": "1N5387B",
+          "type": "SUBCKT",
+          "pins": [
+            "K",
+            "A"
+          ],
+          "adaptations": [
+            "Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp"
+          ],
+          "declarations": 1
+        }
+      ],
+      "skipped": []
+    }
+  ],
+  "packages": [
+    {
+      "id": "qucs-schottky",
+      "name": "Qucs · 肖特基二极管",
+      "license": "GPL-2.0-or-later",
+      "detail": "38 个社区参考；保留完整电气网络与依赖。",
+      "notice": "来源为 Qucs-S 社区参考库；未经过厂商认证，实际精度及适用条件须核对。多通道 IC 仅表示来源中的单通道。",
+      "documentation": "/models/qucs/README.md"
+    },
+    {
+      "id": "qucs-zener",
+      "name": "Qucs · 稳压二极管",
+      "license": "GPL-2.0-or-later",
+      "detail": "94 个社区参考；保留完整电气网络与依赖。",
+      "notice": "来源为 Qucs-S 社区参考库；未经过厂商认证，实际精度及适用条件须核对。多通道 IC 仅表示来源中的单通道。",
+      "documentation": "/models/qucs/README.md"
+    }
+  ],
+  "registered": [
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-1n5711.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / 1N5711",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-1n5711w.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / 1N5711W",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-1n5711ws.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / 1N5711WS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-1n6263w.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / 1N6263W",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-bat42.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / BAT42",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-bat42ws.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / BAT42WS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-bat43ws.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / BAT43WS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-bat46.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / BAT46",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-bat54.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / BAT54",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-bat54dw.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / BAT54DW",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-bat54ws.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / BAT54WS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sd101aw.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SD101AW",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sd101aws.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SD101AWS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sd101bw.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SD101BW",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sd101cw.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SD101CW",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sd103aw.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SD103AW",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sd103aws.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SD103AWS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sd103bws.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SD103BWS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sd103cw.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SD103CW",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sd103cws.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SD103CWS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdm03mt40.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDM03MT40",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdm03u40.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDM03U40",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdm10m45sd.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDM10M45SD",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdm10p45.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDM10P45",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdm10u45.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDM10U45",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdm20e40c.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDM20E40C",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdm20u30.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDM20U30",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdm20u40.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDM20U40",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdm40e20ls.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDM40E20LS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sbmg0340l.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SBMG0340L",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sbmg0340la.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SBMG0340LA",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sbmg0340lc.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SBMG0340LC",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sbmg0340ls.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SBMG0340LS",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdmk0340l.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDMK0340L",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdmp0340lat.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDMP0340LAT",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdmp0340lct.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDMP0340LCT",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdmp0340lst.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDMP0340LST",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-schottky",
+      "file": "qucs/expanded/schottky-sdmp0340lt.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / DiodesSchottky / SDMP0340LT",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/DiodesSchottky.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-bzt52c10t.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / BZT52C10T",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-bzt52c10s.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / BZT52C10S",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-bzt52c10.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / BZT52C10",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4728a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4728A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4729a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4729A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4730a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4730A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4731a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4731A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4732a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4732A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4733a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4733A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4734a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4734A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4735a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4735A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4741a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4741A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4742a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4742A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4743a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4743A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4744a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4744A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4745a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4745A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4746a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4746A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4747a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4747A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4757a.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4757A",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n746.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N746",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n747.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N747",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n748.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N748",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n749.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N749",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n750.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N750",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n751.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N751",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n752.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N752",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n753.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N753",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n754.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N754",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n755.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N755",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n756.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N756",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n757.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N757",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n758.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N758",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n759.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N759",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4728.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4728",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4729.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4729",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4730.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4730",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4731.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4731",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4732.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4732",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4733.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4733",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4734.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4734",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4735.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4735",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4736.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4736",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4737.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4737",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4738.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4738",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4739.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4739",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4740.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4740",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4741.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4741",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4742.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4742",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4743.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4743",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4744.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4744",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4745.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4745",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4746.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4746",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4747.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4747",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4748.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4748",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4749.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4749",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4750.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4750",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4751.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4751",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4752.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4752",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4753.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4753",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4754.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4754",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4755.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4755",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4756.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4756",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4757.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4757",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4758.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4758",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4759.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4759",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4760.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4760",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4761.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4761",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4762.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4762",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4763.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4763",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n4764.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N4764",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5342b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5342B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5344b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5344B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5346b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5346B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5348b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5348B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5350b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5350B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5351b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5351B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5353b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5353B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5355b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5355B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5357b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5357B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5359b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5359B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5361b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5361B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5363b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5363B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5365b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5365B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5367b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5367B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5369b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5369B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5371b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5371B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5373b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5373B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5375b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5375B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5377b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5377B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5379b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5379B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5381b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5381B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5383b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5383B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5385b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5385B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    },
+    {
+      "packageId": "qucs-zener",
+      "file": "qucs/expanded/zener-1n5387b.lib",
+      "source": {
+        "label": "离线开源库 / Qucs-S 社区参考 / Z-Diodes / 1N5387B",
+        "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Z-Diodes.lib",
+        "license": "GPL-2.0-or-later",
+        "attribution": "Qucs-S project and contributors；不是厂商官网原件。保留整个电气网络及内部依赖，原作者及厂商说明见随附上游文件；单通道模型不表示整颗多通道封装。型号添加 _QUCS，内部名称隔离。源文件、GPL 许可和转换记录随库提供。"
+      },
+      "excludedIds": []
+    }
+  ],
+  "skipped": [
+    {
+      "upstream": "DiodesSchottky.lib",
+      "part": "BAS40",
+      "reason": "Part already shipped from Diodes.lib; retain existing attributed source"
+    },
+    {
+      "upstream": "DiodesSchottky.lib",
+      "part": "BAS70",
+      "reason": "Part already shipped from Diodes.lib; retain existing attributed source"
+    },
+    {
+      "upstream": "DiodesSchottky.lib",
+      "part": "SD103ASDM",
+      "reason": "Upstream Cj0=29.2 implies 29.2 F for SD103ASDM/ATW; quarantined rather than guessing a missing pico suffix"
+    },
+    {
+      "upstream": "DiodesSchottky.lib",
+      "part": "SD103ATW",
+      "reason": "Upstream Cj0=29.2 implies 29.2 F for SD103ASDM/ATW; quarantined rather than guessing a missing pico suffix"
+    }
+  ],
+  "publicModels": 132
+}

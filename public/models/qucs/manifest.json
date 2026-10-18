@@ -1,0 +1,3571 @@
+{
+  "revision": "e0c0e154edb4f8403d53c5c5601c2ee133c9e970",
+  "license": "GPL-2.0-or-later",
+  "downloaded": "2026-09-24",
+  "files": [
+    {
+      "file": "COPYING",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/COPYING",
+      "bytes": 18045,
+      "sha256": "a12514c5ee9b779ccea74a797feddad88ace2fcf9960f14dcbf9250d089f87e7"
+    },
+    {
+      "file": "upstream/Transistors.lib",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Transistors.lib",
+      "bytes": 253116,
+      "sha256": "e0770b039b0eaf8aa86a501a69c4c892c9c79168462739d2e94ba37855205f77"
+    },
+    {
+      "file": "upstream/Diodes.lib",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/Diodes.lib",
+      "bytes": 44642,
+      "sha256": "cb36101ec244c6c265f0b2d4347538bc5acdfad2dfa66a780f4110a9842c7d2c"
+    },
+    {
+      "file": "upstream/VDMOS_IR.lib",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/library/VDMOS_IR.lib",
+      "bytes": 66920,
+      "sha256": "36ee3b9cdea2c9ec9220d277ebcd710afa05498c1c50a23cd8764af49c59e0f1"
+    },
+    {
+      "file": "upstream/bjtsub.cpp",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/qucs/components/bjtsub.cpp",
+      "bytes": 10080,
+      "sha256": "f5c53b33b02cdd16e3751834e401132b3efd82b1b741f5c164ee31b82f88dde8"
+    },
+    {
+      "file": "upstream/bjt.cpp",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/qucs/components/bjt.cpp",
+      "bytes": 5008,
+      "sha256": "2ae982f502a562ce8876d4334e07a3200573e03fcd8f5c135a43caeb8ac1d7a7"
+    },
+    {
+      "file": "upstream/diode.cpp",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/qucs/components/diode.cpp",
+      "bytes": 8743,
+      "sha256": "18e5f080ac28105496fd1589c4a4e22de952ba5701691059c94a4c9e5340f2eb"
+    },
+    {
+      "file": "upstream/vdmos.cpp",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/qucs/components/vdmos.cpp",
+      "bytes": 12873,
+      "sha256": "38f07cae297b252f9e53c9eab504113ffc3c9313eb324b3fe7ed4304dfaaa34e"
+    },
+    {
+      "file": "upstream/component.cpp",
+      "url": "https://raw.githubusercontent.com/ra3xdh/qucs_s/e0c0e154edb4f8403d53c5c5601c2ee133c9e970/qucs/components/component.cpp",
+      "bytes": 60818,
+      "sha256": "407ac2a7ac11b84a8b4b705a3d363d4e9340dfa86b9259c4325d8392e4858b4c"
+    }
+  ],
+  "converted": [
+    {
+      "file": "transistors.lib",
+      "upstream": "Transistors.lib",
+      "bytes": 73516,
+      "sha256": "9012fd8c35757e9e998d15e16409ef65dd1235706c41872f5e487f51056162a1",
+      "models": [
+        {
+          "id": "2DA1774R_QUCS",
+          "part": "2DA1774R",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "2DC4617R_QUCS",
+          "part": "2DC4617R",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC109C_QUCS",
+          "part": "BC109C",
+          "manufacturer": "Philips",
+          "type": "NPN"
+        },
+        {
+          "id": "BC807-16_QUCS",
+          "part": "BC807-16",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC807-25_QUCS",
+          "part": "BC807-25",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC807-40_QUCS",
+          "part": "BC807-40",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC817-16_QUCS",
+          "part": "BC817-16",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC817-25_QUCS",
+          "part": "BC817-25",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC817-40_QUCS",
+          "part": "BC817-40",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC846A_QUCS",
+          "part": "BC846A",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC846AW_QUCS",
+          "part": "BC846AW",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC846B_QUCS",
+          "part": "BC846B",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC846BW_QUCS",
+          "part": "BC846BW",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC846C_QUCS",
+          "part": "BC846C",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC846CW_QUCS",
+          "part": "BC846CW",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847A_QUCS",
+          "part": "BC847A",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847AT_QUCS",
+          "part": "BC847AT",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847AW_QUCS",
+          "part": "BC847AW",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847B_QUCS",
+          "part": "BC847B",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847BS_QUCS",
+          "part": "BC847BS",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847BT_QUCS",
+          "part": "BC847BT",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847BV_QUCS",
+          "part": "BC847BV",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847BW_QUCS",
+          "part": "BC847BW",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847C_QUCS",
+          "part": "BC847C",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847CT_QUCS",
+          "part": "BC847CT",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847CW_QUCS",
+          "part": "BC847CW",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC847PN_QUCS",
+          "part": "BC847PN",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC848A_QUCS",
+          "part": "BC848A",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC848AW_QUCS",
+          "part": "BC848AW",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC848B_QUCS",
+          "part": "BC848B",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC848BW_QUCS",
+          "part": "BC848BW",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC848C_QUCS",
+          "part": "BC848C",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC848CW_QUCS",
+          "part": "BC848CW",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "BC856A_QUCS",
+          "part": "BC856A",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC856AW_QUCS",
+          "part": "BC856AW",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC856B_QUCS",
+          "part": "BC856B",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC856BW_QUCS",
+          "part": "BC856BW",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857A_QUCS",
+          "part": "BC857A",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857AT_QUCS",
+          "part": "BC857AT",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857AW_QUCS",
+          "part": "BC857AW",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857B_QUCS",
+          "part": "BC857B",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857BS_QUCS",
+          "part": "BC857BS",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857BT_QUCS",
+          "part": "BC857BT",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857BV_QUCS",
+          "part": "BC857BV",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857BW_QUCS",
+          "part": "BC857BW",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857C_QUCS",
+          "part": "BC857C",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857CW_QUCS",
+          "part": "BC857CW",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC857CT_QUCS",
+          "part": "BC857CT",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC858A_QUCS",
+          "part": "BC858A",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC858AW_QUCS",
+          "part": "BC858AW",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC858B_QUCS",
+          "part": "BC858B",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC858BW_QUCS",
+          "part": "BC858BW",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC858C_QUCS",
+          "part": "BC858C",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "BC858CW_QUCS",
+          "part": "BC858CW",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "DMMT3904W_QUCS",
+          "part": "DMMT3904W",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "DMMT3906_QUCS",
+          "part": "DMMT3906",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "DMMT3906W_QUCS",
+          "part": "DMMT3906W",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "DMMT5551_QUCS",
+          "part": "DMMT5551",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT458_QUCS",
+          "part": "FZT458",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT489_QUCS",
+          "part": "FZT489",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT491_QUCS",
+          "part": "FZT491",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT491A_QUCS",
+          "part": "FZT491A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT493_QUCS",
+          "part": "FZT493",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT549_QUCS",
+          "part": "FZT549",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT558_QUCS",
+          "part": "FZT558",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT560_QUCS",
+          "part": "FZT560",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT589_QUCS",
+          "part": "FZT589",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT591_QUCS",
+          "part": "FZT591",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT591A_QUCS",
+          "part": "FZT591A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT649_QUCS",
+          "part": "FZT649",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT651_QUCS",
+          "part": "FZT651",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT653_QUCS",
+          "part": "FZT653",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT655_QUCS",
+          "part": "FZT655",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT657_QUCS",
+          "part": "FZT657",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT658_QUCS",
+          "part": "FZT658",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT688B_QUCS",
+          "part": "FZT688B",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT689B_QUCS",
+          "part": "FZT689B",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT690B_QUCS",
+          "part": "FZT690B",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT692B_QUCS",
+          "part": "FZT692B",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT694B_QUCS",
+          "part": "FZT694B",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT696B_QUCS",
+          "part": "FZT696B",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT717_QUCS",
+          "part": "FZT717",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT749_QUCS",
+          "part": "FZT749",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT751_QUCS",
+          "part": "FZT751",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT753_QUCS",
+          "part": "FZT753",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT755_QUCS",
+          "part": "FZT755",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT757_QUCS",
+          "part": "FZT757",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT758_QUCS",
+          "part": "FZT758",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT788A_QUCS",
+          "part": "FZT788A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT788B_QUCS",
+          "part": "FZT788B",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT789A_QUCS",
+          "part": "FZT789A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT790A_QUCS",
+          "part": "FZT790A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT795A_QUCS",
+          "part": "FZT795A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT796A_QUCS",
+          "part": "FZT796A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT849_QUCS",
+          "part": "FZT849",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT851_QUCS",
+          "part": "FZT851",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT853_QUCS",
+          "part": "FZT853",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT855_QUCS",
+          "part": "FZT855",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT857_QUCS",
+          "part": "FZT857",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT869_QUCS",
+          "part": "FZT869",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT948_QUCS",
+          "part": "FZT948",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT949_QUCS",
+          "part": "FZT949",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT951_QUCS",
+          "part": "FZT951",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT953_QUCS",
+          "part": "FZT953",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT955_QUCS",
+          "part": "FZT955",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT956_QUCS",
+          "part": "FZT956",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT957_QUCS",
+          "part": "FZT957",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT958_QUCS",
+          "part": "FZT958",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT968_QUCS",
+          "part": "FZT968",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT1047A_QUCS",
+          "part": "FZT1047A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT1048A_QUCS",
+          "part": "FZT1048A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT1049A_QUCS",
+          "part": "FZT1049A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT1051A_QUCS",
+          "part": "FZT1051A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT1053A_QUCS",
+          "part": "FZT1053A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "FZT1147A_QUCS",
+          "part": "FZT1147A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT1149A_QUCS",
+          "part": "FZT1149A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZT1151A_QUCS",
+          "part": "FZT1151A",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "PNP"
+        },
+        {
+          "id": "FZTA42_QUCS",
+          "part": "FZTA42",
+          "manufacturer": "Zetex Semiconductors",
+          "type": "NPN"
+        },
+        {
+          "id": "IMT4_QUCS",
+          "part": "IMT4",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "IMX8_QUCS",
+          "part": "IMX8",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBT123S_QUCS",
+          "part": "MMBT123S",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBT2222A_QUCS",
+          "part": "MMBT2222A",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBT2222AT_QUCS",
+          "part": "MMBT2222AT",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBT2907A_QUCS",
+          "part": "MMBT2907A",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMBT2907AT_QUCS",
+          "part": "MMBT2907AT",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMBT3904_QUCS",
+          "part": "MMBT3904",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBT3904T_QUCS",
+          "part": "MMBT3904T",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBT3906_QUCS",
+          "part": "MMBT3906",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMBT3906T_QUCS",
+          "part": "MMBT3906T",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMBT4401T_QUCS",
+          "part": "MMBT4401T",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBT4124_QUCS",
+          "part": "MMBT4124",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBT4126_QUCS",
+          "part": "MMBT4126",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMBTA05_QUCS",
+          "part": "MMBTA05",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBTA06_QUCS",
+          "part": "MMBTA06",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBTA42_QUCS",
+          "part": "MMBTA42",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBTA55_QUCS",
+          "part": "MMBTA55",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMBTA56_QUCS",
+          "part": "MMBTA56",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMBTA92_QUCS",
+          "part": "MMBTA92",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMBTH10_QUCS",
+          "part": "MMBTH10",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMBTH24_QUCS",
+          "part": "MMBTH24",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMDT2222A_QUCS",
+          "part": "MMDT2222A",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMDT2227_npn_QUCS",
+          "part": "MMDT2227_npn",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMDT2227_pnp_QUCS",
+          "part": "MMDT2227_pnp",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMDT2907A_QUCS",
+          "part": "MMDT2907A",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMDT3904_QUCS",
+          "part": "MMDT3904",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMDT3904V_QUCS",
+          "part": "MMDT3904V",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMDT3906_QUCS",
+          "part": "MMDT3906",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMDT3946_npn_QUCS",
+          "part": "MMDT3946_npn",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMDT3946_pnp_QUCS",
+          "part": "MMDT3946_pnp",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMDT4401_QUCS",
+          "part": "MMDT4401",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMDT4403_QUCS",
+          "part": "MMDT4403",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMDT4124_QUCS",
+          "part": "MMDT4124",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMDT4413_npn_QUCS",
+          "part": "MMDT4413_npn",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMDT4413_pnp_QUCS",
+          "part": "MMDT4413_pnp",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMDT5401_QUCS",
+          "part": "MMDT5401",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMDT5551_QUCS",
+          "part": "MMDT5551",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMST2222A_QUCS",
+          "part": "MMST2222A",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMST2907A_QUCS",
+          "part": "MMST2907A",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMST3904_QUCS",
+          "part": "MMST3904",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMST3906_QUCS",
+          "part": "MMST3906",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMST4124_QUCS",
+          "part": "MMST4124",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMST4126_QUCS",
+          "part": "MMST4126",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMST4401_QUCS",
+          "part": "MMST4401",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMST4403_QUCS",
+          "part": "MMST4403",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMST5401_QUCS",
+          "part": "MMST5401",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMST5551_QUCS",
+          "part": "MMST5551",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMSTA05_QUCS",
+          "part": "MMSTA05",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMSTA06_QUCS",
+          "part": "MMSTA06",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMSTA42_QUCS",
+          "part": "MMSTA42",
+          "manufacturer": "Diodes Inc.",
+          "type": "NPN"
+        },
+        {
+          "id": "MMSTA55_QUCS",
+          "part": "MMSTA55",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMSTA56_QUCS",
+          "part": "MMSTA56",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        },
+        {
+          "id": "MMSTA92_QUCS",
+          "part": "MMSTA92",
+          "manufacturer": "Diodes Inc.",
+          "type": "PNP"
+        }
+      ],
+      "skipped": [
+        {
+          "id": "2N2219A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N2222",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N2222A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N2369A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N2484",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N2905A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N2907",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N2907A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N2955",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3019",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3053",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3055",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3390",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3391A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3392",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3393",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3415",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3416",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3417",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3501",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3507",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3700",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3702",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3703",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3859A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3903",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3904",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3905",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3906",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N3947",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N4123",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N4124",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N4125",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N4126",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N4400",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N4401",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N4402",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N4403",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N4410",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5086",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5087",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5088",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5089",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5172",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5210",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5366",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5400",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5401",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5550",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5551",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5551",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5769",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5771",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5772",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N5830",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N6431",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N6517",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2N6715",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2SA1213",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "2SC2873",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC107A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC107BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC108BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC109BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC177AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC178AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC182BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC183BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC184BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC237BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC238BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC239BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC307AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC308AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC337AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC338AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC413BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC414BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC415AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC416AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC546BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC547BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC548BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC548C",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC549",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC549BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC550BP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC556AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC557AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC557B",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC558AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC559AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC560AP",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC639",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC640",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC846B",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC847B",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC848B",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC849B",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC850B",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC856A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC857A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC858A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC859A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BC860A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BCV72",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BCW32",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BD135",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BD136",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BD139",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BD675",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD675A",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD676",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD676A",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD677",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD677A",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD678",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD678A",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD679",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD679A",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD680",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD680A",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD681",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BD682",
+          "reason": "not one primitive"
+        },
+        {
+          "id": "BF720",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BF721",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFG425W",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFP193W",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFP405",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFP420",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFP540",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFP620",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFP640",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFR92A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFS20",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFT92",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFT92A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "BFT93",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MJ15024",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MJ15025",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS3702",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS3703",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS5179",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS6513",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS6514",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS6515",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS6518",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS6521",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS6523",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS6531",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS6534",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS6562",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPS8098",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA05",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA06",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA10",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA18",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA20",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA42",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA43",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA55",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA56",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA92",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSA93",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSH10",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSL01",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "MPSL51",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TIP35C",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TIP36C",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TIP41C",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TIP42C",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TN6714A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TN6715A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TN6726A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TN6727A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TN6728A",
+          "reason": "manufacturer not stated"
+        },
+        {
+          "id": "TN6729A",
+          "reason": "manufacturer not stated"
+        }
+      ]
+    },
+    {
+      "file": "diodes.lib",
+      "upstream": "Diodes.lib",
+      "bytes": 28636,
+      "sha256": "67e7bb0b654e5650079413c288b5da4289ed58e2e4052f03c6d9f2393b791ea2",
+      "models": [
+        {
+          "id": "1N4148_QUCS",
+          "part": "1N4148",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4148W_QUCS",
+          "part": "1N4148W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4148WS_QUCS",
+          "part": "1N4148WS",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4148WT_QUCS",
+          "part": "1N4148WT",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4001_QUCS",
+          "part": "1N4001",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4002_QUCS",
+          "part": "1N4002",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4003_QUCS",
+          "part": "1N4003",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4004_QUCS",
+          "part": "1N4004",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4005_QUCS",
+          "part": "1N4005",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4006_QUCS",
+          "part": "1N4006",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N4007_QUCS",
+          "part": "1N4007",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N5400_QUCS",
+          "part": "1N5400",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N5401_QUCS",
+          "part": "1N5401",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N5402_QUCS",
+          "part": "1N5402",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N5404_QUCS",
+          "part": "1N5404",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N5406_QUCS",
+          "part": "1N5406",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N5407_QUCS",
+          "part": "1N5407",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "1N5408_QUCS",
+          "part": "1N5408",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "6A05_QUCS",
+          "part": "6A05",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "6A01_QUCS",
+          "part": "6A01",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "6A02_QUCS",
+          "part": "6A02",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "6A04_QUCS",
+          "part": "6A04",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "6A06_QUCS",
+          "part": "6A06",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "6A08_QUCS",
+          "part": "6A08",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "6A10_QUCS",
+          "part": "6A10",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "10A01_QUCS",
+          "part": "10A01",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "10A02_QUCS",
+          "part": "10A02",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "10A03_QUCS",
+          "part": "10A03",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "10A04_QUCS",
+          "part": "10A04",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "10A05_QUCS",
+          "part": "10A05",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "10A06_QUCS",
+          "part": "10A06",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "10A07_QUCS",
+          "part": "10A07",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "DFLR1200_QUCS",
+          "part": "DFLR1200",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "DLFR1400_QUCS",
+          "part": "DLFR1400",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1A_QUCS",
+          "part": "S1A",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1AB_QUCS",
+          "part": "S1AB",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1B_QUCS",
+          "part": "S1B",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1BB_QUCS",
+          "part": "S1BB",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1D_QUCS",
+          "part": "S1D",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1DB_QUCS",
+          "part": "S1DB",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1G_QUCS",
+          "part": "S1G",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1GB_QUCS",
+          "part": "S1GB",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1J_QUCS",
+          "part": "S1J",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1JB_QUCS",
+          "part": "S1JB",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1K_QUCS",
+          "part": "S1K",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1KB_QUCS",
+          "part": "S1KB",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1M_QUCS",
+          "part": "S1M",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S1MB_QUCS",
+          "part": "S1MB",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S2A_QUCS",
+          "part": "S2A",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S2B_QUCS",
+          "part": "S2B",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S2D_QUCS",
+          "part": "S2D",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S2G_QUCS",
+          "part": "S2G",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S2J_QUCS",
+          "part": "S2J",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S2K_QUCS",
+          "part": "S2K",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S2M_QUCS",
+          "part": "S2M",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S3A_QUCS",
+          "part": "S3A",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S3BB_QUCS",
+          "part": "S3BB",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S3D_QUCS",
+          "part": "S3D",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S3GB_QUCS",
+          "part": "S3GB",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S3K_QUCS",
+          "part": "S3K",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S3M_QUCS",
+          "part": "S3M",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S5AC_QUCS",
+          "part": "S5AC",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S5BC_QUCS",
+          "part": "S5BC",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S5DC_QUCS",
+          "part": "S5DC",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S5GC_QUCS",
+          "part": "S5GC",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S5JC_QUCS",
+          "part": "S5JC",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S5KC_QUCS",
+          "part": "S5KC",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "S5MC_QUCS",
+          "part": "S5MC",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAL99_QUCS",
+          "part": "BAL99",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS116_QUCS",
+          "part": "BAS116",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS116T_QUCS",
+          "part": "BAS116T",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS16T_QUCS",
+          "part": "BAS16T",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS16TW_QUCS",
+          "part": "BAS16TW",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS16V_QUCS",
+          "part": "BAS16V",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS16W_QUCS",
+          "part": "BAS16W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS19_QUCS",
+          "part": "BAS19",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS19W_QUCS",
+          "part": "BAS19W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS20_QUCS",
+          "part": "BAS20",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS20W_QUCS",
+          "part": "BAS20W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS21_QUCS",
+          "part": "BAS21",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS21T_QUCS",
+          "part": "BAS21T",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS21W_QUCS",
+          "part": "BAS21W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV116W_QUCS",
+          "part": "BAV116W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV16W_QUCS",
+          "part": "BAV16W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV16WS_QUCS",
+          "part": "BAV16WS",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV170_QUCS",
+          "part": "BAV170",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV170T_QUCS",
+          "part": "BAV170T",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV199_QUCS",
+          "part": "BAV199",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV199DW_QUCS",
+          "part": "BAV199DW",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV199T_QUCS",
+          "part": "BAV199T",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV19W_QUCS",
+          "part": "BAV19W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV19WS_QUCS",
+          "part": "BAV19WS",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV20W_QUCS",
+          "part": "BAV20W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV20WS_QUCS",
+          "part": "BAV20WS",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV21W_QUCS",
+          "part": "BAV21W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV21WS_QUCS",
+          "part": "BAV21WS",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV23A_QUCS",
+          "part": "BAV23A",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV23C_QUCS",
+          "part": "BAV23C",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV23S_QUCS",
+          "part": "BAV23S",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV3004W_QUCS",
+          "part": "BAV3004W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV70_QUCS",
+          "part": "BAV70",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV70T_QUCS",
+          "part": "BAV70T",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV70W_QUCS",
+          "part": "BAV70W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV756DW_QUCS",
+          "part": "BAV756DW",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV99_QUCS",
+          "part": "BAV99",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV99BRW_QUCS",
+          "part": "BAV99BRW",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV99DW_QUCS",
+          "part": "BAV99DW",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV99T_QUCS",
+          "part": "BAV99T",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAV99W_QUCS",
+          "part": "BAV99W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAW156_QUCS",
+          "part": "BAW156",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAW156T_QUCS",
+          "part": "BAW156T",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAW56_QUCS",
+          "part": "BAW56",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAW567DW_QUCS",
+          "part": "BAW567DW",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAW56DW_QUCS",
+          "part": "BAW56DW",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAW56T_QUCS",
+          "part": "BAW56T",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAW56W_QUCS",
+          "part": "BAW56W",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "LL4148_QUCS",
+          "part": "LL4148",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS40_QUCS",
+          "part": "BAS40",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS70_QUCS",
+          "part": "BAS70",
+          "manufacturer": "Diodes Inc.",
+          "type": "D"
+        },
+        {
+          "id": "BAS40_Philips_QUCS",
+          "part": "BAS40_Philips",
+          "manufacturer": "Philips",
+          "type": "D"
+        },
+        {
+          "id": "BAS70_Philips_QUCS",
+          "part": "BAS70_Philips",
+          "manufacturer": "Philips",
+          "type": "D"
+        }
+      ],
+      "skipped": []
+    },
+    {
+      "file": "power-mos.lib",
+      "upstream": "VDMOS_IR.lib",
+      "bytes": 95017,
+      "sha256": "675c46d00d03e879bfff255895d7edd7fd16b29a747671764af64e35ede46f32",
+      "models": [
+        {
+          "id": "IRF1302_QUCS",
+          "part": "IRF1302",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1312S_QUCS",
+          "part": "IRF1312S",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1405_QUCS",
+          "part": "IRF1405",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1503S_QUCS",
+          "part": "IRF1503S",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF3717_QUCS",
+          "part": "IRF3717",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6607_QUCS",
+          "part": "IRF6607",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6609_QUCS",
+          "part": "IRF6609",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6618_QUCS",
+          "part": "IRF6618",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6620_QUCS",
+          "part": "IRF6620",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6623_QUCS",
+          "part": "IRF6623",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6635_QUCS",
+          "part": "IRF6635",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6691_QUCS",
+          "part": "IRF6691",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7201_QUCS",
+          "part": "IRF7201",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7204_QUCS",
+          "part": "IRF7204",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF7205_QUCS",
+          "part": "IRF7205",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF7207_QUCS",
+          "part": "IRF7207",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF7210_QUCS",
+          "part": "IRF7210",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF7220_QUCS",
+          "part": "IRF7220",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF7233_QUCS",
+          "part": "IRF7233",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF7303_QUCS",
+          "part": "IRF7303",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7335_QUCS",
+          "part": "IRF7335",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7343N_QUCS",
+          "part": "IRF7343N",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7343P_QUCS",
+          "part": "IRF7343P",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF7401_QUCS",
+          "part": "IRF7401",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7403_QUCS",
+          "part": "IRF7403",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7404_QUCS",
+          "part": "IRF7404",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF7406_QUCS",
+          "part": "IRF7406",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF7413_QUCS",
+          "part": "IRF7413",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7413A_QUCS",
+          "part": "IRF7413A",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7455_QUCS",
+          "part": "IRF7455",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7456_QUCS",
+          "part": "IRF7456",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7468_QUCS",
+          "part": "IRF7468",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7805_QUCS",
+          "part": "IRF7805",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7807_QUCS",
+          "part": "IRF7807",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7809A_QUCS",
+          "part": "IRF7809A",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7811_QUCS",
+          "part": "IRF7811",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7811AV_QUCS",
+          "part": "IRF7811AV",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7822_QUCS",
+          "part": "IRF7822",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7831_QUCS",
+          "part": "IRF7831",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7832_QUCS",
+          "part": "IRF7832",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF9410_QUCS",
+          "part": "IRF9410",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF9Z24S_L_QUCS",
+          "part": "IRF9Z24S_L",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRFL014_QUCS",
+          "part": "IRFL014",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFL4310_QUCS",
+          "part": "IRFL4310",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP2907_QUCS",
+          "part": "IRFP2907",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP90N20D_QUCS",
+          "part": "IRFP90N20D",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRL3915_QUCS",
+          "part": "IRL3915",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRL530NS_L_QUCS",
+          "part": "IRL530NS_L",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLML2803_QUCS",
+          "part": "IRLML2803",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7821_QUCS",
+          "part": "IRF7821",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1310_QUCS",
+          "part": "IRF1310",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF510_QUCS",
+          "part": "IRF510",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF530_QUCS",
+          "part": "IRF530",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6644_QUCS",
+          "part": "IRF6644",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6617_QUCS",
+          "part": "IRF6617",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7413ZPBF_QUCS",
+          "part": "IRF7413ZPBF",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7805ZPBF_QUCS",
+          "part": "IRF7805ZPBF",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6629PBF_QUCS",
+          "part": "IRF6629PBF",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF8910_QUCS",
+          "part": "IRF8910",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLR2908_QUCS",
+          "part": "IRLR2908",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP4668_QUCS",
+          "part": "IRFP4668",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF8721_QUCS",
+          "part": "IRF8721",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7309N_QUCS",
+          "part": "IRF7309N",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7309P_QUCS",
+          "part": "IRF7309P",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRLR3802_QUCS",
+          "part": "IRLR3802",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5004_QUCS",
+          "part": "IRFH5004",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5015_QUCS",
+          "part": "IRFH5015",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5020_QUCS",
+          "part": "IRFH5020",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5250_QUCS",
+          "part": "IRFH5250",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5255_QUCS",
+          "part": "IRFH5255",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5300_QUCS",
+          "part": "IRFH5300",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5302_QUCS",
+          "part": "IRFH5302",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5302D_QUCS",
+          "part": "IRFH5302D",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5306_QUCS",
+          "part": "IRFH5306",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLH5030_QUCS",
+          "part": "IRLH5030",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF7490_QUCS",
+          "part": "IRF7490",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1010E_QUCS",
+          "part": "IRF1010E",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1010EZ_QUCS",
+          "part": "IRF1010EZ",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1010N_QUCS",
+          "part": "IRF1010N",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1404_QUCS",
+          "part": "IRF1404",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1404Z_QUCS",
+          "part": "IRF1404Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1407_QUCS",
+          "part": "IRF1407",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF1503_QUCS",
+          "part": "IRF1503",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2204_QUCS",
+          "part": "IRF2204",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2204S_QUCS",
+          "part": "IRF2204S",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2804_QUCS",
+          "part": "IRF2804",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2804S_QUCS",
+          "part": "IRF2804S",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFHS8242_QUCS",
+          "part": "IRFHS8242",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFHS8342_QUCS",
+          "part": "IRFHS8342",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFML8244_QUCS",
+          "part": "IRFML8244",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFZ44N_QUCS",
+          "part": "IRFZ44N",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFZ44V_QUCS",
+          "part": "IRFZ44V",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFZ46N_QUCS",
+          "part": "IRFZ46N",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFZ46NL_QUCS",
+          "part": "IRFZ46NL",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFZ46NS_QUCS",
+          "part": "IRFZ46NS",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLH5036_QUCS",
+          "part": "IRLH5036",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFB4410Z_QUCS",
+          "part": "IRFB4410Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5053_QUCS",
+          "part": "IRFH5053",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5215_QUCS",
+          "part": "IRFH5215",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5220_QUCS",
+          "part": "IRFH5220",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH7914_QUCS",
+          "part": "IRFH7914",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH7921_QUCS",
+          "part": "IRFH7921",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH7932_QUCS",
+          "part": "IRFH7932",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH7936_QUCS",
+          "part": "IRFH7936",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP054V_QUCS",
+          "part": "IRFP054V",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP250N_QUCS",
+          "part": "IRFP250N",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFR120Z_QUCS",
+          "part": "IRFR120Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFR2307Z_QUCS",
+          "part": "IRFR2307Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFR2607Z_QUCS",
+          "part": "IRFR2607Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFR2905Z_QUCS",
+          "part": "IRFR2905Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFZ46Z_QUCS",
+          "part": "IRFZ46Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFZ48N_QUCS",
+          "part": "IRFZ48N",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFZ48Z_QUCS",
+          "part": "IRFZ48Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5007_QUCS",
+          "part": "IRFH5007",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5110_QUCS",
+          "part": "IRFH5110",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5204_QUCS",
+          "part": "IRFH5204",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH6200_QUCS",
+          "part": "IRFH6200",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLHM620_QUCS",
+          "part": "IRLHM620",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLHM630_QUCS",
+          "part": "IRLHM630",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLHS6242_QUCS",
+          "part": "IRLHS6242",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLHS6342_QUCS",
+          "part": "IRLHS6342",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLML6344_QUCS",
+          "part": "IRLML6344",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLML6346_QUCS",
+          "part": "IRLML6346",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLML6246_QUCS",
+          "part": "IRLML6246",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFHM830_QUCS",
+          "part": "IRFHM830",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFHM830D_QUCS",
+          "part": "IRFHM830D",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFHM831_QUCS",
+          "part": "IRFHM831",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH3702_QUCS",
+          "part": "IRFH3702",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH3707_QUCS",
+          "part": "IRFH3707",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5207_QUCS",
+          "part": "IRFH5207",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5406_QUCS",
+          "part": "IRFH5406",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFH5104_QUCS",
+          "part": "IRFH5104",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFS4010_QUCS",
+          "part": "IRFS4010",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF6201_QUCS",
+          "part": "IRF6201",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLML6244_QUCS",
+          "part": "IRLML6244",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2805_QUCS",
+          "part": "IRF2805",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2805S_QUCS",
+          "part": "IRF2805S",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLML0040_QUCS",
+          "part": "IRLML0040",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2807_QUCS",
+          "part": "IRF2807",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2807Z_QUCS",
+          "part": "IRF2807Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2903ZS_QUCS",
+          "part": "IRF2903ZS",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF2907Z_QUCS",
+          "part": "IRF2907Z",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF9640___QUCS",
+          "part": "IRF9640__",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF740_QUCS",
+          "part": "IRF740",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF830_QUCS",
+          "part": "IRF830",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFZ24_QUCS",
+          "part": "IRFZ24",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLML2402_QUCS",
+          "part": "IRLML2402",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP9140___QUCS",
+          "part": "IRFP9140__",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRFP240H_QUCS",
+          "part": "IRFP240H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP9240H_QUCS",
+          "part": "IRFP9240H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF9640_QUCS",
+          "part": "IRF9640",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF610H_QUCS",
+          "part": "IRF610H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF9520_QUCS",
+          "part": "IRF9520",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP9140_QUCS",
+          "part": "IRFP9140",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRFP150N_QUCS",
+          "part": "IRFP150N",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLML6401_AB_QUCS",
+          "part": "IRLML6401_AB",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF640H_QUCS",
+          "part": "IRF640H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF9640H_QUCS",
+          "part": "IRF9640H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF9610H_QUCS",
+          "part": "IRF9610H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF9520H_QUCS",
+          "part": "IRF9520H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF9620H_QUCS",
+          "part": "IRF9620H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRFP340H_QUCS",
+          "part": "IRFP340H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP9140H_QUCS",
+          "part": "IRFP9140H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRF710H_QUCS",
+          "part": "IRF710H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRF730H_QUCS",
+          "part": "IRF730H",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRFP9240_QUCS",
+          "part": "IRFP9240",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRFP240_QUCS",
+          "part": "IRFP240",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        },
+        {
+          "id": "IRLML6402_QUCS",
+          "part": "IRLML6402",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "PMOS"
+        },
+        {
+          "id": "IRFP462_QUCS",
+          "part": "IRFP462",
+          "manufacturer": "International Rectifier / Infineon",
+          "type": "NMOS"
+        }
+      ],
+      "skipped": []
+    }
+  ]
+}

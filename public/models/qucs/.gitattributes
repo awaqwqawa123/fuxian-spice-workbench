@@ -1,0 +1,4 @@
+# Preserve downloaded and generated model bytes for manifest SHA-256 checks.
+COPYING -text
+*.lib -text
+upstream/* -text

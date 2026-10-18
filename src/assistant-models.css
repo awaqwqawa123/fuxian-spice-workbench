@@ -1,0 +1,37 @@
+.assistant-workspace-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); flex:none; gap:4px; margin:5px 10px 7px; padding:3px; border:1px solid #d9e3d3; border-radius:7px; background:#eaf0e5; }
+.assistant-workspace-tabs:has(> button:nth-child(2):last-child) { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.assistant-workspace-tabs > button { position:relative; display:flex; align-items:center; justify-content:center; gap:5px; min-width:0; min-height:36px; padding:4px; border:1px solid transparent; border-radius:5px; background:transparent; color:#73826b; font:12px/1.25 var(--sans); cursor:pointer; }
+.assistant-workspace-tabs > button > svg { flex:none; }
+.assistant-workspace-tabs > button .assistant-tab-label { min-width:0; overflow-wrap:anywhere; text-align:center; }
+.assistant-workspace-tabs > button[aria-selected=true] { background:#fffef9; border-color:#cddbc6; color:#2d624b; box-shadow:0 1px 2px #183b2310; }
+.assistant-workspace-tabs > button .assistant-tab-count { position:absolute; top:1px; right:1px; min-width:16px; border-radius:4px; padding:1px 3px; background:#e4eedc; color:#426342; font:10px var(--mono); }
+@container assistant-sidebar (max-width:340px) { .assistant-workspace-tabs > button > svg { display:none; } .assistant-workspace-tabs > button:has(.assistant-tab-count) { padding-right:15px; } }
+@container assistant-sidebar (max-width:250px) { .assistant-workspace-tabs:has(> button:nth-child(3)) { grid-template-columns:repeat(2,minmax(0,1fr)); } .assistant-workspace-tabs > button:nth-child(3) { grid-column:1/-1; } }
+.assistant-tab-panel { min-width:0; min-height:0; height:100%; }
+.assistant-tab-panel[hidden] { display:none!important; }
+.assistant-chat-panel { display:flex; flex-direction:column; }
+.assistant-models-panel { overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; padding:0 10px 14px; }
+.workspace-shell .assistant-sidebar:has(.assistant-workspace-tabs) .assistant-sidebar-content { overflow:hidden; }
+.assistant-models-panel > .model-search { border:0; border-radius:0; padding:4px 2px 10px; margin:0; background:transparent; }
+.assistant-models-panel .model-search > header { display:none; }
+.assistant-models-panel .model-search-modes { flex-wrap:wrap; }
+.assistant-models-panel .model-search-results { max-height:300px; }
+.assistant-models-panel .model-search pre { max-height:260px; }
+.assistant-models-panel .datasheet-model-builder { min-width:0; }
+.assistant-model-downloads { margin:4px 0 15px; padding-bottom:13px; border-bottom:1px solid #d4dfd0; font-size:11px; }
+.assistant-model-downloads > header { display:flex; align-items:center; gap:7px; color:#315f43; font-size:12px; }
+.assistant-model-downloads > header span { margin-left:auto; font:11px var(--mono); color:#7d8e73; }
+.assistant-model-downloads p { margin:8px 0; line-height:1.6; color:#78846f; overflow-wrap:anywhere; }
+.assistant-model-download { margin-top:9px; padding:9px; border:1px solid #d2dfca; border-radius:7px; background:#fdfefb; }
+.assistant-model-download > summary { cursor:pointer; overflow-wrap:anywhere; }
+.assistant-model-download > summary small { display:block; margin-top:4px; padding-left:12px; color:#7a856d; }
+.assistant-model-download a { display:inline-flex; align-items:center; gap:4px; color:#307150; text-underline-offset:3px; }
+.assistant-model-download ul { color:#966546; padding-left:17px; max-height:145px; overflow:auto; line-height:1.55; overflow-wrap:anywhere; }
+.assistant-model-download button { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:6px 8px; border:1px solid #cbdbbf; border-radius:5px; background:#f0f6e9; color:#38613f; font:inherit; cursor:pointer; }
+.assistant-model-download button:disabled { opacity:.55; cursor:default; }
+.assistant-model-definition { margin:10px 0; }
+.assistant-model-definition small { display:block; margin-top:5px; color:#7b846f; line-height:1.5; }
+.assistant-model-download pre { max-height:230px; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; padding:8px; background:#edf2e9; border:1px solid #dce5d5; border-radius:5px; font:10px/1.65 var(--mono); }
+.assistant-model-source { margin:10px 0; }
+.assistant-model-source summary { cursor:pointer; line-height:1.65; overflow-wrap:anywhere; }
+.assistant-model-shortcut { padding:7px 9px; margin:8px 0; border:1px solid #c8daba; border-radius:5px; background:#edf5e5; color:#3b694b; font:11px var(--sans); }

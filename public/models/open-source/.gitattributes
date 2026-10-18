@@ -1,0 +1,4 @@
+* -text
+README.md text eol=lf
+manifest.json text eol=lf
+**/*.lib text eol=lf

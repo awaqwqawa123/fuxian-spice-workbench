@@ -1,0 +1,15 @@
+.page-analysis-range { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+.page-analysis-range label { display: flex; flex-direction: column; min-width: 0; gap: 3px; font-size: 12px; }
+.page-analysis-range input { width: 100%; min-width: 0; height: 26px; box-sizing: border-box; }
+.page-analysis-tools p[role="alert"] { color: var(--danger,#b42318); overflow-wrap: anywhere; }
+.page-analysis-tools .page-inline-actions { flex-wrap: wrap; }
+.page-analysis-tools .page-analysis-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); }
+.page-analysis-tools .page-analysis-tabs button { min-width:0; padding-inline:5px; }
+.page-analysis-tools .page-analysis-fields,.page-analysis-tools .page-analysis-range { gap:6px; }
+.page-analysis-tools .page-list-navigation { flex-shrink:0; }
+.page-analysis-tools table { flex:none; }
+.page-analysis-tools[data-analysis-page=range] .page-analysis-range { flex:none; }
+@media (max-height:760px) {
+  .page-analysis-range { gap: 4px; }
+  .page-analysis-range input { height: 23px; }
+}

@@ -1,0 +1,23 @@
+.editor-canvas .device-value { pointer-events:all; }
+.editor-canvas.tool-select .device-value { cursor:text; }
+.editor-canvas.tool-select .device-value:hover,
+.editor-canvas.tool-select .device-value:focus-visible { fill:#176347; text-decoration:underline; text-decoration-style:dotted; text-underline-offset:4px; outline:none; }
+.component-value-backdrop { z-index:120; background:#17372e32; backdrop-filter:blur(2px); }
+.component-value-editor { box-sizing:border-box; width:min(390px,calc(100vw - 32px)); max-height:calc(100dvh - 32px); overflow:auto; background:#fcfdfb; border:1px solid #bdcec3; border-radius:14px; box-shadow:0 18px 64px #163b2e30; color:#284a3b; padding:22px; }
+.component-value-editor header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.component-value-editor header>div { display:flex; align-items:baseline; gap:12px; }
+.component-value-editor header span { color:#187052; font:600 16px var(--mono); }
+.component-value-editor h2 { font-size:17px; font-weight:600; margin:0; }
+.component-value-editor button { display:inline-flex; align-items:center; justify-content:center; gap:5px; border:1px solid #c5d4ca; border-radius:7px; padding:7px 11px; background:#fff; color:#365d49; font:inherit; cursor:pointer; }
+.component-value-editor header button { padding:5px; border-color:transparent; background:transparent; }
+.component-value-editor label { display:block; font-size:12px; color:#657e6f; margin-bottom:7px; }
+.component-value-editor input { box-sizing:border-box; width:100%; border:1px solid #aebfb2; background:#fff; border-radius:8px; padding:11px 13px; font:20px var(--mono); color:#244c39; }
+.component-value-editor input:focus { outline:2px solid #65a786; outline-offset:2px; }
+.component-value-editor input[aria-invalid="true"] { border-color:#bb6154; }
+.component-value-hint,.component-value-error { font-size:12px; line-height:1.6; margin:9px 0 0; }
+.component-value-hint { color:#718578; }.component-value-error { color:#a34839; }
+.component-value-editor footer { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:22px; }
+.component-value-editor footer>span { font-size:11px; color:#7b8e82; }.component-value-editor footer>div { display:flex; gap:7px; }
+.component-value-editor button.primary { border-color:#245c42; background:#245c42; color:white; }
+.component-value-editor button:disabled { opacity:.45; cursor:not-allowed; }
+.component-value-editor button:focus-visible { outline:2px solid #65a786; outline-offset:2px; }

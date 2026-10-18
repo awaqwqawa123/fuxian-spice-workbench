@@ -1,0 +1,284 @@
+/* The final production layer: one readable scale and bounded engineering surfaces.
+   Theme colors live in workbench-theme.css; local density never changes a circuit. */
+:root[data-workbench-theme] {
+  --ui-control-border: var(--ui-border-strong);
+  --ui-chart-surface: var(--ui-raised);
+  --ui-focus-ring: var(--ui-accent-ink);
+}
+:root[data-workbench-theme] :is(.workspace-shell, .workbench-window, .settings-dialog, .model-editor-dialog, .spice-library-dialog, .extension-library-window, .example-gallery, .final-test-report-dialog) {
+  font-family: var(--ui-font-interface);
+  font-size: var(--ui-font-body);
+  line-height: 1.5;
+}
+:root[data-workbench-theme] :is(.workspace-shell, .workbench-window, .settings-dialog, .model-editor-dialog, .spice-library-dialog, .extension-library-window, .example-gallery, .final-test-report-dialog) :is(button, input, select, textarea) {
+  font-family: var(--ui-font-interface);
+}
+:root[data-workbench-theme] :is(.workspace-shell, .workbench-window, .settings-dialog, .model-editor-dialog, .spice-library-dialog, .extension-library-window, .example-gallery, .final-test-report-dialog) :focus-visible {
+  outline: 2px solid var(--ui-focus-ring) !important;
+  outline-offset: 2px;
+}
+:root[data-workbench-theme] :is(input, textarea)::placeholder { opacity: 1; }
+.workspace-shell :is(.drawing-status, .page-measurement-summary, .wave-readout, .wave-cursor-readout, .page-op-results td, .page-analysis-tools td) { font-variant-numeric: tabular-nums; }
+
+/* Standard controls: consistent target size, visible input boundaries, quiet buttons. */
+.workspace-shell :is(.workspace-topbar-actions > button, .workspace-file-menu > summary, .workspace-secondary-menu > summary, .workspace-simulation-controls > button, .project-ai-name, .project-sidebar-actions > button, .editor-inspector button, .assistant-sidebar button),
+:is(.workbench-window, .settings-dialog, .model-editor-dialog, .spice-library-dialog, .extension-library-window, .example-gallery, .final-test-report-dialog) :is(button, select, input:not([type=checkbox]):not([type=radio]):not([type=color])) {
+  min-height: var(--ui-control-height);
+  border-radius: var(--ui-radius-control);
+  font-size: var(--ui-font-tool);
+  line-height: 1.35;
+}
+:root[data-workbench-theme] :is(.workspace-shell, .workbench-window, .settings-dialog, .model-editor-dialog, .spice-library-dialog, .extension-library-window, .example-gallery) :is(input:not([type=checkbox]):not([type=radio]):not([type=color]), select, textarea) {
+  border-color: var(--ui-control-border) !important;
+}
+:root[data-workbench-theme] :is(.workspace-shell, .workbench-window, .settings-dialog, .model-editor-dialog, .spice-library-dialog, .extension-library-window, .example-gallery) :is(input, select, textarea):focus {
+  border-color: var(--ui-accent-ink) !important;
+}
+:root[data-workbench-theme] :is(input[type=checkbox], input[type=radio]) { accent-color: var(--ui-accent); }
+.workspace-shell :is(input, textarea, select):disabled { opacity: .7; }
+.workspace-shell :is(.workspace-commandbar, .workspace-topbar) button:disabled { opacity: .45; }
+
+/* Primary workspace chrome. Menus group occasional actions without crowding the title. */
+.workspace-shell .workspace-topbar-title { min-width: 140px; }
+.workspace-shell .workspace-topbar .project-title-input { font-size: var(--ui-font-reading); }
+.workspace-shell .workspace-topbar :is(.workspace-view-tabs > button, .workspace-topbar-actions > button, .workspace-simulation-controls > button, .workspace-file-menu > summary, .workspace-secondary-menu > summary) { font-size: var(--ui-font-tool); }
+.workspace-shell .workspace-topbar :is(.workspace-file-menu, .workspace-secondary-menu) { position: relative; flex: none; }
+.workspace-shell .workspace-topbar :is(.workspace-file-menu, .workspace-secondary-menu) > summary {
+  display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 9px; cursor: pointer;
+  color: var(--ui-muted); border: 1px solid transparent; list-style: none; white-space: nowrap;
+}
+.workspace-shell .workspace-topbar :is(.workspace-file-menu, .workspace-secondary-menu) > summary::-webkit-details-marker { display: none; }
+:root[data-workbench-theme] .workspace-topbar :is(.workspace-file-menu, .workspace-secondary-menu)[open] > summary { color: var(--ui-accent-ink) !important; background: var(--ui-accent-soft) !important; }
+.workspace-shell .workspace-topbar :is(.workspace-file-menu, .workspace-secondary-menu) > div {
+  position: absolute; right: 0; top: calc(100% + 7px); z-index: 90; display: flex; flex-direction: column;
+  width: max-content; min-width: 190px; max-width: calc(100vw - 24px); padding: 6px;
+  color: var(--ui-ink); background: var(--ui-raised); border: 1px solid var(--ui-border); border-radius: var(--ui-radius-card);
+  box-shadow: 0 8px 24px var(--ui-shadow);
+}
+.workspace-shell .workspace-topbar :is(.workspace-file-menu, .workspace-secondary-menu) > div > button {
+  display: flex; align-items: center; justify-content: flex-start; gap: 8px; width: 100%; min-height: var(--ui-control-height);
+  padding: 7px 10px; border-radius: 5px; font-size: var(--ui-font-tool); text-align: left;
+}
+.workspace-shell .workspace-topbar .workspace-file-menu > div > p { margin: 5px 8px; font-size: var(--ui-font-tool); color: var(--ui-muted); line-height: 1.5; }
+.workspace-shell .workspace-topbar .workspace-menu-heading { padding: 5px 0 2px; font-weight: 600; border-top: 1px solid var(--ui-border); }
+.workspace-shell .workspace-topbar .workspace-menu-heading:first-child { border-top: 0; }
+.workspace-shell .workspace-topbar .free-save-state { display: flex; max-width: 126px; font-size: var(--ui-font-meta); }
+.workspace-shell .workspace-commandbar :is(.drawing-tools > button, .canvas-diagram-add, .workspace-layout-actions > button) {
+  min-height: 32px; min-width: 32px; font-size: var(--ui-font-tool); border-radius: var(--ui-radius-control);
+}
+.workspace-shell .workspace-commandbar .drawing-edit-menu { display: block; position: relative; flex: none; overflow: visible; }
+.workspace-shell .workspace-commandbar .drawing-edit-menu > summary {
+  display: flex; align-items: center; justify-content: center; gap: 5px; min-height: 32px; padding: 5px 7px;
+  font-size: var(--ui-font-tool); color: var(--ui-muted); background: transparent; border: 1px solid transparent;
+  border-radius: var(--ui-radius-control); cursor: pointer; list-style: none;
+}
+.workspace-shell .workspace-commandbar .drawing-edit-menu > summary::-webkit-details-marker { display: none; }
+.workspace-shell .workspace-commandbar .drawing-edit-menu > div {
+  position: absolute; left: 0; top: calc(100% + 7px); z-index: 100; min-width: 150px; padding: 5px;
+  color: var(--ui-ink); background: var(--ui-raised); border: 1px solid var(--ui-border); border-radius: 9px; box-shadow: 0 8px 24px var(--ui-shadow);
+}
+.workspace-shell .workspace-commandbar .drawing-edit-menu:not([open]) > div { display: none; }
+.workspace-shell .workspace-commandbar .drawing-edit-menu[open] > div { display: flex; flex-direction: column; gap: 2px; }
+.workspace-shell .workspace-commandbar .drawing-edit-menu > div > button { display: flex; align-items: center; justify-content: flex-start; gap: 8px; min-height: 32px; width: 100%; padding: 5px 9px; font-size: var(--ui-font-tool); }
+.workspace-shell .workspace-commandbar :is(.schematic-symbol-primary > span, .zoom-controls > span, .probe-inline-mode, .canvas-overlay-tools > label),
+.workspace-shell .drawing-status :is(small, button, span), .workspace-navigation-rail :is(.workspace-rail-tabs > button, .workspace-rail-bottom > button) { font-size: var(--ui-font-meta); }
+.workspace-shell .workspace-center .drawing-status { min-height: 32px; max-height: 32px; flex-basis: 32px; }
+.workspace-shell .workspace-navigation-rail .workspace-rail-tabs { gap: var(--ui-space-unit); }
+
+/* Plain sheet and chart surfaces create hierarchy without wrapping every area in a card. */
+.single-page-workspace { background: var(--ui-raised); }
+.page-schematic-toolbar, .page-group-toolbar { min-height: 40px; height: auto; padding: 5px 10px; background: var(--ui-raised); }
+.page-schematic-toolbar > strong { font-size: var(--ui-font-command); font-weight: 600; }
+.page-schematic-toolbar label, .page-group-toolbar label { font-size: var(--ui-font-tool); color: var(--ui-muted); }
+.page-waveform-host { background: var(--ui-raised); }
+.page-group-toolbar > label > select { min-height: 30px; background: var(--ui-raised); }
+.page-result-toolbar { min-height: 46px; padding: 6px 10px; gap: 8px; background: var(--ui-raised); }
+.page-result-caption { gap: 1px; }
+.page-result-caption strong { font-size: var(--ui-font-command); font-weight: 600; }
+.page-result-caption span { font-size: var(--ui-font-meta); }
+.page-waveform-host :is(button, input:not([type=checkbox]):not([type=radio]), select), .page-compact-tabs button {
+  min-height: min(var(--ui-control-height), 34px); padding: 4px 7px; border-radius: var(--ui-radius-control);
+  font-family: var(--ui-font-interface); font-size: var(--ui-font-tool); line-height: 1.35;
+}
+.page-waveform-host button { color: var(--ui-muted); background: var(--ui-raised); }
+.page-waveform-host button:hover:not(:disabled) { color: var(--ui-ink); background: var(--ui-hover); }
+.page-waveform-host button:is([aria-pressed=true], [aria-selected=true]), .page-compact-tabs button[aria-pressed=true] {
+  color: var(--ui-accent-ink); border-color: var(--ui-border-strong); background: var(--ui-accent-soft); font-weight: 600;
+}
+.page-device-summary { padding: 5px 10px; min-height: 40px; font-size: var(--ui-font-tool); background: var(--ui-panel); }
+.page-device-summary[hidden] { display: none !important; }
+.page-result-tabs { gap: 4px; padding: 5px 8px; background: var(--ui-raised); }
+.page-result-tabs > button { border-color: transparent; background: transparent; }
+.page-result-tabs > span { font-size: var(--ui-font-meta); line-height: 1.4; }
+.page-result-tabs .is-warning { color: var(--ui-warning); }
+.page-result-setup, .page-analysis-tools, .page-result-log, .page-op-results { font-size: var(--ui-font-body); }
+.page-result-setup { padding: 12px; gap: 12px; }
+.page-analysis-tools { gap: 6px; padding: 8px; }
+.page-analysis-page-picker { display: flex; gap: 8px; align-items: center; flex: none; font-size: var(--ui-font-tool); }
+.page-analysis-page-picker select { flex: 1; min-width: 0; }
+.page-analysis-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+.page-analysis-tools :is(td, th) { padding: 4px 6px; line-height: 1.4; }
+.page-result-setup p, .page-list-navigation, .page-result-log pre, .page-analysis-tools :is(label, p, th, td), .page-measurement-summary { font-size: var(--ui-font-tool); }
+.page-result-log pre { font-family: var(--mono); line-height: 1.55; }
+.page-measurement-summary { background: var(--ui-panel); padding: 7px 10px; gap: 4px 12px; line-height: 1.4; }
+.page-measurement-summary :is(b, strong) { font-weight: 600; }
+.page-compact-tabs { font-size: var(--ui-font-tool); }
+.page-compact-tabs small { font-size: var(--ui-font-meta); }
+.page-workspace-controls, .page-workspace-controls > strong,
+.page-collapsed-waveform, .page-collapsed-schematic { font-size: var(--ui-font-tool); }
+.page-workspace-controls { gap: 5px; padding: 3px 7px; }
+.page-workspace-controls > button { min-height: 32px; padding: 4px 7px; border-radius: var(--ui-radius-control); font-size: var(--ui-font-tool); line-height: 1.35; }
+.page-collapsed-waveform > button, .page-collapsed-schematic > button { min-height: 32px; border-radius: var(--ui-radius-control); font-size: var(--ui-font-tool); }
+.wave-workspace-embedded :is(.wave-embedded-return, .wave-coordinate-actions, .wave-coordinate-actions label, [data-wave-y-locked]) { font-size: var(--ui-font-tool); }
+.wave-workspace-embedded .wave-embedded-return { gap: 6px; padding-block: 2px; }
+
+/* Chart controls and technical readouts have the same legible baseline as tools. */
+.wave-workspace.wave-workspace-embedded { padding: 8px; gap: 6px; font-size: var(--ui-font-tool); background: var(--ui-raised); }
+.wave-workspace-embedded :is(button, select) { min-height: 32px; font-size: var(--ui-font-tool); border-radius: var(--ui-radius-control); }
+.wave-embedded-toolbar, .wave-embedded-tabs { gap: 4px; }
+.wave-embedded-tabs { padding-bottom: 6px; }
+.wave-workspace-embedded :is(.wave-embedded-state, .wave-embedded-view > header small, .wave-readout, .wave-cursor-readout, .wave-embedded-pagination, .wave-embedded-body p, .wave-expression-content small, .wave-expression-content label, .wave-cursor-navigation-status, .wave-cursor-navigation-controls, .wave-axis-inline) { font-size: var(--ui-font-tool); }
+.wave-workspace-embedded .wave-embedded-view > :is(.wave-readout, .wave-cursor-readout) { font-size: var(--ui-font-tool); }
+.is-compact > .page-compact-tabs { font-size: var(--ui-font-tool); }
+.wave-workspace-embedded .wave-embedded-state small { font-size: inherit; }
+.wave-embedded-view > header { min-height: 40px; padding: 4px 6px; }
+.wave-workspace-embedded .wave-embedded-view > .wave-readout { padding: 4px 7px; min-height: 28px; line-height: 1.35; }
+.wave-workspace-embedded .wave-embedded-view > .wave-cursor-readout { font-size: var(--ui-font-tool); padding: 4px 5px; line-height: 1.35; }
+.wave-workspace-embedded .wave-plot :is(.wave-axis, .wave-axis-unit) { font-size: 12px; }
+.wave-workspace-embedded .wave-view { background: var(--ui-chart-surface) !important; box-shadow: none; border-radius: 7px; }
+.wave-axis-inline fieldset { border-radius: 7px; padding: 7px; gap: 6px; }
+.wave-axis-inline input:not([type=checkbox]) { min-height: 32px; padding: 4px 6px; font-size: var(--ui-font-tool); }
+.wave-expression-inline .wave-expression-content :is(input, select, button) { font-size: var(--ui-font-tool); }
+.wave-workspace-embedded[data-embedded-condensed=true] { padding: 5px 6px; gap: 4px; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-toolbar { flex-wrap: nowrap; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-toolbar > select { width: 60px; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-toolbar > button { padding-inline: 5px; white-space: nowrap; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-tabs > select { width: 85px; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-state { min-height: 22px; line-height: 1.3; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-state > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-view > header { min-height: 36px; padding-block: 2px; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-view > .wave-readout { overflow: hidden; flex-wrap: nowrap; min-height: 24px; white-space: nowrap; }
+.wave-embedded-navigation-page { display: flex; flex-direction: column; gap: 10px; }
+.wave-embedded-navigation-page .wave-embedded-zoom { flex-wrap: wrap; margin-left: 0; }
+.wave-embedded-navigation-page > button { align-self: flex-start; }
+.wave-bounded-form { display: flex; flex-direction: column; gap: 6px; padding: 2px 0; margin: 0 !important; min-width: 0; }
+.wave-bounded-form [hidden] { display: none !important; }
+.wave-form-page-nav { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.wave-form-page-nav > select { flex: 1; width: 0; }
+.wave-form-page-nav > button { flex: none; }
+.wave-form-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.wave-form-fields.wave-form-single { grid-template-columns: minmax(0, 1fr); }
+.wave-form-fields > label { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.wave-form-fields input, .wave-form-fields select { width: 100%; box-sizing: border-box; }
+.wave-form-fields > .wave-form-checkbox { flex-direction: row; align-items: center; }
+.wave-form-checkbox input { width: 16px; height: 16px; flex: none; min-height: 16px !important; }
+.wave-form-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
+.wave-form-actions > p { width: 100%; margin: 0; line-height: 1.35; }
+.wave-form-actions > .wave-expression-item { width: 100%; padding: 0; }
+.wave-form-actions > .wave-form-page-nav { width: 100%; justify-content: space-between; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-return { display: none; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-curves > p { display: none; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-pagination { margin: 3px 0; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-curves > label { height: 32px; }
+.wave-workspace-embedded[data-embedded-condensed=true] .wave-embedded-info > p:first-child { display: none; }
+.wave-embedded-navigation-page [hidden] { display: none !important; }
+
+/* Embedded setup uses pages, rather than a scrolling form, at every density. */
+.simulation-settings-embedded .simulation-settings-inline-panel { font-size: var(--ui-font-tool); }
+.simulation-settings-embedded :is(button, input:not([type=checkbox]), select) { height: 32px; min-height: 32px; border-radius: var(--ui-radius-control); font-size: var(--ui-font-tool); }
+.simulation-settings-embedded :is(.field, .field-hint, .analysis-command, .simulation-profile-actions > button, .simulation-inline-subpages > button, .editor-analysis-select > button, .workbench-window-footer > span, .simulation-settings-error) { font-size: var(--ui-font-tool); }
+.simulation-settings-embedded .field { margin-bottom: 6px; }
+.simulation-settings-embedded .editor-analysis-select > button { height: 30px; min-height: 30px; }
+.simulation-settings-embedded .simulation-inline-subpages > button { height: 30px; min-height: 30px; }
+.simulation-settings-embedded .workbench-window-heading > button { min-height: 28px; height: 28px; width: 28px; }
+.simulation-settings-embedded .workbench-window-footer > span { line-height: 1.35; }
+
+/* Run/save errors and result freshness use stable semantic colors in all themes. */
+:root[data-workbench-theme] :is(.wave-axis-error, .wave-expression-error, .simulation-settings-error, .workspace-save-status[role=alert], .workspace-save-status.is-error) { color: var(--ui-danger) !important; background-color: var(--ui-danger-bg) !important; }
+.workspace-save-status { flex: none; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; padding: 7px 14px; border-bottom: 1px solid var(--ui-border); font-size: var(--ui-font-tool); line-height: 1.4; }
+.workspace-save-status > span { flex: 1; min-width: 180px; }
+.workspace-save-status button { min-height: 30px; padding: 4px 8px; font-size: var(--ui-font-tool); border: 1px solid currentColor; border-radius: 6px; background: transparent; color: inherit; }
+.workspace-run-status { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: var(--ui-font-meta); }
+.workspace-run-status.is-error { color: var(--ui-danger); }
+.workspace-run-status.is-stale { color: var(--ui-warning); }
+.workspace-run-status.is-success { color: var(--ui-success); }
+.workspace-run-status.is-running { color: var(--ui-info); }
+.workspace-run-status button { color: inherit; }
+:root[data-workbench-theme] .workspace-run-status[data-state=failed],
+:root[data-workbench-theme] .page-waveform-results[data-result-state=failed] .page-result-state { color: var(--ui-danger) !important; }
+:root[data-workbench-theme] .workspace-run-status:is([data-state=stale], [data-state=interrupted], [data-state=recovered], [data-state=warning]) { color: var(--ui-warning) !important; }
+:root[data-workbench-theme] .workspace-run-status[data-state=running] { color: var(--ui-info) !important; }
+:root[data-workbench-theme] .workspace-run-status[data-state=complete] { color: var(--ui-success) !important; }
+:root[data-workbench-theme] .workspace-persistence-notice {
+  display: flex; flex: none; align-items: center; gap: 10px; padding: 8px 14px;
+  color: var(--ui-danger); background: var(--ui-danger-bg); border-bottom: 1px solid var(--ui-border-strong);
+  font-size: var(--ui-font-tool); line-height: 1.4;
+}
+.workspace-persistence-notice > svg { flex: none; }
+.workspace-persistence-notice > div:not(.persistence-actions) { flex: 1; min-width: 0; }
+.workspace-persistence-notice strong { font-weight: 600; }
+.workspace-persistence-notice p { margin: 2px 0 0; overflow-wrap: anywhere; }
+.workspace-persistence-notice .persistence-actions { display: flex; flex: none; gap: 6px; }
+.workspace-persistence-notice .persistence-actions > button { display: flex; align-items: center; gap: 5px; min-height: 32px; padding: 4px 8px; border: 1px solid currentColor; border-radius: 6px; color: inherit; background: transparent; font-size: var(--ui-font-tool); }
+.page-device-summary .inline-device-value { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 6px; flex: 1; min-width: 140px; }
+.inline-device-value > label { display: flex; align-items: center; gap: 6px; }
+.inline-device-value > label > input { width: 100%; max-width: 130px; min-width: 60px; flex: 1; font-variant-numeric: tabular-nums; }
+.inline-device-value > p { margin: 4px 0 0; color: var(--ui-danger); font-size: var(--ui-font-tool); line-height: 1.35; overflow-wrap: anywhere; }
+.inline-device-value .inline-value-draft { color: var(--ui-warning); font-size: var(--ui-font-tool); white-space: nowrap; }
+.inline-device-value .inline-value-error { flex-basis: 100%; color: var(--ui-danger); font-size: var(--ui-font-tool); line-height: 1.35; overflow-wrap: anywhere; }
+:root[data-workbench-theme] .inline-device-value input[aria-invalid=true] { border-color: var(--ui-danger) !important; background: var(--ui-danger-bg) !important; }
+@media (max-width: 900px) { .workspace-persistence-notice { flex-wrap: wrap; }.workspace-persistence-notice .persistence-actions { margin-left: 27px; } }
+
+/* At laptop height, recover space from padding and targets, never from text. */
+@media (max-height: 700px) {
+  .workspace-shell .free-header.workspace-topbar { height: 52px; min-height: 52px; flex-basis: 52px; }
+  .workspace-navigation-rail .workspace-rail-brand { height: 52px; flex-basis: 52px; }
+  .workspace-navigation-rail .workspace-rail-tabs { gap: 4px; padding-block: 8px; }
+  .workspace-navigation-rail :is(.workspace-rail-tabs > button, .workspace-rail-bottom > button) { min-height: 48px; }
+  .workspace-shell .drawing-toolbar.workspace-commandbar { height: 42px; min-height: 42px; flex-basis: 42px; padding-block: 3px; }
+  .workspace-shell :is(.workspace-topbar-actions > button, .workspace-file-menu > summary, .workspace-secondary-menu > summary, .workspace-simulation-controls > button) { min-height: 32px; padding-block: 4px; }
+  .page-schematic-toolbar, .page-group-toolbar { min-height: 36px; padding-block: 3px; }
+  .page-result-toolbar { min-height: 40px; padding: 3px 8px; }
+  .page-device-summary { min-height: 34px; padding: 3px 8px; }
+  .page-result-tabs { padding: 3px 6px; }
+  .page-measurement-summary { padding: 4px 8px; }
+  .page-workspace-controls { padding-block: 1px; }
+  .page-result-setup { gap: 7px; padding: 8px; }
+  .simulation-settings-embedded .simulation-settings-body { padding: 6px 8px; }
+  .simulation-settings-embedded .workbench-window-footer { padding: 5px 8px; }
+}
+@media (max-height: 600px) {
+  .page-sidebar-tabs { padding-block: 1px; }
+  .page-waveform-host :is(.page-group-toolbar, .page-result-toolbar, .page-result-tabs) { padding-block: 1px; min-height: 34px; }
+  .page-waveform-host :is(.page-sidebar-tabs, .page-group-toolbar, .page-result-toolbar, .page-result-tabs) :is(button, select) { min-height: 32px; }
+  .wave-workspace-embedded .wave-embedded-tabs { padding-bottom: 2px; }
+  .wave-workspace.wave-workspace-embedded[data-embedded-condensed=true] { padding-block: 3px; }
+  .page-measurement-summary { min-height: 28px; padding-block: 2px; }
+  .page-measurement-summary button { min-height: 32px; }
+  .page-return-toolbar { padding-block: 2px; }
+  .page-waveform-host .page-return-toolbar button { min-height: 32px; }
+  .page-analysis-tools { padding: 3px 6px; gap: 3px; }
+  .page-waveform-host .page-analysis-tools :is(button, input, select) { height: 32px; min-height: 32px; }
+  .page-analysis-tools > p { line-height: 1.25; }
+  .page-analysis-fields { row-gap: 2px; }
+  .page-analysis-fields label, .page-analysis-range label { gap: 2px; line-height: 1.25; }
+  .page-analysis-tools .page-list-navigation { padding-top: 0; }
+}
+@media (max-width: 1100px) {
+  .workspace-shell .workspace-topbar { gap: 6px; }
+  .workspace-shell .workspace-topbar .workspace-topbar-actions { gap: 2px; }
+  .workspace-shell .workspace-topbar :is(.workspace-file-menu, .workspace-secondary-menu) > summary { padding-inline: 6px; }
+  .workspace-shell .workspace-topbar :is(.workspace-file-menu, .workspace-secondary-menu) > summary > span { display: none; }
+  .workspace-shell .workspace-topbar-title { min-width: 110px; }
+}
+@media (max-width: 1000px) {
+  .workspace-shell .free-header.workspace-topbar { gap: 5px; }
+  .workspace-shell .workspace-topbar .free-brand { display: none; }
+  .workspace-shell .workspace-topbar-title { min-width: 110px; }
+  .workspace-shell .workspace-topbar .workspace-view-tabs > button { padding-inline: 5px; }
+  .workspace-shell .workspace-topbar .workspace-simulation-controls { padding-inline: 5px; gap: 2px; }
+  .workspace-shell .workspace-topbar .workspace-simulation-controls .simulation-profile-select { width: 96px; max-width: 96px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace-shell *, .workbench-window * { scroll-behavior: auto; }
+}

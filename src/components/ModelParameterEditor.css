@@ -1,0 +1,11 @@
+.model-parameter-editor{border:1px solid #d8e3ea;border-radius:8px;background:#f8fbfc;padding:14px}
+.model-parameter-editor>header{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px;font-size:13px}
+.model-parameter-editor>header span,.model-parameter-editor p{color:#637789;font-size:11px}
+.model-parameter-editor>div{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.model-parameter-editor label>span{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;gap:6px}
+.model-parameter-editor code{color:#678092;font-size:11px}
+.model-parameter-editor label>div{display:flex;align-items:center;gap:7px}
+.model-parameter-editor input{width:100%;min-width:0;border:1px solid #c7d5df;border-radius:5px;padding:7px 8px;background:#fff;font:12px ui-monospace,monospace;color:#18354a}
+.model-parameter-editor input:focus{outline:2px solid #318fbd;outline-offset:1px}
+.model-parameter-editor small{color:#637789;white-space:nowrap;font-size:10px;min-width:28px}
+.model-parameter-editor p{margin:12px 0 0;line-height:1.5}

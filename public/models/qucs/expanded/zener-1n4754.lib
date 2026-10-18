@@ -1,0 +1,10 @@
+* Pinned Qucs-S community reference; GPL-2.0-or-later; NOT a manufacturer original.
+* Z-Diodes/1N4754; e0c0e154edb4f8403d53c5c5601c2ee133c9e970
+* Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp
+* 39V, 1W Silicon
+* Manufacturer: Motorola
+* added by Leandro D'Archivio <morti667@hotmail.com>
+.subckt 1N4754_QUCS K A
+D1 A K Z31c4113f17_QUCS
+.model Z31c4113f17_QUCS D(IS=2.67E-9 N=1.27 CJO=3.93E-11 M=0.33 VJ=0.75 FC=0.5 ISR=0.0 NR=2.0 RS=36 TT=5.01E-8 KF=0 AF=1 BV=38.78 IBV=0.0065 XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85)
+.ends 1N4754_QUCS

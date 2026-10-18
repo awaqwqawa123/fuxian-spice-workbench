@@ -1,0 +1,52 @@
+/* Persistent markers and text share the circuit's sheet scale. Hit areas and
+   transient editing handles can remain screen-sized without enlarging artwork. */
+.editor-canvas.is-middle-zooming, .editor-canvas.is-middle-zooming * { cursor:ns-resize !important; }
+.editor-canvas.is-middle-panning, .editor-canvas.is-middle-panning * { cursor:grabbing !important; }
+.workspace-canvas-host { position:relative; }
+.canvas-middle-zoom-hint { position:absolute; top:18px; right:18px; z-index:8; display:grid; gap:3px; padding:11px 14px; border:1px solid #b6d9c6; border-radius:9px; background:rgba(245,252,247,.96); box-shadow:0 5px 18px rgba(29,74,51,.13); color:#174f38; pointer-events:none; font-size:12px; line-height:1.4; }
+.canvas-middle-zoom-hint strong { font-size:13px; }
+.canvas-middle-zoom-hint small { color:#4a6c59; font-size:11px; }
+.editor-canvas .pin-dot,
+.editor-canvas .junction-dot {
+  vector-effect:none;
+  stroke-width:1.2;
+}
+.editor-canvas .editor-pin.connected .pin-dot { stroke-width:.5; }
+.editor-canvas .editor-pin:is(:hover,:focus-visible,.pending) .pin-dot,
+.editor-canvas .editor-junction:is(:hover,:focus-visible,.selected) .junction-dot { stroke-width:1.5; }
+.editor-canvas .editor-pin:hover .pin-hit { fill:transparent; }
+/* Two wire ends are a route continuation, not an electrical branch. Keep the
+   transparent hit area so selection, snapping and probes still reach it. */
+.editor-canvas .editor-junction[data-junction-kind="through"] .junction-dot { opacity:0; }
+.editor-canvas .editor-junction[data-junction-kind="branch"] .junction-dot { fill:#3d7960; stroke:#3d7960; stroke-width:.5; }
+.editor-canvas .editor-junction[data-junction-kind="open"] .junction-dot { fill:#fcfdfb; stroke:#557b68; }
+.editor-canvas .editor-junction.net-highlight[data-junction-kind="branch"] .junction-dot { fill:#f3ba48; stroke:#ac6e08; }
+.editor-canvas .editor-junction:is(:hover,:focus-visible,.selected,.pending) .junction-dot { opacity:1; fill:#fcfdfb; stroke:#bf7d22; stroke-width:1.5; }
+.editor-canvas .editor-wire .wire-hit { vector-effect:non-scaling-stroke; stroke-width:16; }
+.editor-canvas .canvas-node-annotation rect { fill:#f2f6f2; fill-opacity:.96; stroke:#dce6df; stroke-width:.7; }
+.editor-canvas .editor-node-label { font:500 11px var(--mono); fill:#607269; letter-spacing:.1px; }
+.editor-canvas .net-label text { font:600 11px var(--mono); }
+.editor-canvas .net-label path { stroke-width:1.2; }
+.editor-canvas .net-label rect { stroke-width:1; fill:#f3f8f4; }
+.editor-canvas .input-marker,
+.editor-canvas .output-marker { font:600 11px var(--mono); }
+.editor-canvas .input-marker text,
+.editor-canvas .output-marker text { paint-order:stroke; stroke:#fcfdfb; stroke-width:3px; stroke-linejoin:round; }
+.editor-canvas .wire-snap-ring { stroke-width:1.5; }
+.editor-canvas .wire-snap-conductor { stroke-width:3; opacity:.26; }
+.editor-canvas .wire-snap-preview text { font-size:10px; font-weight:600; }
+.editor-canvas .canvas-dc-voltage { color:var(--ui-success,#237443); }
+.editor-canvas .canvas-dc-voltage rect { fill:var(--canvas-label-background,#f1fbf2); stroke:currentColor; stroke-width:.8; fill-opacity:.96; }
+.editor-canvas .canvas-dc-voltage text { fill:currentColor; font:700 12px var(--mono); }
+.editor-canvas .canvas-dc-voltage path { fill:none; stroke:currentColor; stroke-width:1; }
+.editor-canvas .canvas-dc-voltage circle { fill:currentColor; }
+.dc-voltage-notice { position:absolute; left:14px; top:12px; z-index:5; display:grid; grid-template-columns:1fr auto; gap:4px 12px; max-width:min(430px,calc(100% - 28px)); padding:9px 12px; border:1px solid var(--ui-border,#c8dccd); border-radius:7px; background:var(--ui-panel,#f8fcf8); color:var(--ui-ink,#23543a); box-shadow:0 2px 8px #203a2010; font-size:11px; line-height:1.5; }
+.dc-voltage-notice strong { font-size:12px; }
+.dc-voltage-notice>span { grid-column:1; color:var(--ui-muted,#5c7564); white-space:pre-line; max-height:110px; overflow:auto; }
+.dc-voltage-notice>button { grid-column:2; grid-row:1 / 3; align-self:center; border:1px solid var(--ui-border,#c8dccd); border-radius:5px; background:var(--ui-panel,#fff); color:inherit; padding:4px 8px; cursor:pointer; font-size:11px; }
+.dc-voltage-notice[data-state="error"],.dc-voltage-notice[data-state="stale"] { border-color:#c29855; }
+.dc-voltage-notice details { grid-column:1 / -1; max-height:160px; overflow:auto; }
+.dc-voltage-notice summary { cursor:pointer; }
+.dc-voltage-notice p { margin:5px 0; white-space:pre-wrap; }
+.workspace-shell .workspace-commandbar .dc-voltage-refresh { display:grid; place-items:center; padding:4px; border:1px solid var(--ui-border,#d0dbd3); border-radius:5px; background:var(--ui-panel,#fff); color:var(--ui-muted,#587561); cursor:pointer; }
+.workspace-shell .workspace-commandbar .dc-voltage-refresh:disabled { opacity:.55; cursor:wait; }

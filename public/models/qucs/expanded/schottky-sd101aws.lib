@@ -1,0 +1,5 @@
+* Pinned Qucs-S community reference; GPL-2.0-or-later; NOT a manufacturer original.
+* DiodesSchottky/SD101AWS; e0c0e154edb4f8403d53c5c5601c2ee133c9e970
+* Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp
+* 
+.model SD101AWS_QUCS D(IS=230n N=1.96 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=2.13 TT=1.44n KF=0 AF=1 BV=60 IBV=200n XTI=3 EG=1.11 TBV1=0 TRS1=0 TNOM=26.85 mfg="Qucs community / unspecified manufacturer" type="Schottky single die")

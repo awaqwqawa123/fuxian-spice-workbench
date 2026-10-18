@@ -1,0 +1,33 @@
+/* Canvas actions follow the workspace's compact icon controls. */
+.workspace-shell .page-schematic-toolbar { min-height:42px; padding:5px 12px; background:var(--ui-panel); }
+.workspace-shell .page-schematic-toolbar>strong { display:flex; align-items:center; gap:8px; color:var(--ui-ink); font-size:12px; font-weight:600; }
+.workspace-shell .page-schematic-toolbar>strong>svg { color:var(--ui-muted); }
+.workspace-shell .page-schematic-toolbar>div { gap:12px; }
+.workspace-shell .schematic-view-actions { display:flex; align-items:center; gap:3px; }
+.workspace-shell .page-schematic-toolbar .schematic-view-status { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--ui-muted); white-space:nowrap; }
+.workspace-shell .schematic-view-status>span { width:5px; height:5px; border-radius:50%; background:var(--ui-accent); opacity:.65; }
+.workspace-shell button.canvas-view-action { display:inline-flex; align-items:center; justify-content:center; flex:none; width:32px; height:32px; min-width:32px; min-height:32px; padding:0; border:1px solid transparent; border-radius:8px; background:transparent; color:var(--ui-muted); cursor:pointer; transition:background .15s,color .15s,border-color .15s; }
+.workspace-shell button.canvas-view-action:hover:not(:disabled) { color:var(--ui-accent-ink); background:var(--ui-accent-soft); border-color:var(--ui-border); }
+.workspace-shell button.canvas-view-action:focus-visible { outline:2px solid var(--ui-accent); outline-offset:2px; }
+.workspace-shell button.canvas-view-action:disabled { opacity:.32; cursor:default; }
+.workspace-shell button.canvas-view-action>svg { flex:none; }
+.workspace-shell .drawing-surface .dc-voltage-notice { display:flex; flex-direction:column; gap:0; width:300px; max-width:calc(100% - 24px); left:12px; top:12px; padding:10px; border:1px solid var(--ui-border); border-radius:12px; background:var(--ui-raised); color:var(--ui-ink); box-shadow:0 4px 16px var(--ui-shadow); font-size:12px; line-height:1.5; }
+.workspace-shell .bias-notice-heading { display:flex; align-items:center; gap:9px; min-width:0; }
+.workspace-shell .bias-notice-icon { display:grid; place-items:center; flex:none; width:34px; height:34px; border-radius:10px; color:var(--ui-accent-ink); background:var(--ui-accent-soft); }
+.workspace-shell .bias-notice-title { display:flex; flex:1; flex-direction:column; min-width:0; gap:2px; }
+.workspace-shell .dc-voltage-notice .bias-notice-title>strong { color:var(--ui-ink); font-size:12px; font-weight:600; line-height:1.45; }
+.workspace-shell .bias-notice-title>span { color:var(--ui-muted); font-size:11px; }
+.workspace-shell .bias-notice-actions { display:flex; align-items:center; gap:2px; margin-left:auto; }
+.workspace-shell .dc-voltage-notice .bias-notice-message { margin:8px 3px 0; color:var(--ui-muted); max-height:110px; overflow:auto; }
+.workspace-shell .dc-voltage-notice .bias-notice-details { margin-top:8px; padding:7px 3px 0; border-top:1px solid var(--ui-border); max-height:180px; overflow:auto; }
+.workspace-shell .bias-notice-details>summary { display:flex; align-items:center; gap:6px; list-style:none; cursor:pointer; color:var(--ui-muted); font-size:11px; }
+.workspace-shell .bias-notice-details>summary::-webkit-details-marker { display:none; }
+.workspace-shell .bias-notice-details>summary>svg:last-child { margin-left:auto; transition:transform .15s; }
+.workspace-shell .bias-notice-details[open]>summary>svg:last-child { transform:rotate(180deg); }
+.workspace-shell .dc-voltage-notice .bias-notice-details p { margin:7px 0 0; color:var(--ui-muted); font-size:11px; }
+.workspace-shell .bias-notice-details small { display:block; margin-top:6px; color:var(--ui-muted); font-size:10px; }
+.workspace-shell .dc-voltage-notice:is([data-state=error],[data-state=stale]) { border-color:color-mix(in srgb,var(--ui-warning,#b88425) 45%,var(--ui-border)); }
+.workspace-shell .dc-voltage-notice:is([data-state=error],[data-state=stale]) .bias-notice-icon { color:var(--ui-warning,#b88425); background:color-mix(in srgb,var(--ui-warning,#b88425) 12%,var(--ui-raised)); }
+.workspace-shell .bias-wire-hint { display:flex; align-items:center; gap:5px; }
+@media(max-width:1000px) { .workspace-shell .page-schematic-toolbar .schematic-view-status { display:none; } }
+@media(prefers-reduced-motion:reduce) { .workspace-shell button.canvas-view-action,.workspace-shell .bias-notice-details>summary>svg:last-child { transition:none; } }

@@ -1,0 +1,53 @@
+{
+  "downloadedOn": "2026-09-23",
+  "files": [
+    {
+      "file": "gsuberland/LICENSE",
+      "url": "https://raw.githubusercontent.com/gsuberland/spice_models/52bb96a1d1b22be83c409e40b7d7e7f05e461ba7/LICENSE",
+      "sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+      "bytes": 7048
+    },
+    {
+      "file": "gsuberland/README.md",
+      "url": "https://raw.githubusercontent.com/gsuberland/spice_models/52bb96a1d1b22be83c409e40b7d7e7f05e461ba7/README.md",
+      "sha256": "bee914e679d75f53ec9a200b9aae21cfe62b3300d43a4800544509bd654f1e5c",
+      "bytes": 1087
+    },
+    {
+      "file": "gsuberland/CREE_XLamp_XP_E2.txt",
+      "url": "https://raw.githubusercontent.com/gsuberland/spice_models/52bb96a1d1b22be83c409e40b7d7e7f05e461ba7/LEDs/CREE_XLamp_XP_E2.txt",
+      "sha256": "91be86609fb526ca5a35c1c7dd4f5ce4337b6c23315701fbc81e477241bf2d60",
+      "bytes": 11969
+    },
+    {
+      "file": "dvhx/LICENSE",
+      "url": "https://raw.githubusercontent.com/dvhx/spice-diode-model-js/c225e2cc483a9e950528e9cb98ae89c4e15a487a/LICENSE",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "bytes": 35149
+    },
+    {
+      "file": "dvhx/README.md",
+      "url": "https://raw.githubusercontent.com/dvhx/spice-diode-model-js/c225e2cc483a9e950528e9cb98ae89c4e15a487a/README.md",
+      "sha256": "9c07cfbee1ee80c9f21057348dc5d826e021328db9da566ef1a402e3ce3e8613",
+      "bytes": 355
+    },
+    {
+      "file": "dvhx/models.js",
+      "url": "https://raw.githubusercontent.com/dvhx/spice-diode-model-js/c225e2cc483a9e950528e9cb98ae89c4e15a487a/models.js",
+      "sha256": "413bc226032e29b7ed6ee3e17d37985b1a30f599c00b8889668b10510cb27ec0",
+      "bytes": 3648
+    },
+    {
+      "file": "gsuberland/cree-xpe2.lib",
+      "sha256": "115ea6fe550a78146ef80307de62b519c7be99cf1cd6524134c564e48023730a",
+      "bytes": 1226,
+      "conversion": "scripts/download-open-models.py"
+    },
+    {
+      "file": "dvhx/measured-diodes.lib",
+      "sha256": "f216cd720975b7ac71b14fb0216ae5e5083f29056c57ba452b81fc8bc0d72101",
+      "bytes": 2046,
+      "conversion": "scripts/download-open-models.py"
+    }
+  ]
+}

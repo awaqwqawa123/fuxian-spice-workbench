@@ -1,0 +1,47 @@
+* GPL-3.0. Author: Dusan Halicky (dvhx). Original models.js and license are included.
+* Converted the first fit per named diode to SPICE syntax; numbers are unchanged.
+* _IVFIT is an explicit name suffix: measured sample FORWARD DC ONLY.
+* NO reverse breakdown, capacitance, reverse recovery or temperature characterization.
+* Two-terminal die I-V only: ER1002CT is not a complete three-pin dual diode package.
+
+* 1N34A: avg error 2.3% max 6.3%
+.model 1N34A_IVFIT D(IS=3.22270e-9 N=1.59630 RS=0.396195 type="forward-DC-fit")
+
+* 1N4007: avg error 8.6% max 18.4%
+.model 1N4007_IVFIT D(IS=2.23487e-9 N=1.77383 RS=0.637275 type="forward-DC-fit")
+
+* 1N4148: avg error 4.1% max 19.9%
+.model 1N4148_IVFIT D(IS=4.75820e-9 N=1.95969 RS=2.14024 type="forward-DC-fit")
+
+* 1N5399: avg error 9.3% max 23.1%
+.model 1N5399_IVFIT D(IS=1.43583e-9 N=1.68080 RS=0.554708 type="forward-DC-fit")
+
+* 1N5408: avg error 7.0% max 15.3%
+.model 1N5408_IVFIT D(IS=1.05957e-9 N=1.57219 RS=0.664185 type="forward-DC-fit")
+
+* 1N5819: avg error 0.7% max 2.2%
+.model 1N5819_IVFIT D(IS=4.14809e-7 N=1.04287 RS=0.208896 type="forward-DC-fit")
+
+* 1N5822: avg error 1.2% max 2.8%
+.model 1N5822_IVFIT D(IS=0.00000125552 N=1.03475 RS=0.0431348 type="forward-DC-fit")
+
+* ER1002CT: avg error 4.8% max 28.9%
+.model ER1002CT_IVFIT D(IS=9.93370e-11 N=1.16105 RS=0.701337 type="forward-DC-fit")
+
+* FR107: avg error 12.2% max 34.7%
+.model FR107_IVFIT D(IS=8.92157e-10 N=1.55229 RS=6.23061 type="forward-DC-fit")
+
+* FR207: avg error 10.8% max 33.9%
+.model FR207_IVFIT D(IS=4.19814e-10 N=1.45297 RS=5.25472 type="forward-DC-fit")
+
+* FR302: avg error 6.6% max 26.8%
+.model FR302_IVFIT D(IS=1.50494e-10 N=1.13749 RS=1.65315 type="forward-DC-fit")
+
+* PR1504: avg error 10.0% max 21.9%
+.model PR1504_IVFIT D(IS=2.08298e-10 N=1.29583 RS=3.54298 type="forward-DC-fit")
+
+* SFF3DG: avg error 3.7% max 24.4%
+.model SFF3DG_IVFIT D(IS=3.41787e-11 N=1.06219 RS=0.742020 type="forward-DC-fit")
+
+* BAT43: avg error 1.1% max 4.0%
+.model BAT43_IVFIT D(IS=2.87591e-7 N=1.00985 RS=1.24219 type="forward-DC-fit")

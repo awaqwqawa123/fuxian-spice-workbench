@@ -1,0 +1,11 @@
+.dsh-local-settings{padding:12px;border:1px solid var(--line,#dce4e8);border-radius:10px;background:var(--surface,#fff);font-size:12px;line-height:1.6;min-width:0}
+.dsh-local-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dsh-local-heading button{display:inline-flex;align-items:center;gap:5px;font-size:12px}
+.dsh-local-settings p{margin:7px 0;overflow-wrap:anywhere}
+.dsh-local-settings small{color:var(--muted,#64748b)}
+.dsh-local-selects{display:grid;gap:9px;margin-top:10px}
+.dsh-local-selects label{display:grid;gap:4px;min-width:0}
+.dsh-local-selects select{width:100%;min-width:0}
+.dsh-local-help{margin-top:10px;border-top:1px solid var(--line,#dce4e8);padding-top:9px}
+.dsh-local-help summary{cursor:pointer;color:var(--muted,#64748b)}
+.dsh-local-help code{font-size:11px;overflow-wrap:anywhere}

@@ -1,0 +1,289 @@
+/* Engineering studio panels. Keep the compact palette and resizable layout intact. */
+.workspace-shell :is(.project-sidebar, .editor-inspector, .assistant-sidebar) {
+  font-size: var(--ui-font-body, 12px);
+  line-height: 1.5;
+}
+.workspace-shell :is(.project-sidebar-heading h2, .editor-inspector-heading strong, .assistant-sidebar-heading h2, .inspector-panel-controls > strong) {
+  font-size: var(--ui-font-command, 13px);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.workspace-shell .workspace-left .library-title > span,
+.workspace-shell .workspace-right .editor-inspector-heading strong {
+  font-size: var(--ui-font-command, 13px);
+  line-height: 18px;
+  letter-spacing: 0;
+}
+.workspace-shell .workspace-left .library-title > small { font-size: var(--ui-font-meta, 11px); }
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) { container: device-panel / inline-size; }
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) > .library-sources > button {
+  font-size: var(--ui-font-body, 12px);
+  line-height: 18px;
+  padding: 6px 7px !important;
+  min-height: 32px;
+  border-radius: var(--ui-radius-control, 6px);
+}
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) > .library-sources > button > span { font-size: var(--ui-font-meta, 11px); }
+@container device-panel (max-width: 190px) {
+  .workspace-shell .workspace-left .device-library:has(> .common-device-library) > .library-sources > button { font-size: var(--ui-font-meta, 11px); }
+  .workspace-shell .workspace-left .device-library > .library-sources > button > span { white-space: nowrap; }
+}
+.workspace-shell .common-device-library > .library-section-heading {
+  font-size: var(--ui-font-meta, 11px);
+  line-height: 18px;
+  font-weight: 500;
+}
+.workspace-shell .common-device-library .common-device-grid > .common-device-button {
+  border-radius: var(--ui-radius-control, 6px);
+  box-shadow: none;
+}
+/* Shared legacy theme paints a badge behind all palette SVGs; only these compact
+   glyphs need a plain background, leaving full model previews unaffected. */
+:root[data-workbench-theme] .workspace-shell .common-device-library .common-device-button > svg {
+  background: transparent !important;
+  border-radius: 0;
+}
+.workspace-shell .common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button > span {
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+.workspace-shell .common-device-library .common-device-button.active {
+  box-shadow: inset 0 0 0 1px var(--ui-accent);
+}
+.workspace-shell .common-device-library .common-device-button.active > svg [fill="#fcfdfb"] {
+  fill: var(--ui-accent-soft);
+}
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) > .library-foot { font-size: var(--ui-font-meta, 11px); line-height: 14px; }
+
+/* One search surface, a quiet segmented switch, and neutral technical glyphs. */
+.workspace-shell .workspace-left .common-device-library > .device-search {
+  border-radius: var(--ui-radius-control, 6px);
+  box-shadow: 0 1px 2px var(--ui-shadow);
+}
+.workspace-shell .workspace-left .common-device-library > .device-search:focus-within {
+  border-color: var(--ui-accent) !important;
+  box-shadow: 0 0 0 3px var(--ui-accent-soft);
+}
+:root[data-workbench-theme] .workspace-shell .common-device-library > .device-search input {
+  background: transparent !important;
+  border: 0;
+  outline: none;
+  box-shadow: none;
+}
+.workspace-shell .common-device-library > .device-search kbd {
+  padding: 2px 4px;
+  border: 1px solid var(--ui-border);
+  border-radius: 4px;
+  font-family: var(--ui-font-interface, var(--sans));
+}
+.workspace-shell .common-device-library > .user-library-switch {
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-control, 6px);
+}
+:root[data-workbench-theme] .workspace-shell .common-device-library > .user-library-switch button[aria-pressed=true] {
+  background: var(--ui-raised) !important;
+  color: var(--ui-accent-ink) !important;
+  border-color: var(--ui-border) !important;
+  box-shadow: 0 1px 3px var(--ui-shadow);
+  font-weight: 600;
+}
+:root[data-workbench-theme] .workspace-shell .common-device-library .common-device-button > svg {
+  color: var(--ui-ink) !important;
+}
+:root[data-workbench-theme] .workspace-shell .common-device-library .common-device-button:is(:hover, .active) > svg {
+  color: var(--ui-accent) !important;
+}
+.workspace-shell .common-device-library > .library-extension-toggle {
+  border: 1px solid var(--ui-border) !important;
+  border-radius: var(--ui-radius-control, 6px);
+}
+.workspace-shell .common-device-library > .library-extension-toggle > svg:first-child {
+  color: var(--ui-accent);
+}
+
+/* Project names and metadata have distinct, readable scales. */
+.workspace-shell .workspace-left .project-sidebar-heading { padding: 12px; }
+.workspace-shell .workspace-left .project-sidebar-actions { padding: 8px 12px 12px; gap: 8px; }
+.workspace-shell .workspace-left .project-sidebar-actions > button { font-size: var(--ui-font-body, 12px); border-radius: var(--ui-radius-control, 6px); }
+.workspace-shell .workspace-left .project-sidebar-section { padding: 0 12px 8px; font-size: var(--ui-font-meta, 11px); }
+.workspace-shell .workspace-left .project-sidebar-section > span:last-child { font-size: var(--ui-font-meta, 11px); }
+.workspace-shell .workspace-left .project-sidebar-list { padding: 0 8px 12px; }
+.workspace-shell .workspace-left .project-sidebar-entry { padding: 10px 8px; margin-bottom: 4px; border-radius: var(--ui-radius-control, 6px); }
+.workspace-shell .workspace-left .project-sidebar-entry-top { gap: 8px; }
+.workspace-shell .workspace-left .project-sidebar-entry-top > strong { font-size: var(--ui-font-body, 12px); line-height: 18px; }
+.workspace-shell .workspace-left .project-sidebar-current { font-size: var(--ui-font-meta, 11px); line-height: 14px; }
+.workspace-shell .workspace-left .project-sidebar-entry-meta,
+.workspace-shell .workspace-left .project-sidebar-entry-meta time {
+  font-size: var(--ui-font-meta, 11px);
+  line-height: 16px;
+}
+.workspace-shell .workspace-left .project-sidebar-entry-meta { margin-top: 4px; padding-left: 25px; }
+.workspace-shell .workspace-left .project-sidebar-entry.is-active::before { top: 10px; bottom: 10px; width: 2px; }
+.workspace-shell .workspace-left .project-sidebar-footer { padding: 12px; }
+.workspace-shell .workspace-left .project-sidebar-footer > p,
+.workspace-shell .workspace-left .project-sidebar-save { font-size: var(--ui-font-meta, 11px); line-height: 1.5; }
+
+/* Property panels use aligned labels and values, with quiet section boundaries. */
+.workspace-shell .workspace-right .editor-inspector-scroll { padding: 12px; }
+.workspace-shell .workspace-right .inspector-tabs > [role=tab] {
+  font-size: var(--ui-font-body, 12px);
+  border-radius: var(--ui-radius-control, 6px);
+  line-height: 18px;
+}
+.workspace-shell .workspace-right .inspector-tabs {
+  padding: 5px;
+  gap: 3px;
+}
+:root[data-workbench-theme] .workspace-shell .workspace-right .inspector-tabs > [aria-selected=true] {
+  background: var(--ui-raised) !important;
+  border: 1px solid var(--ui-border) !important;
+  color: var(--ui-accent-ink) !important;
+  font-weight: 600;
+  box-shadow: 0 1px 3px var(--ui-shadow);
+}
+:root[data-workbench-theme] .workspace-shell .workspace-right .inspector-pages {
+  background: var(--ui-panel) !important;
+}
+:root[data-workbench-theme] .workspace-shell .workspace-right .inspector-pages > button[aria-pressed=true] {
+  background: transparent !important;
+  border-bottom-color: var(--ui-accent) !important;
+  font-weight: 600;
+}
+.workspace-shell .editor-inspector :is(.subsection-title, .selection-summary > strong) {
+  font-size: var(--ui-font-command, 13px);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.workspace-shell .editor-inspector :is(.field, .device-parameters label, .source-parameters label) {
+  font-size: var(--ui-font-body, 12px);
+  line-height: 1.5;
+}
+.workspace-shell .editor-inspector :is(.field > span, .device-parameters label > span) { margin-bottom: 6px; }
+.workspace-shell .editor-inspector :is(input, select, textarea) {
+  font-size: var(--ui-font-body, 12px);
+  line-height: 1.5;
+  border-radius: var(--ui-radius-control, 6px);
+}
+.workspace-shell .editor-inspector :is(input:not([type=checkbox]):not([type=radio]):not([type=color]), select) {
+  min-height: 34px;
+  padding: 7px 9px;
+  font-variant-numeric: tabular-nums;
+}
+:root[data-workbench-theme] .workspace-shell .editor-inspector :is(.field > span, .device-parameters label > span, .source-parameters label > span) {
+  color: var(--ui-muted) !important;
+  font-weight: 500;
+}
+.workspace-shell .editor-inspector :is(input:not([type=checkbox]):not([type=radio]), select, textarea):focus-visible {
+  outline: none;
+  border-color: var(--ui-accent) !important;
+  box-shadow: 0 0 0 3px var(--ui-accent-soft);
+}
+.workspace-shell .editor-inspector :is(.field-hint, .model-limit-note, .spice-code-note, .pin-list span, .selected-device-preview small) {
+  font-size: var(--ui-font-meta, 11px);
+  line-height: 1.55;
+}
+.workspace-shell .editor-inspector :is(.field-pair, .source-field-pair) { gap: 8px; }
+.workspace-shell .editor-inspector :is(.source-summary, .source-spice-preview, .model-parameter-summary, .model-editor-inline) {
+  padding: 8px;
+  border-radius: var(--ui-radius-card, 8px);
+  border-color: var(--ui-border);
+}
+.workspace-shell .editor-inspector .selected-device-preview {
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ui-border);
+}
+.workspace-shell .editor-inspector .selected-device-preview > svg { border-radius: var(--ui-radius-card, 8px); }
+.workspace-shell .editor-inspector .selected-device-preview strong { font-size: 14px; line-height: 1.5; }
+.workspace-shell .editor-inspector .selection-summary p { color: var(--ui-muted); font-size: var(--ui-font-body, 12px); line-height: 1.65; }
+.workspace-shell .editor-inspector .pin-list > div { padding-top: 8px; padding-bottom: 8px; }
+.workspace-shell .editor-inspector .pin-list code { font-size: var(--ui-font-body, 12px); font-variant-numeric: tabular-nums; }
+.workspace-shell .editor-inspector .pin-list { padding-top: 12px; margin-top: 12px; }
+
+/* Assistant chrome stays subordinate to messages, active tasks and the composer. */
+.workspace-shell .workspace-body > .assistant-sidebar { font-size: var(--ui-font-body, 12px); line-height: 1.55; }
+.workspace-shell .assistant-sidebar .assistant-sidebar-heading h2 { font-size: var(--ui-font-command, 13px); line-height: 18px; margin-top: 4px; }
+.workspace-shell .assistant-sidebar .assistant-sidebar-kicker { font-size: var(--ui-font-meta, 11px); letter-spacing: .8px; }
+.workspace-shell .assistant-sidebar .assistant-sidebar-hint { font-size: var(--ui-font-meta, 11px); }
+.workspace-shell .assistant-sidebar .assistant-workspace-tabs { gap: 4px; padding: 4px; margin: 8px 12px; }
+.workspace-shell .assistant-sidebar .assistant-workspace-tabs > button { font-size: var(--ui-font-body, 12px); border-radius: var(--ui-radius-control, 6px); }
+:root[data-workbench-theme] .workspace-shell .assistant-sidebar .assistant-workspace-tabs > button[aria-selected=true] {
+  background: var(--ui-raised) !important;
+  border-color: var(--ui-border) !important;
+  color: var(--ui-accent-ink) !important;
+  box-shadow: 0 1px 3px var(--ui-shadow);
+  font-weight: 600;
+}
+.workspace-shell .assistant-sidebar .assistant-workspace-tabs .assistant-tab-count {
+  color: var(--ui-muted);
+  background: var(--ui-soft);
+}
+.workspace-shell .assistant-sidebar .assistant-sidebar-heading h2 > svg { color: var(--ui-accent); }
+.workspace-shell .assistant-sidebar :is(.persistent-message > p, .persistent-message .assistant-markdown, .circuit-explanation-messages article) {
+  font-size: var(--ui-font-reading, 13px);
+  line-height: 1.65;
+}
+.workspace-shell .assistant-sidebar :is(.persistent-message, .circuit-explanation-messages article) { margin-top: 12px; margin-bottom: 12px; }
+.workspace-shell .assistant-sidebar .persistent-message.is-user { border-radius: var(--ui-radius-card, 8px); padding: 10px 12px; }
+:root[data-workbench-theme] .workspace-shell .assistant-sidebar .persistent-message.is-user {
+  background: var(--ui-soft) !important;
+  border-color: var(--ui-border) !important;
+}
+.workspace-shell .assistant-sidebar .persistent-message header { color: var(--ui-muted); }
+.workspace-shell .assistant-sidebar .persistent-message header strong { color: var(--ui-ink); font-weight: 600; }
+.workspace-shell .assistant-sidebar .persistent-empty > strong { font-size: 15px; line-height: 1.6; }
+.workspace-shell .assistant-sidebar :is(.persistent-empty > p, .desktop-control-empty) { font-size: var(--ui-font-body, 12px); line-height: 1.7; }
+.workspace-shell .assistant-sidebar .circuit-explanation-messages article:not(.ai-message-user) {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 10px 0;
+}
+.workspace-shell .assistant-sidebar :is(.persistent-message header, .persistent-message header time, .desktop-control-task small, .persistent-status > span, .persistent-session-details) {
+  font-size: var(--ui-font-meta, 11px);
+  line-height: 1.5;
+}
+.workspace-shell .assistant-sidebar :is(.persistent-candidate, .persistent-simulation, .persistent-progress > details, .desktop-control-task, .desktop-control-run-status, .desktop-control-canvas) {
+  border-radius: var(--ui-radius-card, 8px);
+  padding: 8px;
+  border-color: var(--ui-border);
+}
+.workspace-shell .assistant-sidebar :is(.persistent-candidate > summary, .persistent-simulation > summary, .desktop-control-task > summary) {
+  font-size: var(--ui-font-body, 12px);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.workspace-shell .assistant-sidebar :is(.persistent-progress > summary, .persistent-progress li > p, .persistent-simulation > p, .persistent-compose > div small) {
+  font-size: var(--ui-font-meta, 11px);
+  line-height: 1.5;
+}
+.workspace-shell .assistant-sidebar :is(.persistent-compose textarea, .desktop-control-compose textarea, .desktop-control-redraw textarea, .circuit-explanation-compose textarea) {
+  font-size: var(--ui-font-body, 12px);
+  line-height: 1.6;
+  border-radius: var(--ui-radius-control, 6px);
+}
+.workspace-shell .assistant-sidebar :is(.persistent-compose, .desktop-control-compose, .circuit-explanation-compose) { gap: 8px; }
+.workspace-shell .assistant-sidebar :is(.persistent-compose, .desktop-control-compose, .circuit-explanation-compose) {
+  padding-top: 10px;
+  border-top-color: var(--ui-border);
+}
+.workspace-shell .assistant-sidebar :is(.persistent-compose textarea, .desktop-control-compose textarea, .circuit-explanation-compose textarea) {
+  padding: 10px 12px;
+  box-shadow: 0 1px 3px var(--ui-shadow);
+}
+.workspace-shell .assistant-sidebar :is(.persistent-compose textarea, .desktop-control-compose textarea, .circuit-explanation-compose textarea):focus-visible {
+  outline: none;
+  border-color: var(--ui-accent) !important;
+  box-shadow: 0 0 0 3px var(--ui-accent-soft);
+}
+.workspace-shell .assistant-sidebar :is(.persistent-compose, .desktop-control-compose, .circuit-explanation-compose) button {
+  min-height: 32px;
+  padding: 6px 9px;
+  font-size: var(--ui-font-body, 12px);
+}
+.workspace-shell .assistant-sidebar :is(.persistent-scroll, .desktop-control-scroll, .circuit-explanation-messages) {
+  scrollbar-color: var(--ui-border-strong) transparent;
+}

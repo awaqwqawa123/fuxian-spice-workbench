@@ -1,0 +1,126 @@
+/* Scope outer chrome too, keeping the whole common palette on one page. */
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) { padding: 9px 8px; }
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) > .library-title { min-height: 18px; }
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) > .library-sources { margin: 6px 0; }
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) > .library-sources > button { min-height: 32px; padding: 6px 7px; font-size: 11px; }
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) > .library-foot { margin-top: 7px; padding: 0; font-size: 10px; }
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) > .library-foot small { display: none; }
+/* Placement controls are compact; the full library dialog keeps its detail cards. */
+.common-device-library {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.common-device-library.common-device-library > .device-search {
+  height: 34px;
+  min-height: 34px;
+  padding: 0 8px;
+  margin: 0;
+  gap: 6px;
+}
+.common-device-library.common-device-library > .device-search input { min-width: 0; font-size: 12px; }
+.common-device-library.common-device-library > .device-search kbd { font-size: 10px; }
+.common-device-library.common-device-library > .user-library-switch {
+  padding: 3px;
+  margin: 0;
+  min-width: 0;
+}
+.common-device-library.common-device-library > .user-library-switch button {
+  padding: 5px 4px;
+  min-height: 28px;
+  font-size: 12px;
+}
+.common-device-library.common-device-library > .library-section-heading {
+  margin: 0;
+  min-height: 18px;
+  font-size: 11px;
+  gap: 4px;
+}
+.common-device-library.common-device-library > .device-palette.common-device-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+}
+.common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  min-width: 0;
+  height: 54px;
+  min-height: 0;
+  padding: 4px 2px;
+  margin: 0;
+  border: 1px solid var(--ui-border, #dbe5e7);
+  border-radius: 5px;
+  color: var(--ui-ink, #36576a);
+  background: var(--ui-raised, #fff);
+  cursor: grab;
+  transition: border-color 120ms, background-color 120ms;
+}
+.common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button > svg {
+  display: block;
+  flex: 0 0 32px;
+  width: 36px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ui-accent, #08786c);
+}
+.common-device-library .common-device-button svg [fill="#fcfdfb"] {
+  fill: var(--ui-raised, #fcfdfb);
+}
+.common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button > span {
+  display: block;
+  flex: none;
+  min-width: 0;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  white-space: nowrap;
+  color: inherit;
+}
+.common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button:hover,
+.common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button.active {
+  border-color: var(--ui-accent, #178779);
+  color: var(--ui-accent-ink, #086f63);
+  background: var(--ui-accent-soft, #e8f5ef);
+}
+.common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button:focus-visible {
+  outline: 2px solid var(--ui-accent, #08786c);
+  outline-offset: 2px;
+}
+.common-device-library.common-device-library > .library-extension-toggle {
+  margin: 0;
+  min-width: 0;
+  min-height: 36px;
+  padding: 7px 8px;
+  gap: 5px;
+  font-size: 12px;
+}
+.common-device-library.common-device-library > .library-extension-toggle small { font-size: 10px; }
+.common-device-library.common-device-library > .library-search-scope,
+.common-device-library.common-device-library > .library-empty {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+@container (max-width: 190px) {
+  .common-device-library.common-device-library > .device-palette.common-device-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+  .common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button { height: 44px; gap: 0; padding: 2px; }
+  .common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button > svg { flex-basis: 27px; height: 27px; width: 33px; }
+  .common-device-library.common-device-library > .library-extension-toggle small { display: none; }
+  @media (max-height: 760px) {
+    .common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button { height: 38px; padding: 0; }
+    .common-device-library.common-device-library > .device-palette.common-device-grid > button.common-device-button > svg { flex-basis: 22px; height: 22px; width: 29px; }
+  }
+}

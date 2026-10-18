@@ -1,0 +1,107 @@
+﻿/* Document identity, commands and navigation use distinct visual weights. */
+.workspace-shell .free-header.workspace-topbar { height:58px; min-height:58px; flex-basis:58px; gap:16px; padding:0 18px; box-shadow:0 1px 0 var(--ui-border); }
+:root[data-workbench-theme] .workspace-shell .free-header.workspace-topbar { background:var(--ui-raised)!important; }
+.workspace-shell .workspace-topbar .free-brand { order:0; padding-right:16px; border-right:1px solid var(--ui-border); }
+.workspace-shell .workspace-topbar .free-brand strong { font-size:21px; font-weight:750; letter-spacing:-.5px; }
+.workspace-shell .workspace-topbar-title { order:1; flex:1 1 280px; min-width:190px; max-width:400px; gap:6px; }
+.workspace-shell .workspace-topbar .project-title-input { width:100%; min-width:100px; padding:7px 8px; font-size:15px; font-weight:600; line-height:1.4; }
+:root[data-workbench-theme] .workspace-shell .workspace-topbar .project-title-input { background:transparent!important; border-color:transparent!important; }
+:root[data-workbench-theme] .workspace-shell .workspace-topbar .project-title-input:is(:hover,:focus) { background:var(--ui-soft)!important; border-color:var(--ui-border)!important; }
+.workspace-shell .workspace-topbar .project-title-input:focus { box-shadow:0 0 0 3px var(--ui-accent-soft); }
+.workspace-shell .workspace-topbar .free-version { font:10px var(--mono); padding:3px 5px; border:0; }
+.workspace-shell .workspace-topbar .workspace-view-tabs { order:2; align-self:center; gap:4px; padding:3px; border:1px solid var(--ui-border); border-radius:8px; }
+.workspace-shell .workspace-topbar .workspace-view-tabs>button { min-height:30px; padding:6px 10px; border:0; border-radius:5px; font-size:12px; gap:6px; }
+:root[data-workbench-theme] .workspace-shell .workspace-view-tabs>button[aria-current=page] { color:var(--ui-accent-ink)!important; background:var(--ui-accent-soft)!important; font-weight:600; }
+.workspace-shell .workspace-simulation-controls { order:0; gap:4px; margin-left:8px; padding:0 0 0 12px; border-left:1px solid var(--ui-border); border-right:0; }
+.workspace-shell .workspace-simulation-profile { display:flex; flex:none; flex-direction:column; gap:1px; margin:0; }
+.workspace-shell .workspace-simulation-profile>span { font-size:10px; line-height:1.2; font-weight:600; color:var(--ui-muted); white-space:nowrap; }
+.workspace-shell .workspace-simulation-controls .simulation-profile-select { width:150px; max-width:150px; height:28px; min-height:28px; font-size:12px; padding:3px 7px; border-radius:7px; }
+.workspace-shell .workspace-topbar .workspace-topbar-actions { order:4; flex:0 0 auto; gap:4px; margin-left:auto; }
+.workspace-shell .workspace-topbar :is(.workspace-topbar-actions>button,.workspace-simulation-controls>button,.project-ai-name,.workspace-file-menu>summary) { min-height:34px; padding:7px 8px; gap:6px; border-radius:7px; font-size:13px; line-height:1.3; }
+.workspace-shell .workspace-topbar :is(.workspace-topbar-actions>button,.workspace-simulation-controls>button,.project-ai-name)>svg { width:16px; height:16px; flex:none; stroke-width:1.7; }
+:root[data-workbench-theme] .workspace-shell .workspace-topbar .workspace-simulation-controls>button { color:var(--ui-ink)!important; background:var(--ui-soft)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] .workspace-shell .workspace-topbar .workspace-simulation-controls>button[aria-label="添加仿真配置"] { color:var(--ui-accent-ink)!important; background:var(--ui-accent-soft)!important; }
+.workspace-shell .workspace-topbar .workspace-topbar-actions>.run-button { min-width:104px; padding:7px 14px; margin-left:4px; font-size:13px; font-weight:600; }
+:root[data-workbench-theme] .workspace-shell .workspace-topbar .workspace-topbar-actions>.run-button { background:var(--ui-accent)!important; color:var(--ui-on-accent)!important; border-color:var(--ui-accent)!important; box-shadow:0 2px 4px var(--ui-shadow); }
+:root[data-workbench-theme] .workspace-shell .workspace-topbar .workspace-topbar-actions>.run-button:hover:not(:disabled) { background:color-mix(in srgb,var(--ui-accent) 88%,var(--ui-ink))!important; }
+.workspace-shell .workspace-topbar .free-save-state { max-width:100px; margin-left:8px; font-size:11px; }
+.workspace-shell .state-dot:not(.amber) { background:var(--ui-success); }
+
+/* A quiet command strip gives the canvas the most contrast. */
+.workspace-shell .drawing-toolbar.workspace-commandbar { height:46px; min-height:46px; flex-basis:46px; padding:5px 12px; gap:10px; }
+:root[data-workbench-theme] .workspace-shell .drawing-toolbar.workspace-commandbar { background:var(--ui-panel)!important; }
+.workspace-shell .workspace-commandbar .drawing-tools { height:36px; gap:4px; }
+.workspace-shell .workspace-commandbar :is(.drawing-tools button,.canvas-diagram-add,.workspace-layout-actions button,.canvas-overlay-tools>label,.wire-mode-button) { font-size:12px; line-height:1.3; border-radius:6px; }
+.workspace-shell .workspace-commandbar .drawing-tools>button { min-width:32px; min-height:32px; padding:7px; }
+.workspace-shell .workspace-commandbar .drawing-tools>button>svg { stroke-width:1.7; }
+.workspace-shell .workspace-commandbar .drawing-tools>i { margin:0 7px; height:19px; border-color:var(--ui-border); }
+.workspace-shell .workspace-commandbar .schematic-symbol-primary>span { font-size:12px; }
+:root[data-workbench-theme] .workspace-shell .workspace-commandbar :is(button,summary):hover:not(:disabled) {
+  color:var(--ui-ink)!important; background:var(--ui-hover)!important; border-color:var(--ui-border)!important;
+}
+.workspace-shell .workspace-commandbar :is(input,select) { font-size:12px; }
+.workspace-shell .workspace-commandbar .zoom-controls>span { min-width:40px; font-size:11px; font-variant-numeric:tabular-nums; }
+.workspace-shell .workspace-layout-actions { gap:4px; padding-left:10px; border-color:var(--ui-border); }
+.workspace-shell .workspace-center .drawing-status { min-height:30px; max-height:30px; flex-basis:30px; padding:4px 14px; font-size:11px; }
+.workspace-shell .workspace-center .drawing-status :is(small,button) { font-size:11px; }
+.workspace-shell .workspace-center .drawing-status small { font-variant-numeric:tabular-nums; }
+:root[data-workbench-theme] .workspace-shell .sidebar-resize-handle { background:var(--ui-panel)!important; }
+.workspace-shell .sidebar-resize-handle>span { width:2px; opacity:.5; border-radius:2px; }
+
+/* The dark rail anchors the light workspace without competing with its tools. */
+.workbench-with-assistant.workspace-shell>.workspace-navigation-rail { width:64px; flex-basis:64px; border-right:0; }
+:root[data-workbench-theme] .workbench-with-assistant.workspace-shell>.workspace-navigation-rail { color:var(--ui-rail-ink)!important; background:var(--ui-rail)!important; border-color:transparent!important; }
+.workspace-navigation-rail .workspace-rail-brand { height:58px; flex-basis:58px; border:0; }
+:root[data-workbench-theme] .workspace-navigation-rail .workspace-rail-brand { color:var(--ui-rail-active)!important; }
+.workspace-navigation-rail .workspace-rail-brand>svg { width:34px; height:34px; padding:8px; background:var(--ui-accent); color:var(--ui-on-accent); border-radius:10px; }
+.workspace-navigation-rail .workspace-rail-tabs { gap:10px; padding:18px 7px; }
+.workspace-navigation-rail :is(.workspace-rail-tabs>button,.workspace-rail-bottom>button) { width:50px; min-height:58px; gap:7px; font-size:11px; line-height:1.3; border-radius:9px; }
+:root[data-workbench-theme] .workspace-navigation-rail :is(.workspace-rail-tabs>button,.workspace-rail-bottom>button) { color:var(--ui-rail-ink)!important; background:transparent!important; border-color:transparent!important; }
+:root[data-workbench-theme] .workspace-navigation-rail :is(.workspace-rail-tabs>button,.workspace-rail-bottom>button):hover { color:var(--ui-rail-active)!important; background:var(--ui-rail-hover)!important; }
+:root[data-workbench-theme] .workspace-navigation-rail .workspace-rail-tabs>button[aria-expanded=true] { color:var(--ui-rail-active)!important; background:color-mix(in srgb,var(--ui-accent) 30%,var(--ui-rail))!important; }
+.workspace-navigation-rail .workspace-rail-tabs>button[aria-expanded=true]::before { left:-7px; top:16px; bottom:16px; width:3px; }
+.workspace-navigation-rail .workspace-rail-bottom { display:flex; flex-direction:column; gap:5px; padding:12px 7px; border-color:#ffffff0c; }
+.workspace-shell :is(.workspace-topbar,.workspace-commandbar,.workspace-navigation-rail) :focus-visible { outline:2px solid var(--ui-accent); outline-offset:2px; }
+
+/* Labels fold before controls or the editable document title get squeezed. */
+@media(max-width:1800px) {
+  .workspace-shell .workspace-topbar .workspace-topbar-actions>button>span { display:none; }
+  .workspace-shell .workspace-topbar .workspace-topbar-actions>button:not(.run-button) { width:34px; min-width:34px; padding:7px; }
+  .workspace-shell .workspace-topbar .free-version { display:none; }
+}
+@media(max-width:1480px) {
+  .workspace-shell .free-header.workspace-topbar { gap:10px; padding-inline:12px; }
+  .workspace-shell .workspace-simulation-controls .simulation-profile-select { width:128px; }
+  .workspace-shell .workspace-topbar-title { max-width:340px; }
+  .workspace-shell .workspace-topbar .project-ai-name>span { display:none; }
+  .workspace-shell .workspace-topbar .free-save-state { max-width:10px; margin-left:4px; }
+  .workspace-shell .workspace-topbar .workspace-save-label { display:none; }
+  .workspace-shell .workspace-commandbar .drawing-tools>button>span,
+  .workspace-shell .workspace-commandbar .workspace-layout-actions>button>span { display:none; }
+}
+@media(max-width:1100px) {
+  .workspace-shell .free-header.workspace-topbar { gap:7px; padding-inline:10px; }
+  .workspace-shell .workspace-topbar .free-brand { padding-right:10px; }
+  .workspace-shell .workspace-simulation-controls { gap:2px; margin-left:4px; padding-left:7px; }
+  .workspace-shell .workspace-topbar .workspace-simulation-controls>button>svg { display:none; }
+  .workspace-shell .workspace-simulation-controls .simulation-profile-select { width:100px; }
+  .workspace-shell .workspace-topbar-title { min-width:130px; }
+  .workspace-shell .workspace-topbar .project-title-input { min-width:80px; font-size:13px; }
+  .workspace-shell .workspace-topbar .workspace-view-tabs>button { padding-inline:7px; }
+  .workspace-shell .workspace-topbar .workspace-topbar-actions { gap:2px; }
+  .workspace-shell .workspace-topbar .workspace-topbar-actions>.run-button { min-width:90px; padding-inline:9px; }
+  .workspace-shell .workspace-commandbar { gap:6px; padding-inline:8px; }
+  .workspace-shell .workspace-commandbar .canvas-overlay-tools { gap:4px; }
+}
+@media(max-width:900px) {
+  .workspace-shell .free-header.workspace-topbar { overflow-x:auto; scrollbar-width:none; }
+  .workspace-shell .workspace-topbar .free-brand { display:none; }
+  .workspace-shell .workspace-topbar-title { min-width:130px; }
+  .workspace-shell .workspace-topbar .workspace-view-tabs>button { font-size:11px; padding-inline:5px; }
+  .workspace-shell .workspace-simulation-controls .simulation-profile-select { width:90px; }
+}
+/* Simulation creation and editing remain named actions at compact widths. */
+.workspace-shell .workspace-topbar .workspace-simulation-controls>button>span { display:inline; }
+:root[data-workbench-theme] .workspace-shell .workspace-topbar .simulation-profile-add { background:var(--ui-accent-soft)!important; color:var(--ui-accent-ink)!important; border:1px solid var(--ui-accent)!important; font-weight:600; }
+.workspace-shell .workspace-topbar .simulation-profile-edit { border:1px solid var(--ui-border-strong); }
+@media(max-width:1000px) { .workspace-shell .workspace-topbar .workspace-topbar-title { min-width:110px; } }

@@ -1,0 +1,247 @@
+/* Studio dialogs: clear titles, quiet navigation and generous reading surfaces. */
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window,.example-gallery,.final-test-report-dialog,.model-editor-dialog,.spice-library-dialog) {
+  --dialog-padding:24px;
+  box-sizing:border-box;
+  max-width:calc(100vw - 32px);
+  max-height:calc(100dvh - 32px);
+  min-height:0;
+  border:1px solid var(--ui-border);
+  border-radius:var(--ui-radius-dialog,12px);
+  color:var(--ui-ink);
+  background:var(--ui-panel);
+  font:var(--ui-font-reading,13px)/1.6 var(--ui-font-interface,var(--sans));
+  overflow:hidden;
+}
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window,.example-gallery,.final-test-report-dialog,.model-editor-dialog,.spice-library-dialog) :is(button,input,select,textarea) {
+  box-sizing:border-box;
+  border-radius:var(--ui-radius-control,6px);
+}
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window,.example-gallery,.final-test-report-dialog,.model-editor-dialog,.spice-library-dialog) :is(button,select) { font-family:inherit; }
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window,.example-gallery,.final-test-report-dialog,.model-editor-dialog,.spice-library-dialog) :is(button,input,select,textarea,summary,a):focus-visible {
+  outline:2px solid var(--ui-accent);
+  outline-offset:3px;
+}
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window,.example-gallery,.final-test-report-dialog,.model-editor-dialog,.spice-library-dialog) :is(input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]),select) {
+  min-height:34px;
+  font-size:13px;
+}
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window,.example-gallery,.final-test-report-dialog,.model-editor-dialog,.spice-library-dialog) small {
+  font-size:11px;
+  line-height:1.6;
+}
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window)>.workbench-window-heading,
+.example-gallery>.example-gallery-header,
+.final-test-report-dialog>.final-report-heading,
+:is(.model-editor-dialog,.spice-library-dialog)>header {
+  flex:none;
+  padding:20px var(--dialog-padding);
+  gap:16px;
+  border-bottom:1px solid var(--ui-border);
+  background:var(--ui-raised);
+}
+:root[data-workbench-theme] :is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window)>.workbench-window-heading,
+:root[data-workbench-theme] .example-gallery>.example-gallery-header,
+:root[data-workbench-theme] .final-test-report-dialog>.final-report-heading,
+:root[data-workbench-theme] :is(.model-editor-dialog,.spice-library-dialog)>header {
+  background:var(--ui-raised)!important;
+}
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window)>.workbench-window-heading h2,
+.example-gallery .example-gallery-header h2,
+.final-test-report-dialog .final-report-heading h2,
+:is(.model-editor-dialog,.spice-library-dialog)>header h2 {
+  margin:4px 0 6px;
+  font-size:20px;
+  font-weight:650;
+  line-height:1.45;
+  letter-spacing:-.02em;
+  gap:9px;
+}
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window)>.workbench-window-heading p,
+.example-gallery .example-gallery-header p,
+.final-test-report-dialog .final-report-heading p,
+:is(.model-editor-dialog,.spice-library-dialog)>header p {
+  margin:0;
+  font-size:13px;
+  line-height:1.65;
+  color:var(--ui-muted);
+}
+:is(.appearance-settings,.settings-dialog,.extension-library-window) .workbench-window-kicker,
+.example-gallery .example-eyebrow,.final-test-report-dialog .final-report-heading>div>span {
+  font-size:11px;
+  letter-spacing:.06em;
+  font-weight:600;
+  color:var(--ui-muted);
+}
+:is(.appearance-settings,.settings-dialog,.extension-library-window)>.workbench-window-footer,
+.example-gallery>.example-gallery-footer,
+.final-test-report-dialog>footer,
+:is(.model-editor-dialog,.spice-library-dialog)>footer {
+  flex:none;
+  padding:14px var(--dialog-padding);
+  border-top:1px solid var(--ui-border);
+  background:var(--ui-soft);
+  gap:12px;
+  font-size:11px;
+  color:var(--ui-muted);
+}
+:is(.appearance-settings,.settings-dialog,.extension-library-window)>.workbench-window-footer button,
+.example-gallery>.example-gallery-footer button,
+.final-test-report-dialog>footer button,
+:is(.model-editor-dialog,.spice-library-dialog)>footer button {
+  min-height:34px;
+  padding:7px 12px;
+  font-size:13px;
+}
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window)>.workbench-window-heading>button,
+.model-search-window .model-workspace-heading-actions>button[aria-label],
+.example-gallery>.example-gallery-header>button,
+.final-test-report-dialog>.final-report-heading>button,
+:is(.model-editor-dialog,.spice-library-dialog)>header>button {
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  flex:none;
+  padding:0;
+  border:1px solid var(--ui-border);
+  border-radius:var(--ui-radius-control,6px);
+  background:var(--ui-raised);
+  color:var(--ui-muted);
+}
+:is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window)>.workbench-window-heading>button:hover,
+.model-search-window .model-workspace-heading-actions>button[aria-label]:hover,
+.example-gallery>.example-gallery-header>button:hover,
+.final-test-report-dialog>.final-report-heading>button:hover,
+:is(.model-editor-dialog,.spice-library-dialog)>header>button:hover {
+  background:var(--ui-hover);
+  color:var(--ui-ink);
+}
+
+/* Settings: stable navigation, one content scroll area and readable form groups. */
+.appearance-settings .appearance-settings-body { padding:24px; }
+.appearance-settings .appearance-theme-card { padding:8px 8px 12px; border-radius:var(--ui-radius-card,8px); }
+.appearance-settings .appearance-theme-card>small { font-size:12px; line-height:1.6; }
+.appearance-settings .appearance-theme-name { font-size:13px; font-weight:600; }
+.appearance-settings .appearance-color-field { font-size:13px; min-height:42px; }
+.appearance-settings .appearance-color-field code { font-size:11px; }
+.appearance-settings .appearance-note { font-size:12px; line-height:1.65; }
+.appearance-settings .appearance-canvas-options h3 { font-size:14px; }
+.appearance-settings .workbench-window-footer>div>button { min-height:34px; padding:7px 12px; font-size:13px; }
+.settings-dialog .settings-navigation { padding:16px 12px; gap:6px; }
+.settings-dialog .settings-navigation>button { min-height:38px; padding:9px 12px; font-size:13px; }
+.settings-dialog .settings-navigation>button[aria-current=page] {
+  background:var(--ui-raised);
+  color:var(--ui-accent-ink);
+  font-weight:600;
+  border-color:var(--ui-border);
+  box-shadow:0 1px 3px var(--ui-shadow);
+}
+.settings-dialog .settings-navigation>button:not([aria-current=page]):hover { background:var(--ui-hover); color:var(--ui-ink); }
+.settings-dialog .settings-content { padding:24px; gap:20px; overscroll-behavior:contain; scrollbar-gutter:stable; }
+.settings-dialog .settings-content h3 { font-size:15px; line-height:1.5; }
+.settings-dialog .settings-content p,.settings-dialog .settings-content label { font-size:13px; line-height:1.65; }
+.settings-dialog :is(.settings-connection-card,.desktop-connection-guide,.dsh-local-settings) { padding:16px; border-radius:8px; gap:12px; }
+.settings-dialog .settings-content :is(input,select) { height:36px; }
+.settings-dialog .settings-content button { font-size:13px; }
+.settings-dialog .settings-content button.primary { color:var(--ui-on-accent); background:var(--ui-accent); border-color:var(--ui-accent); }
+.settings-dialog .settings-section-title { align-items:flex-start; }
+.settings-dialog .settings-content :is(input,select):focus-visible { outline:0; border-color:var(--ui-accent); box-shadow:0 0 0 3px var(--ui-accent-soft); }
+
+/* Model generation: the request remains the visual starting point. */
+.model-search-window .model-search-window-body { padding:20px var(--dialog-padding) 24px; overscroll-behavior:contain; }
+.model-search-window .model-workspace-heading-actions { gap:8px; }
+.model-search-window .model-generation-utilities { margin:0; }
+.model-search-window .model-generation-composer { padding:20px; border-radius:var(--ui-radius-card,8px); background:var(--ui-raised); border:1px solid var(--ui-border); box-shadow:0 2px 8px var(--ui-shadow); }
+.model-search-window .model-generation-composer>label { font-size:14px; line-height:1.6; }
+.model-search-window .model-generation-composer>textarea { font-size:13px; line-height:1.75; padding:12px 14px; min-height:130px; }
+.model-search-window .model-generation-composer-actions { gap:12px; flex-wrap:wrap; }
+.model-search-window .model-generation-composer-actions button { min-height:36px; }
+.model-search-window .model-workspace-manual-tools { margin-top:24px; padding-top:16px; }
+.model-search-window .model-workspace-manual-tools>summary::after { content:'+'; }
+.model-search-window .model-workspace-manual-tools[open]>summary::after { content:'−'; }
+.model-search-window .model-search-window-drop-hint { background:var(--ui-accent-soft); border-color:var(--ui-accent); color:var(--ui-accent-ink); }
+.model-search-window .model-generation-composer>textarea:focus-visible { outline:0; border-color:var(--ui-accent)!important; box-shadow:0 0 0 3px var(--ui-accent-soft); }
+
+/* Library: category rails and cards share the same rhythm as settings. */
+.extension-library-window .extension-library-modes { padding:12px var(--dialog-padding); gap:8px; }
+.extension-library-window .extension-library-modes>button { min-height:36px; font-size:13px; border-color:transparent; background:transparent; }
+.extension-library-window .extension-library-modes>button[aria-pressed=true] { border-color:var(--ui-border); background:var(--ui-raised); color:var(--ui-accent-ink); box-shadow:0 1px 3px var(--ui-shadow); }
+.extension-library-window .extension-library-modes>button:not([aria-pressed=true]):hover { background:var(--ui-hover); color:var(--ui-ink); }
+.extension-library-window .extension-library-categories { padding:16px 12px; }
+:root[data-workbench-theme] .extension-library-window .extension-library-categories,
+:root[data-workbench-theme] .example-gallery .example-categories { background:var(--ui-soft)!important; }
+.extension-library-window .extension-library-categories>button { border-radius:var(--ui-radius-control,6px); font-size:13px; }
+:root[data-workbench-theme] .extension-library-window .extension-library-categories>button[aria-pressed=true],
+:root[data-workbench-theme] .example-gallery .example-categories>button[aria-pressed=true] {
+  background:var(--ui-raised)!important;
+  border:1px solid var(--ui-border)!important;
+  color:var(--ui-accent-ink)!important;
+  font-weight:600;
+  box-shadow:0 1px 3px var(--ui-shadow);
+}
+:root[data-workbench-theme] .extension-library-window .extension-library-categories>button:not([aria-pressed=true]):hover,
+:root[data-workbench-theme] .example-gallery .example-categories>button:not([aria-pressed=true]):hover { background:var(--ui-hover)!important; }
+.extension-library-window :is(.extension-library-browser,.local-device-browser) { padding:20px var(--dialog-padding); }
+.extension-library-window .extension-library-search { border-radius:8px; padding:0 12px; min-height:38px; }
+.extension-library-window .extension-library-search input { background:transparent!important; border:0; min-height:36px; padding:6px 0; }
+.extension-library-window .extension-library-search:has(input:focus-visible) { outline:2px solid var(--ui-accent); outline-offset:2px; }
+.extension-library-window .extension-library-search input:focus-visible { outline:none; }
+.extension-library-window .local-device-filters select { font-size:12px; }
+.extension-library-window :is(.local-device-card,.extension-library-cards>button) { border-radius:8px; padding:16px; }
+.extension-library-window .local-device-card { box-shadow:none; }
+.extension-library-window .local-device-card:focus-within { border-color:var(--ui-accent); }
+.extension-library-window .local-device-card-grid { gap:12px; }
+.extension-library-window .local-device-card-top strong { font-size:14px; }
+.extension-library-window .extension-library-cards small { font-size:11px; }
+
+/* Examples keep preview art prominent, with smaller and quieter surrounding chrome. */
+.example-gallery :is(.example-browser,.example-preview) { padding:20px; }
+.example-gallery .example-categories { padding:16px 12px; }
+.example-gallery .example-categories>button { border:1px solid transparent; font-size:13px; border-radius:var(--ui-radius-control,6px); }
+.example-gallery .example-search { border-radius:8px; padding:0 12px; min-height:38px; }
+.example-gallery .example-search input { background:transparent!important; border:0; min-height:36px; padding:6px 0; }
+.example-gallery .example-search:has(input:focus-visible) { outline:2px solid var(--ui-accent); outline-offset:2px; }
+.example-gallery .example-search input:focus-visible { outline:none; }
+.example-gallery .example-card { border-radius:8px; padding:16px; }
+.example-gallery .example-card:not([aria-pressed=true]) { box-shadow:none; }
+.example-gallery .example-card>strong { font-size:14px; }
+.example-gallery .example-preview h3 { font-size:16px; line-height:1.5; }
+.example-gallery .example-preview p { font-size:13px; line-height:1.7; }
+.example-gallery .use-example { min-height:38px; font-size:13px; }
+:root[data-workbench-theme] .example-gallery .example-preview { background:var(--ui-raised)!important; }
+
+/* The report document remains a white printable page; window controls follow the theme. */
+.final-test-report-dialog .final-report-body { padding:24px; overscroll-behavior:contain; }
+.final-test-report-dialog :is(.final-report-overview>div,.final-report-section,.final-report-document-preview,.final-report-table-wrap) { border-color:var(--ui-border); border-radius:8px; background:var(--ui-soft); color:var(--ui-ink); }
+.final-test-report-dialog :is(.final-report-note,.final-report-help,.final-report-revisions span,.final-report-revisions small,.final-report-preview-heading>span,.final-report-document-preview p,.final-report-overview small) { color:var(--ui-muted); }
+.final-test-report-dialog .final-report-overview strong { font-size:15px; }
+.final-test-report-dialog .final-report-details :is(input:not([type=checkbox]),select) { min-height:36px; padding:7px 10px; }
+.final-test-report-dialog .final-report-details textarea { padding:10px 12px; font-size:13px; line-height:1.7; }
+.final-test-report-dialog .final-report-table-wrap :is(th,td) { padding:12px 14px; color:var(--ui-ink); border-color:var(--ui-border); background:var(--ui-raised); }
+.final-test-report-dialog .final-report-table-wrap th { color:var(--ui-muted); background:var(--ui-soft); }
+.final-test-report-dialog .final-report-section summary { color:var(--ui-ink); font-size:13px; line-height:1.6; }
+.final-test-report-dialog .final-report-heading>div>span { color:var(--ui-muted); }
+.final-test-report-dialog .final-report-details fieldset { border-color:var(--ui-border); border-radius:8px; }
+.final-test-report-dialog .final-report-details :is(label,legend) { color:var(--ui-ink); font-size:13px; }
+.final-test-report-dialog .final-report-small-button { color:var(--ui-ink); background:var(--ui-raised); border-color:var(--ui-border); min-height:34px; font-size:12px; }
+.final-test-report-dialog>footer { color:var(--ui-ink); background:var(--ui-soft); }
+.final-test-report-dialog>footer button { color:var(--ui-ink); background:var(--ui-raised); border-color:var(--ui-border); }
+.final-test-report-dialog>footer button.primary { color:var(--ui-on-accent); background:var(--ui-accent); border-color:var(--ui-accent); }
+.final-test-report-dialog .final-report-preview-empty { color:var(--ui-muted); background:var(--ui-raised); border-color:var(--ui-border); }
+
+@media(max-width:1100px) {
+  :is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window,.example-gallery,.final-test-report-dialog,.model-editor-dialog,.spice-library-dialog) { --dialog-padding:16px; }
+  .settings-dialog .settings-content,.final-test-report-dialog .final-report-body { padding:20px 16px; }
+  .appearance-settings .appearance-settings-body { padding:20px 16px; }
+  .example-gallery :is(.example-browser,.example-preview) { padding:16px; }
+  .final-test-report-dialog .final-report-workspace { gap:16px; }
+}
+@media(max-width:700px) {
+  :is(.appearance-settings,.settings-dialog,.model-search-window,.extension-library-window,.example-gallery,.final-test-report-dialog,.model-editor-dialog,.spice-library-dialog) { max-width:calc(100vw - 16px); max-height:calc(100dvh - 16px); }
+  :is(.appearance-settings,.settings-dialog,.extension-library-window)>.workbench-window-footer,.example-gallery>.example-gallery-footer,.final-test-report-dialog>footer { flex-wrap:wrap; }
+  .model-search-window .model-generation-composer { padding:14px; }
+  .model-search-window .model-generation-attachment { flex-wrap:wrap; }
+  .model-search-window .model-generation-composer-actions { align-items:flex-start; }
+  .extension-library-window .extension-library-modes>button { flex-wrap:wrap; text-align:left; }
+  .settings-dialog .settings-section-title { flex-wrap:wrap; }
+}

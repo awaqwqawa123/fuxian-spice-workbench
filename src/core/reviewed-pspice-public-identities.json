@@ -1,0 +1,3344 @@
+{
+  "version": 1,
+  "evidence": "Exact original creation annotation identifies public part; declaration and electrical parameters remain unchanged",
+  "files": [
+    {
+      "path": "tools/pspice/library/aa_misc.lib",
+      "sha256": "e38fc5c5a2bae308753f108f1eaf74b4cd14f4373881307197f48e16cff7ac73",
+      "models": [
+        {
+          "id": "awb2n6027",
+          "part": "2N6027"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/asw.lib",
+      "sha256": "072e120380d5c4624c4e77310b6cde723ab9a9723fb11ab600f7da05a6c7f7b2",
+      "models": [
+        {
+          "id": "awbdg181a",
+          "part": "DG181A"
+        },
+        {
+          "id": "awbdg181b",
+          "part": "DG181B"
+        },
+        {
+          "id": "awbdg183",
+          "part": "DG183"
+        },
+        {
+          "id": "awbdg183b",
+          "part": "DG183B"
+        },
+        {
+          "id": "awbdg184",
+          "part": "DG184"
+        },
+        {
+          "id": "awbdg184b",
+          "part": "DG184B"
+        },
+        {
+          "id": "awbdg185",
+          "part": "DG185"
+        },
+        {
+          "id": "awbdg185b",
+          "part": "DG185B"
+        },
+        {
+          "id": "awbdg186",
+          "part": "DG186"
+        },
+        {
+          "id": "awbdg186b",
+          "part": "DG186B"
+        },
+        {
+          "id": "awbdg187",
+          "part": "DG187"
+        },
+        {
+          "id": "awbdg187b",
+          "part": "DG187B"
+        },
+        {
+          "id": "awbdg188",
+          "part": "DG188"
+        },
+        {
+          "id": "awbdg188b",
+          "part": "DG188B"
+        },
+        {
+          "id": "awbdg189",
+          "part": "DG189"
+        },
+        {
+          "id": "awbdg189b",
+          "part": "DG189B"
+        },
+        {
+          "id": "awbdg190",
+          "part": "DG190"
+        },
+        {
+          "id": "awbdg190b",
+          "part": "DG190B"
+        },
+        {
+          "id": "awbdg191",
+          "part": "DG191"
+        },
+        {
+          "id": "awbdg191b",
+          "part": "DG191B"
+        },
+        {
+          "id": "awbdg200a",
+          "part": "DG200A"
+        },
+        {
+          "id": "awbdg200aaa",
+          "part": "DG200AAA"
+        },
+        {
+          "id": "awbdg200aaa_883",
+          "part": "DG200AAA_883"
+        },
+        {
+          "id": "awbdg200aak",
+          "part": "DG200AAK"
+        },
+        {
+          "id": "awbdg200aak_883",
+          "part": "DG200AAK_883"
+        },
+        {
+          "id": "awbdg200aba",
+          "part": "DG200ABA"
+        },
+        {
+          "id": "awbdg200abk",
+          "part": "DG200ABK"
+        },
+        {
+          "id": "awbdg200aca",
+          "part": "DG200ACA"
+        },
+        {
+          "id": "awbdg200acj",
+          "part": "DG200ACJ"
+        },
+        {
+          "id": "awbdg200ack",
+          "part": "DG200ACK"
+        },
+        {
+          "id": "awbdg201aa",
+          "part": "DG201AA"
+        },
+        {
+          "id": "awbdg201ab",
+          "part": "DG201AB"
+        },
+        {
+          "id": "awbdg201ac",
+          "part": "DG201AC"
+        },
+        {
+          "id": "awbdg201ad",
+          "part": "DG201AD"
+        },
+        {
+          "id": "awbdg202a",
+          "part": "DG202A"
+        },
+        {
+          "id": "awbdg202b",
+          "part": "DG202B"
+        },
+        {
+          "id": "awbdg202c",
+          "part": "DG202C"
+        },
+        {
+          "id": "awbdg202d",
+          "part": "DG202D"
+        },
+        {
+          "id": "awbdg211c",
+          "part": "DG211C"
+        },
+        {
+          "id": "awbdg211d",
+          "part": "DG211D"
+        },
+        {
+          "id": "awbdg212c",
+          "part": "DG212C"
+        },
+        {
+          "id": "awbdg212d",
+          "part": "DG212D"
+        },
+        {
+          "id": "awbdg271ak",
+          "part": "DG271AK"
+        },
+        {
+          "id": "awbdg271ak_883",
+          "part": "DG271AK_883"
+        },
+        {
+          "id": "awbdg271bk",
+          "part": "DG271BK"
+        },
+        {
+          "id": "awbdg271cj",
+          "part": "DG271CJ"
+        },
+        {
+          "id": "awbdg271ck",
+          "part": "DG271CK"
+        },
+        {
+          "id": "awbdg271dy",
+          "part": "DG271DY"
+        },
+        {
+          "id": "awbdg300",
+          "part": "DG300"
+        },
+        {
+          "id": "awbdg301",
+          "part": "DG301"
+        },
+        {
+          "id": "awbdg302",
+          "part": "DG302"
+        },
+        {
+          "id": "awbdg308a",
+          "part": "DG308A"
+        },
+        {
+          "id": "awbdg381a",
+          "part": "DG381A"
+        },
+        {
+          "id": "awbdg506a",
+          "part": "DG506A"
+        },
+        {
+          "id": "awbdg508a",
+          "part": "DG508A"
+        },
+        {
+          "id": "awbdgp201aa",
+          "part": "DGP201AA"
+        },
+        {
+          "id": "awbdgp201ad",
+          "part": "DGP201AD"
+        },
+        {
+          "id": "awbg118",
+          "part": "G118"
+        },
+        {
+          "id": "awbhi516cmos",
+          "part": "HI516CMOS"
+        },
+        {
+          "id": "awbhi516ttl",
+          "part": "HI516TTL"
+        },
+        {
+          "id": "awbmc14066b",
+          "part": "MC14066B"
+        },
+        {
+          "id": "awbhi201",
+          "part": "HI201"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/bjn.lib",
+      "sha256": "7f6234f85105fab28ccd2dab8614a5d675b6c3d8170dbea2f27b0b5d8a44fd29",
+      "models": [
+        {
+          "id": "awbmrf580",
+          "part": "MRF580"
+        },
+        {
+          "id": "awbmrf580a",
+          "part": "MRF580A"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/bjnd.lib",
+      "sha256": "971a93c847cb518db01b94722c1be571290b971268046f6dbd1b3388b0dfed04",
+      "models": [
+        {
+          "id": "awb2n6037",
+          "part": "2N6037"
+        },
+        {
+          "id": "awb2n6038",
+          "part": "2N6038"
+        },
+        {
+          "id": "awb2n6039",
+          "part": "2N6039"
+        },
+        {
+          "id": "awb2n6426",
+          "part": "2N6426"
+        },
+        {
+          "id": "awb2n6427",
+          "part": "2N6427"
+        },
+        {
+          "id": "awb2sd1699",
+          "part": "2SD1699"
+        },
+        {
+          "id": "awb2sd1702",
+          "part": "2SD1702"
+        },
+        {
+          "id": "awbbc617",
+          "part": "BC617"
+        },
+        {
+          "id": "awbbc618",
+          "part": "BC618"
+        },
+        {
+          "id": "awbbd645",
+          "part": "BD645"
+        },
+        {
+          "id": "awbbd647",
+          "part": "BD647"
+        },
+        {
+          "id": "awbbd649",
+          "part": "BD649"
+        },
+        {
+          "id": "awbbd651",
+          "part": "BD651"
+        },
+        {
+          "id": "awbbdx53c",
+          "part": "BDX53C"
+        },
+        {
+          "id": "awbbu931zp",
+          "part": "BU931ZP"
+        },
+        {
+          "id": "awbevk31_050a",
+          "part": "EVK31_050A"
+        },
+        {
+          "id": "awbks621k30",
+          "part": "KS621K30"
+        },
+        {
+          "id": "awbks621k60",
+          "part": "KS621K60"
+        },
+        {
+          "id": "awbkt224515",
+          "part": "KT224515"
+        },
+        {
+          "id": "awbmj11016",
+          "part": "MJ11016"
+        },
+        {
+          "id": "awbmj11018",
+          "part": "MJ11018"
+        },
+        {
+          "id": "awbmj11028",
+          "part": "MJ11028"
+        },
+        {
+          "id": "awbmj11030",
+          "part": "MJ11030"
+        },
+        {
+          "id": "awbmj11032",
+          "part": "MJ11032"
+        },
+        {
+          "id": "awbmj3000",
+          "part": "MJ3000"
+        },
+        {
+          "id": "awbteo1055",
+          "part": "TEO1055"
+        },
+        {
+          "id": "awbteo2445",
+          "part": "TEO2445"
+        },
+        {
+          "id": "awbtip100",
+          "part": "TIP100"
+        },
+        {
+          "id": "awbtip101",
+          "part": "TIP101"
+        },
+        {
+          "id": "awbtip102",
+          "part": "TIP102"
+        },
+        {
+          "id": "awbtip122",
+          "part": "TIP122"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/bjpd.lib",
+      "sha256": "cc01a4db21476df87e8bf7497859418142d12667f681c86b274db7d6385ffad1",
+      "models": [
+        {
+          "id": "awb2n6034",
+          "part": "2N6034"
+        },
+        {
+          "id": "awb2n6035",
+          "part": "2N6035"
+        },
+        {
+          "id": "awb2n6036",
+          "part": "2N6036"
+        },
+        {
+          "id": "awb2n6052",
+          "part": "2N6052"
+        },
+        {
+          "id": "awbbdx54c",
+          "part": "BDX54C"
+        },
+        {
+          "id": "awbbdx64b",
+          "part": "BDX64B"
+        },
+        {
+          "id": "awbmj11015",
+          "part": "MJ11015"
+        },
+        {
+          "id": "awbmj11017",
+          "part": "MJ11017"
+        },
+        {
+          "id": "awbtip105",
+          "part": "TIP105"
+        },
+        {
+          "id": "awbtip106",
+          "part": "TIP106"
+        },
+        {
+          "id": "awbtip107",
+          "part": "TIP107"
+        },
+        {
+          "id": "awbtip127",
+          "part": "TIP127"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/buf.lib",
+      "sha256": "3418b51c60318a203cbca67762491dfe0bee1ec947594ba06baed072ba58408a",
+      "models": [
+        {
+          "id": "awbbuf03",
+          "part": "BUF03"
+        },
+        {
+          "id": "awbha5002",
+          "part": "HA5002"
+        },
+        {
+          "id": "awbha5033",
+          "part": "HA5033"
+        },
+        {
+          "id": "awblh0002",
+          "part": "LH0002"
+        },
+        {
+          "id": "awblh0033",
+          "part": "LH0033"
+        },
+        {
+          "id": "awblh0063",
+          "part": "LH0063"
+        },
+        {
+          "id": "awblm110",
+          "part": "LM110"
+        },
+        {
+          "id": "awblm210",
+          "part": "LM210"
+        },
+        {
+          "id": "awblm310",
+          "part": "LM310"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/contrllr.lib",
+      "sha256": "b43a6b96f334389a5b63b74bb3ca4bde6ed995cff0ac29886667960d090f1a81",
+      "models": [
+        {
+          "id": "awbuc1854",
+          "part": "UC1854"
+        },
+        {
+          "id": "awbuc1903",
+          "part": "UC1903"
+        },
+        {
+          "id": "awbuc2854",
+          "part": "UC2854"
+        },
+        {
+          "id": "awbuc3854",
+          "part": "UC3854"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/di.lib",
+      "sha256": "f8c3910b914460a5f0d4cd11f0a076f32dae94a00afdfe9d4339a3da3cfe2972",
+      "models": [
+        {
+          "id": "awb1n5295",
+          "part": "1N5295"
+        },
+        {
+          "id": "awb1n5297",
+          "part": "1N5297"
+        },
+        {
+          "id": "awb1n5298",
+          "part": "1N5298"
+        },
+        {
+          "id": "awbhp5082_3080",
+          "part": "HP5082_3080"
+        },
+        {
+          "id": "awbhp5082_3081",
+          "part": "HP5082_3081"
+        },
+        {
+          "id": "awbhp5082_3379",
+          "part": "HP5082_3379"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/dri.lib",
+      "sha256": "aef35e82bdbad2f16d624b27e09ee584605320e4cbf49aba925d558a83f56e93",
+      "models": [
+        {
+          "id": "awbad539",
+          "part": "AD539"
+        },
+        {
+          "id": "awbca3262e",
+          "part": "CA3262E"
+        },
+        {
+          "id": "awbd139",
+          "part": "D139"
+        },
+        {
+          "id": "awbicl7667",
+          "part": "ICL7667"
+        },
+        {
+          "id": "awbl293d",
+          "part": "L293D"
+        },
+        {
+          "id": "awbl298n",
+          "part": "L298N"
+        },
+        {
+          "id": "awbl9112",
+          "part": "L9112"
+        },
+        {
+          "id": "awbmc1413",
+          "part": "MC1413"
+        },
+        {
+          "id": "awbsg1626",
+          "part": "SG1626"
+        },
+        {
+          "id": "awbsg2626",
+          "part": "SG2626"
+        },
+        {
+          "id": "awbsg3626",
+          "part": "SG3626"
+        },
+        {
+          "id": "awbtsc429",
+          "part": "TSC429"
+        },
+        {
+          "id": "awbudn2841b",
+          "part": "UDN2841B"
+        },
+        {
+          "id": "awbuls2003",
+          "part": "ULS2003"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/jfn.lib",
+      "sha256": "7de2e8e1a0d58868f0ffe18d2d4073105405c1436a498d94abbe2e9f98fd6c57",
+      "models": [
+        {
+          "id": "awb2sk156j",
+          "part": "2SK156J"
+        },
+        {
+          "id": "awb2sk156l",
+          "part": "2SK156L"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/mfn.lib",
+      "sha256": "f01e1cccdee8dddb14cdf91bb03dc8db60a7c86e58ad0903af26168c7f573500",
+      "models": [
+        {
+          "id": "awb2n6792",
+          "part": "2N6792"
+        },
+        {
+          "id": "awb2n6794",
+          "part": "2N6794"
+        },
+        {
+          "id": "awbmlp1n06cl",
+          "part": "MLP1N06CL"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/mfp.lib",
+      "sha256": "38774e4fa9e18afab23c712d4aae4f1924a81bf1e8cfd29931b47e34d314baad",
+      "models": [
+        {
+          "id": "awbirf9140",
+          "part": "IRF9140"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/mfpm.lib",
+      "sha256": "e1443e97403bec29a9508cda6004697cd6925782f119b73e27673513dc9c9090",
+      "models": [
+        {
+          "id": "awbirf9140",
+          "part": "IRF9140"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/opa.lib",
+      "sha256": "941d64e499899976a7e5f8a6232d625d2171ff50298eda40fbea775183f7e105",
+      "models": [
+        {
+          "id": "awb1437",
+          "part": "1437"
+        },
+        {
+          "id": "awbad521",
+          "part": "AD521"
+        },
+        {
+          "id": "awbad524s",
+          "part": "AD524S"
+        },
+        {
+          "id": "awbad549j",
+          "part": "AD549J"
+        },
+        {
+          "id": "awbad549k",
+          "part": "AD549K"
+        },
+        {
+          "id": "awbad549l",
+          "part": "AD549L"
+        },
+        {
+          "id": "awbad549s",
+          "part": "AD549S"
+        },
+        {
+          "id": "awbad648",
+          "part": "AD648"
+        },
+        {
+          "id": "awbad705k",
+          "part": "AD705K"
+        },
+        {
+          "id": "awbad847j",
+          "part": "AD847J"
+        },
+        {
+          "id": "awbad848",
+          "part": "AD848"
+        },
+        {
+          "id": "awbad849as",
+          "part": "AD849AS"
+        },
+        {
+          "id": "awbad849j",
+          "part": "AD849J"
+        },
+        {
+          "id": "awbald2701",
+          "part": "ALD2701"
+        },
+        {
+          "id": "awbald2701a",
+          "part": "ALD2701A"
+        },
+        {
+          "id": "awbald2701b",
+          "part": "ALD2701B"
+        },
+        {
+          "id": "awbca3130",
+          "part": "CA3130"
+        },
+        {
+          "id": "awbca3130a",
+          "part": "CA3130A"
+        },
+        {
+          "id": "awbca3140",
+          "part": "CA3140"
+        },
+        {
+          "id": "awbca3140a",
+          "part": "CA3140A"
+        },
+        {
+          "id": "awbca3420a",
+          "part": "CA3420A"
+        },
+        {
+          "id": "awbclc220am",
+          "part": "CLC220AM"
+        },
+        {
+          "id": "awbclc400",
+          "part": "CLC400"
+        },
+        {
+          "id": "awbclc401",
+          "part": "CLC401"
+        },
+        {
+          "id": "awbclc501aid",
+          "part": "CLC501AID"
+        },
+        {
+          "id": "awbclc501ajp",
+          "part": "CLC501AJP"
+        },
+        {
+          "id": "awbclc501amd",
+          "part": "CLC501AMD"
+        },
+        {
+          "id": "awbha17902p",
+          "part": "HA17902P"
+        },
+        {
+          "id": "awbha2500",
+          "part": "HA2500"
+        },
+        {
+          "id": "awbha2502",
+          "part": "HA2502"
+        },
+        {
+          "id": "awbha2505",
+          "part": "HA2505"
+        },
+        {
+          "id": "awbha2510",
+          "part": "HA2510"
+        },
+        {
+          "id": "awbha2512",
+          "part": "HA2512"
+        },
+        {
+          "id": "awbha2515",
+          "part": "HA2515"
+        },
+        {
+          "id": "awbha2520",
+          "part": "HA2520"
+        },
+        {
+          "id": "awbha2522",
+          "part": "HA2522"
+        },
+        {
+          "id": "awbha2525",
+          "part": "HA2525"
+        },
+        {
+          "id": "awbha2544",
+          "part": "HA2544"
+        },
+        {
+          "id": "awbha2544c",
+          "part": "HA2544C"
+        },
+        {
+          "id": "awbha2600",
+          "part": "HA2600"
+        },
+        {
+          "id": "awbha2602",
+          "part": "HA2602"
+        },
+        {
+          "id": "awbha2605",
+          "part": "HA2605"
+        },
+        {
+          "id": "awbha2620",
+          "part": "HA2620"
+        },
+        {
+          "id": "awbha2622",
+          "part": "HA2622"
+        },
+        {
+          "id": "awbha2625",
+          "part": "HA2625"
+        },
+        {
+          "id": "awbha2645",
+          "part": "HA2645"
+        },
+        {
+          "id": "awbha5101",
+          "part": "HA5101"
+        },
+        {
+          "id": "awbha5102",
+          "part": "HA5102"
+        },
+        {
+          "id": "awbha5104",
+          "part": "HA5104"
+        },
+        {
+          "id": "awbha5112",
+          "part": "HA5112"
+        },
+        {
+          "id": "awbha5114",
+          "part": "HA5114"
+        },
+        {
+          "id": "awbha5127",
+          "part": "HA5127"
+        },
+        {
+          "id": "awbha5130",
+          "part": "HA5130"
+        },
+        {
+          "id": "awbha5134",
+          "part": "HA5134"
+        },
+        {
+          "id": "awbha5134a",
+          "part": "HA5134A"
+        },
+        {
+          "id": "awbha5135",
+          "part": "HA5135"
+        },
+        {
+          "id": "awbha5137",
+          "part": "HA5137"
+        },
+        {
+          "id": "awbha5137a",
+          "part": "HA5137A"
+        },
+        {
+          "id": "awbha5141",
+          "part": "HA5141"
+        },
+        {
+          "id": "awbha5142",
+          "part": "HA5142"
+        },
+        {
+          "id": "awbha5144",
+          "part": "HA5144"
+        },
+        {
+          "id": "awbha5147",
+          "part": "HA5147"
+        },
+        {
+          "id": "awbha5151",
+          "part": "HA5151"
+        },
+        {
+          "id": "awbha5152",
+          "part": "HA5152"
+        },
+        {
+          "id": "awbha5154",
+          "part": "HA5154"
+        },
+        {
+          "id": "awbha5170",
+          "part": "HA5170"
+        },
+        {
+          "id": "awbha5180_2",
+          "part": "HA5180_2"
+        },
+        {
+          "id": "awbha5195",
+          "part": "HA5195"
+        },
+        {
+          "id": "awblf13741",
+          "part": "LF13741"
+        },
+        {
+          "id": "awblf147",
+          "part": "LF147"
+        },
+        {
+          "id": "awblf155",
+          "part": "LF155"
+        },
+        {
+          "id": "awblf156",
+          "part": "LF156"
+        },
+        {
+          "id": "awblf157",
+          "part": "LF157"
+        },
+        {
+          "id": "awblf256",
+          "part": "LF256"
+        },
+        {
+          "id": "awblf347",
+          "part": "LF347"
+        },
+        {
+          "id": "awblf347b",
+          "part": "LF347B"
+        },
+        {
+          "id": "awblf351",
+          "part": "LF351"
+        },
+        {
+          "id": "awblf355",
+          "part": "LF355"
+        },
+        {
+          "id": "awblf356",
+          "part": "LF356"
+        },
+        {
+          "id": "awblf357",
+          "part": "LF357"
+        },
+        {
+          "id": "awblf400c",
+          "part": "LF400C"
+        },
+        {
+          "id": "awblf411",
+          "part": "LF411"
+        },
+        {
+          "id": "awblf412",
+          "part": "LF412"
+        },
+        {
+          "id": "awblf412a",
+          "part": "LF412A"
+        },
+        {
+          "id": "awblf441",
+          "part": "LF441"
+        },
+        {
+          "id": "awblf441a",
+          "part": "LF441A"
+        },
+        {
+          "id": "awblf442",
+          "part": "LF442"
+        },
+        {
+          "id": "awblf444",
+          "part": "LF444"
+        },
+        {
+          "id": "awblf444a",
+          "part": "LF444A"
+        },
+        {
+          "id": "awblh0022",
+          "part": "LH0022"
+        },
+        {
+          "id": "awblh0022c",
+          "part": "LH0022C"
+        },
+        {
+          "id": "awblh0032",
+          "part": "LH0032"
+        },
+        {
+          "id": "awblh0042",
+          "part": "LH0042"
+        },
+        {
+          "id": "awblh0042c",
+          "part": "LH0042C"
+        },
+        {
+          "id": "awblh0052",
+          "part": "LH0052"
+        },
+        {
+          "id": "awblh0052c",
+          "part": "LH0052C"
+        },
+        {
+          "id": "awblm118",
+          "part": "LM118"
+        },
+        {
+          "id": "awblm11",
+          "part": "LM11"
+        },
+        {
+          "id": "awblm121",
+          "part": "LM121"
+        },
+        {
+          "id": "awblm1458",
+          "part": "LM1458"
+        },
+        {
+          "id": "awblm146",
+          "part": "LM146"
+        },
+        {
+          "id": "awblm1558",
+          "part": "LM1558"
+        },
+        {
+          "id": "awblm1558h",
+          "part": "LM1558H"
+        },
+        {
+          "id": "awblm218",
+          "part": "LM218"
+        },
+        {
+          "id": "awblm246",
+          "part": "LM246"
+        },
+        {
+          "id": "awblm301",
+          "part": "LM301"
+        },
+        {
+          "id": "awblm318",
+          "part": "LM318"
+        },
+        {
+          "id": "awblm6361",
+          "part": "LM6361"
+        },
+        {
+          "id": "awblm833",
+          "part": "LM833"
+        },
+        {
+          "id": "awblm837",
+          "part": "LM837"
+        },
+        {
+          "id": "awblmc660ai",
+          "part": "LMC660AI"
+        },
+        {
+          "id": "awblmc660am",
+          "part": "LMC660AM"
+        },
+        {
+          "id": "awblmc660c",
+          "part": "LMC660C"
+        },
+        {
+          "id": "awblt1013am",
+          "part": "LT1013AM"
+        },
+        {
+          "id": "awblt1013m",
+          "part": "LT1013M"
+        },
+        {
+          "id": "awblt1014am",
+          "part": "LT1014AM"
+        },
+        {
+          "id": "awblt1014dn",
+          "part": "LT1014DN"
+        },
+        {
+          "id": "awblt1057",
+          "part": "LT1057"
+        },
+        {
+          "id": "awbne5533",
+          "part": "NE5533"
+        },
+        {
+          "id": "awbne5533a",
+          "part": "NE5533A"
+        },
+        {
+          "id": "awbnjm2904",
+          "part": "NJM2904"
+        },
+        {
+          "id": "awbnjm4558",
+          "part": "NJM4558"
+        },
+        {
+          "id": "awbnjm4559",
+          "part": "NJM4559"
+        },
+        {
+          "id": "awbpm155a",
+          "part": "PM155A"
+        },
+        {
+          "id": "awbpm156a",
+          "part": "PM156A"
+        },
+        {
+          "id": "awbpm157a",
+          "part": "PM157A"
+        },
+        {
+          "id": "awbrc4156",
+          "part": "RC4156"
+        },
+        {
+          "id": "awbrc4559",
+          "part": "RC4559"
+        },
+        {
+          "id": "awbse5534",
+          "part": "SE5534"
+        },
+        {
+          "id": "awbse5534a",
+          "part": "SE5534A"
+        },
+        {
+          "id": "awbsg1436",
+          "part": "SG1436"
+        },
+        {
+          "id": "awbsg1536",
+          "part": "SG1536"
+        },
+        {
+          "id": "awbta75458p",
+          "part": "TA75458P"
+        },
+        {
+          "id": "awbtl070",
+          "part": "TL070"
+        },
+        {
+          "id": "awbtl070a",
+          "part": "TL070A"
+        },
+        {
+          "id": "awbtl071",
+          "part": "TL071"
+        },
+        {
+          "id": "awbtl071a",
+          "part": "TL071A"
+        },
+        {
+          "id": "awbtl072",
+          "part": "TL072"
+        },
+        {
+          "id": "awbtl072a",
+          "part": "TL072A"
+        },
+        {
+          "id": "awbtl074",
+          "part": "TL074"
+        },
+        {
+          "id": "awbtl074a",
+          "part": "TL074A"
+        },
+        {
+          "id": "awbtl074c",
+          "part": "TL074C"
+        },
+        {
+          "id": "awbtl075",
+          "part": "TL075"
+        },
+        {
+          "id": "awbtl082",
+          "part": "TL082"
+        },
+        {
+          "id": "awbtl082ac",
+          "part": "TL082AC"
+        },
+        {
+          "id": "awbtl082b",
+          "part": "TL082B"
+        },
+        {
+          "id": "awbtl082m",
+          "part": "TL082M"
+        },
+        {
+          "id": "awbtl084",
+          "part": "TL084"
+        },
+        {
+          "id": "awbtl084b",
+          "part": "TL084B"
+        },
+        {
+          "id": "awbtl084m",
+          "part": "TL084M"
+        },
+        {
+          "id": "awbtlc251",
+          "part": "TLC251"
+        },
+        {
+          "id": "awbtlc272",
+          "part": "TLC272"
+        },
+        {
+          "id": "awbtlc272a",
+          "part": "TLC272A"
+        },
+        {
+          "id": "awbtlc272b",
+          "part": "TLC272B"
+        },
+        {
+          "id": "awbtlc277",
+          "part": "TLC277"
+        },
+        {
+          "id": "awbtlc277m",
+          "part": "TLC277M"
+        },
+        {
+          "id": "awbtlc27l2",
+          "part": "TLC27L2"
+        },
+        {
+          "id": "awbtlc27l2a",
+          "part": "TLC27L2A"
+        },
+        {
+          "id": "awbtlc27l2b",
+          "part": "TLC27L2B"
+        },
+        {
+          "id": "awbtlc27l7m",
+          "part": "TLC27L7M"
+        },
+        {
+          "id": "awbtlc27m7m",
+          "part": "TLC27M7M"
+        },
+        {
+          "id": "awbua301",
+          "part": "UA301"
+        },
+        {
+          "id": "awbua318",
+          "part": "UA318"
+        },
+        {
+          "id": "awbua748",
+          "part": "UA748"
+        },
+        {
+          "id": "awbua748a",
+          "part": "UA748A"
+        },
+        {
+          "id": "awbua748c",
+          "part": "UA748C"
+        },
+        {
+          "id": "awbop01",
+          "part": "OP01"
+        },
+        {
+          "id": "awbop01c",
+          "part": "OP01C"
+        },
+        {
+          "id": "awbop01g",
+          "part": "OP01G"
+        },
+        {
+          "id": "awbop02",
+          "part": "OP02"
+        },
+        {
+          "id": "awbop02a",
+          "part": "OP02A"
+        },
+        {
+          "id": "awbop02b",
+          "part": "OP02B"
+        },
+        {
+          "id": "awbop04",
+          "part": "OP04"
+        },
+        {
+          "id": "awbop04a",
+          "part": "OP04A"
+        },
+        {
+          "id": "awbop04b",
+          "part": "OP04B"
+        },
+        {
+          "id": "awbop05",
+          "part": "OP05"
+        },
+        {
+          "id": "awbop05a",
+          "part": "OP05A"
+        },
+        {
+          "id": "awbop05c",
+          "part": "OP05C"
+        },
+        {
+          "id": "awbop05e",
+          "part": "OP05E"
+        },
+        {
+          "id": "awbop08a",
+          "part": "OP08A"
+        },
+        {
+          "id": "awbop08c",
+          "part": "OP08C"
+        },
+        {
+          "id": "awbop08e",
+          "part": "OP08E"
+        },
+        {
+          "id": "awbop08g",
+          "part": "OP08G"
+        },
+        {
+          "id": "awbop10",
+          "part": "OP10"
+        },
+        {
+          "id": "awbop11a",
+          "part": "OP11A"
+        },
+        {
+          "id": "awbop11b",
+          "part": "OP11B"
+        },
+        {
+          "id": "awbop11c",
+          "part": "OP11C"
+        },
+        {
+          "id": "awbop11g",
+          "part": "OP11G"
+        },
+        {
+          "id": "awbop12a",
+          "part": "OP12A"
+        },
+        {
+          "id": "awbop12b",
+          "part": "OP12B"
+        },
+        {
+          "id": "awbop12c",
+          "part": "OP12C"
+        },
+        {
+          "id": "awbop12e",
+          "part": "OP12E"
+        },
+        {
+          "id": "awbop12f",
+          "part": "OP12F"
+        },
+        {
+          "id": "awbop12g",
+          "part": "OP12G"
+        },
+        {
+          "id": "awbop15a",
+          "part": "OP15A"
+        },
+        {
+          "id": "awbop15b",
+          "part": "OP15B"
+        },
+        {
+          "id": "awbop15e",
+          "part": "OP15E"
+        },
+        {
+          "id": "awbop15f",
+          "part": "OP15F"
+        },
+        {
+          "id": "awbop15g",
+          "part": "OP15G"
+        },
+        {
+          "id": "awbop16a",
+          "part": "OP16A"
+        },
+        {
+          "id": "awbop16b",
+          "part": "OP16B"
+        },
+        {
+          "id": "awbop16c",
+          "part": "OP16C"
+        },
+        {
+          "id": "awbop16e",
+          "part": "OP16E"
+        },
+        {
+          "id": "awbop16f",
+          "part": "OP16F"
+        },
+        {
+          "id": "awbop16g",
+          "part": "OP16G"
+        },
+        {
+          "id": "awbop17a",
+          "part": "OP17A"
+        },
+        {
+          "id": "awbop17b",
+          "part": "OP17B"
+        },
+        {
+          "id": "awbop17c",
+          "part": "OP17C"
+        },
+        {
+          "id": "awbop17e",
+          "part": "OP17E"
+        },
+        {
+          "id": "awbop17f",
+          "part": "OP17F"
+        },
+        {
+          "id": "awbop17g",
+          "part": "OP17G"
+        },
+        {
+          "id": "awbop207a",
+          "part": "OP207A"
+        },
+        {
+          "id": "awbop207f",
+          "part": "OP207F"
+        },
+        {
+          "id": "awbop20b",
+          "part": "OP20B"
+        },
+        {
+          "id": "awbop20c",
+          "part": "OP20C"
+        },
+        {
+          "id": "awbop20f",
+          "part": "OP20F"
+        },
+        {
+          "id": "awbop20g",
+          "part": "OP20G"
+        },
+        {
+          "id": "awbop20h",
+          "part": "OP20H"
+        },
+        {
+          "id": "awbop215a",
+          "part": "OP215A"
+        },
+        {
+          "id": "awbop215b",
+          "part": "OP215B"
+        },
+        {
+          "id": "awbop215c",
+          "part": "OP215C"
+        },
+        {
+          "id": "awbop21a",
+          "part": "OP21A"
+        },
+        {
+          "id": "awbop21b",
+          "part": "OP21B"
+        },
+        {
+          "id": "awbop21g",
+          "part": "OP21G"
+        },
+        {
+          "id": "awbop220a",
+          "part": "OP220A"
+        },
+        {
+          "id": "awbop220b",
+          "part": "OP220B"
+        },
+        {
+          "id": "awbop220c",
+          "part": "OP220C"
+        },
+        {
+          "id": "awbop221a",
+          "part": "OP221A"
+        },
+        {
+          "id": "awbop221b",
+          "part": "OP221B"
+        },
+        {
+          "id": "awbop221c",
+          "part": "OP221C"
+        },
+        {
+          "id": "awbop227a",
+          "part": "OP227A"
+        },
+        {
+          "id": "awbop227f",
+          "part": "OP227F"
+        },
+        {
+          "id": "awbop227g",
+          "part": "OP227G"
+        },
+        {
+          "id": "awbop260a",
+          "part": "OP260A"
+        },
+        {
+          "id": "awbop260e",
+          "part": "OP260E"
+        },
+        {
+          "id": "awbop37",
+          "part": "OP37"
+        },
+        {
+          "id": "awbop37a",
+          "part": "OP37A"
+        },
+        {
+          "id": "awbop37b",
+          "part": "OP37B"
+        },
+        {
+          "id": "awbop37c",
+          "part": "OP37C"
+        },
+        {
+          "id": "awbop37e",
+          "part": "OP37E"
+        },
+        {
+          "id": "awbop37f",
+          "part": "OP37F"
+        },
+        {
+          "id": "awbop37g",
+          "part": "OP37G"
+        },
+        {
+          "id": "awbop421b",
+          "part": "OP421B"
+        },
+        {
+          "id": "awbop421c",
+          "part": "OP421C"
+        },
+        {
+          "id": "awbop421h",
+          "part": "OP421H"
+        },
+        {
+          "id": "awbop77",
+          "part": "OP77"
+        },
+        {
+          "id": "awbop77a",
+          "part": "OP77A"
+        },
+        {
+          "id": "awbopa111am",
+          "part": "OPA111AM"
+        },
+        {
+          "id": "awbopa111bm",
+          "part": "OPA111BM"
+        },
+        {
+          "id": "awbopa121km",
+          "part": "OPA121KM"
+        },
+        {
+          "id": "awbopa121kp",
+          "part": "OPA121KP"
+        },
+        {
+          "id": "awbopa404",
+          "part": "OPA404"
+        },
+        {
+          "id": "awbopa541am",
+          "part": "OPA541AM"
+        },
+        {
+          "id": "awbopa541bm",
+          "part": "OPA541BM"
+        },
+        {
+          "id": "awbopa541sm",
+          "part": "OPA541SM"
+        },
+        {
+          "id": "awbopa605am",
+          "part": "OPA605AM"
+        },
+        {
+          "id": "awbopa605cm",
+          "part": "OPA605CM"
+        },
+        {
+          "id": "awbopa605gh",
+          "part": "OPA605GH"
+        },
+        {
+          "id": "awbopa605kg",
+          "part": "OPA605KG"
+        },
+        {
+          "id": "awbopa620kg",
+          "part": "OPA620KG"
+        },
+        {
+          "id": "awbopa620kp",
+          "part": "OPA620KP"
+        },
+        {
+          "id": "awbopa620ku",
+          "part": "OPA620KU"
+        },
+        {
+          "id": "awbopa620lg",
+          "part": "OPA620LG"
+        },
+        {
+          "id": "awbopa620sg",
+          "part": "OPA620SG"
+        },
+        {
+          "id": "awbopa621kg",
+          "part": "OPA621KG"
+        },
+        {
+          "id": "awbopa621kp",
+          "part": "OPA621KP"
+        },
+        {
+          "id": "awbopa621ku",
+          "part": "OPA621KU"
+        },
+        {
+          "id": "awbopa621lg",
+          "part": "OPA621LG"
+        },
+        {
+          "id": "awbopa621sg",
+          "part": "OPA621SG"
+        },
+        {
+          "id": "awbmc1436",
+          "part": "MC1436"
+        },
+        {
+          "id": "awbmc1436c",
+          "part": "MC1436C"
+        },
+        {
+          "id": "awbmc1439",
+          "part": "MC1439"
+        },
+        {
+          "id": "awbmc1439g",
+          "part": "MC1439G"
+        },
+        {
+          "id": "awbmc1439p1",
+          "part": "MC1439P1"
+        },
+        {
+          "id": "awbmc1456",
+          "part": "MC1456"
+        },
+        {
+          "id": "awbmc1456c",
+          "part": "MC1456C"
+        },
+        {
+          "id": "awbmc1536",
+          "part": "MC1536"
+        },
+        {
+          "id": "awbmc1556",
+          "part": "MC1556"
+        },
+        {
+          "id": "awbmc1558",
+          "part": "MC1558"
+        },
+        {
+          "id": "awbmc1741",
+          "part": "MC1741"
+        },
+        {
+          "id": "awbmc1741c",
+          "part": "MC1741C"
+        },
+        {
+          "id": "awbmc1741s",
+          "part": "MC1741S"
+        },
+        {
+          "id": "awbmc1748",
+          "part": "MC1748"
+        },
+        {
+          "id": "awbmc1748cg",
+          "part": "MC1748CG"
+        },
+        {
+          "id": "awbmc1748cp1",
+          "part": "MC1748CP1"
+        },
+        {
+          "id": "awbmc1748cu",
+          "part": "MC1748CU"
+        },
+        {
+          "id": "awbmc1748g",
+          "part": "MC1748G"
+        },
+        {
+          "id": "awbmc1748u",
+          "part": "MC1748U"
+        },
+        {
+          "id": "awbmc3303",
+          "part": "MC3303"
+        },
+        {
+          "id": "awbmc33071",
+          "part": "MC33071"
+        },
+        {
+          "id": "awbmc33072",
+          "part": "MC33072"
+        },
+        {
+          "id": "awbmc33078",
+          "part": "MC33078"
+        },
+        {
+          "id": "awbmc33079",
+          "part": "MC33079"
+        },
+        {
+          "id": "awbmc33171",
+          "part": "MC33171"
+        },
+        {
+          "id": "awbmc33172",
+          "part": "MC33172"
+        },
+        {
+          "id": "awbmc33174",
+          "part": "MC33174"
+        },
+        {
+          "id": "awbmc33181",
+          "part": "MC33181"
+        },
+        {
+          "id": "awbmc33182",
+          "part": "MC33182"
+        },
+        {
+          "id": "awbmc33184",
+          "part": "MC33184"
+        },
+        {
+          "id": "awbmc3358",
+          "part": "MC3358"
+        },
+        {
+          "id": "awbmc34001",
+          "part": "MC34001"
+        },
+        {
+          "id": "awbmc34001a",
+          "part": "MC34001A"
+        },
+        {
+          "id": "awbmc34001b",
+          "part": "MC34001B"
+        },
+        {
+          "id": "awbmc34002",
+          "part": "MC34002"
+        },
+        {
+          "id": "awbmc34002a",
+          "part": "MC34002A"
+        },
+        {
+          "id": "awbmc34002b",
+          "part": "MC34002B"
+        },
+        {
+          "id": "awbmc3403",
+          "part": "MC3403"
+        },
+        {
+          "id": "awbmc34071",
+          "part": "MC34071"
+        },
+        {
+          "id": "awbmc34071a",
+          "part": "MC34071A"
+        },
+        {
+          "id": "awbmc34072",
+          "part": "MC34072"
+        },
+        {
+          "id": "awbmc34072a",
+          "part": "MC34072A"
+        },
+        {
+          "id": "awbmc34074",
+          "part": "MC34074"
+        },
+        {
+          "id": "awbmc34074a",
+          "part": "MC34074A"
+        },
+        {
+          "id": "awbmc34085",
+          "part": "MC34085"
+        },
+        {
+          "id": "awbmc34085l",
+          "part": "MC34085L"
+        },
+        {
+          "id": "awbmc34181",
+          "part": "MC34181"
+        },
+        {
+          "id": "awbmc34182",
+          "part": "MC34182"
+        },
+        {
+          "id": "awbmc34184",
+          "part": "MC34184"
+        },
+        {
+          "id": "awbmc3458",
+          "part": "MC3458"
+        },
+        {
+          "id": "awbmc35001",
+          "part": "MC35001"
+        },
+        {
+          "id": "awbmc35001a",
+          "part": "MC35001A"
+        },
+        {
+          "id": "awbmc35001b",
+          "part": "MC35001B"
+        },
+        {
+          "id": "awbmc35002",
+          "part": "MC35002"
+        },
+        {
+          "id": "awbmc35004",
+          "part": "MC35004"
+        },
+        {
+          "id": "awbmc35004a",
+          "part": "MC35004A"
+        },
+        {
+          "id": "awbmc35004b",
+          "part": "MC35004B"
+        },
+        {
+          "id": "awbmc3503",
+          "part": "MC3503"
+        },
+        {
+          "id": "awbmc35071",
+          "part": "MC35071"
+        },
+        {
+          "id": "awbmc35072",
+          "part": "MC35072"
+        },
+        {
+          "id": "awbmc35074",
+          "part": "MC35074"
+        },
+        {
+          "id": "awbmc35080",
+          "part": "MC35080"
+        },
+        {
+          "id": "awbmc35080d",
+          "part": "MC35080D"
+        },
+        {
+          "id": "awbmc35084",
+          "part": "MC35084"
+        },
+        {
+          "id": "awbmc35171",
+          "part": "MC35171"
+        },
+        {
+          "id": "awbmc35172",
+          "part": "MC35172"
+        },
+        {
+          "id": "awbmc35174",
+          "part": "MC35174"
+        },
+        {
+          "id": "awbmc35181",
+          "part": "MC35181"
+        },
+        {
+          "id": "awbmc35182",
+          "part": "MC35182"
+        },
+        {
+          "id": "awbmc35184",
+          "part": "MC35184"
+        },
+        {
+          "id": "awbmc3558",
+          "part": "MC3558"
+        },
+        {
+          "id": "awbmc4558",
+          "part": "MC4558"
+        },
+        {
+          "id": "awbmc4558ac",
+          "part": "MC4558AC"
+        },
+        {
+          "id": "awbmc4558c",
+          "part": "MC4558C"
+        },
+        {
+          "id": "awbmc4741",
+          "part": "MC4741"
+        },
+        {
+          "id": "awbmc4741c",
+          "part": "MC4741C"
+        },
+        {
+          "id": "awbop27",
+          "part": "OP27"
+        },
+        {
+          "id": "awbop27a",
+          "part": "OP27A"
+        },
+        {
+          "id": "awbop27b",
+          "part": "OP27B"
+        },
+        {
+          "id": "awbop27c",
+          "part": "OP27C"
+        },
+        {
+          "id": "awbop27e",
+          "part": "OP27E"
+        },
+        {
+          "id": "awbop27f",
+          "part": "OP27F"
+        },
+        {
+          "id": "awbop27g",
+          "part": "OP27G"
+        },
+        {
+          "id": "awbad846",
+          "part": "AD846"
+        },
+        {
+          "id": "awbad846jh",
+          "part": "AD846JH"
+        },
+        {
+          "id": "awbad846jn",
+          "part": "AD846JN"
+        },
+        {
+          "id": "awbad846jq",
+          "part": "AD846JQ"
+        },
+        {
+          "id": "awbad846kh",
+          "part": "AD846KH"
+        },
+        {
+          "id": "awbad846kn",
+          "part": "AD846KN"
+        },
+        {
+          "id": "awbad846kq",
+          "part": "AD846KQ"
+        },
+        {
+          "id": "awbad846sh",
+          "part": "AD846SH"
+        },
+        {
+          "id": "awbad846sq",
+          "part": "AD846SQ"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/opt.lib",
+      "sha256": "d25101eefb7361a9d14c63107a51404258be65711dff7faa6296073cd8593516",
+      "models": [
+        {
+          "id": "awb3c91",
+          "part": "3C91"
+        },
+        {
+          "id": "awb3c92",
+          "part": "3C92"
+        },
+        {
+          "id": "awb4n24",
+          "part": "4N24"
+        },
+        {
+          "id": "awb6n134",
+          "part": "6N134"
+        },
+        {
+          "id": "awb6n138",
+          "part": "6N138"
+        },
+        {
+          "id": "awbhcpl2602",
+          "part": "HCPL2602"
+        },
+        {
+          "id": "awbhcpl6730",
+          "part": "HCPL6730"
+        },
+        {
+          "id": "awbhcpl6731",
+          "part": "HCPL6731"
+        },
+        {
+          "id": "awbpc725",
+          "part": "PC725"
+        },
+        {
+          "id": "awbpc733h",
+          "part": "PC733H"
+        },
+        {
+          "id": "awbtlp112",
+          "part": "TLP112"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/rfbjn.lib",
+      "sha256": "360d530ecf70fa8cea9988b396d91822b4c1bbe4aba55455602e5722b4d85704",
+      "models": [
+        {
+          "id": "awbbfg135a",
+          "part": "BFG135A"
+        },
+        {
+          "id": "awbbfg193",
+          "part": "BFG193"
+        },
+        {
+          "id": "awbbfg196",
+          "part": "BFG196"
+        },
+        {
+          "id": "awbbfg19s",
+          "part": "BFG19S"
+        },
+        {
+          "id": "awbbfg235",
+          "part": "BFG235"
+        },
+        {
+          "id": "awbbfp136w",
+          "part": "BFP136W"
+        },
+        {
+          "id": "awbbfp180",
+          "part": "BFP180"
+        },
+        {
+          "id": "awbbfp180w",
+          "part": "BFP180W"
+        },
+        {
+          "id": "awbbfp181",
+          "part": "BFP181"
+        },
+        {
+          "id": "awbbfp181r",
+          "part": "BFP181R"
+        },
+        {
+          "id": "awbbfp181w",
+          "part": "BFP181W"
+        },
+        {
+          "id": "awbbfp182",
+          "part": "BFP182"
+        },
+        {
+          "id": "awbbfp182r",
+          "part": "BFP182R"
+        },
+        {
+          "id": "awbbfp182w",
+          "part": "BFP182W"
+        },
+        {
+          "id": "awbbfp183",
+          "part": "BFP183"
+        },
+        {
+          "id": "awbbfp183r",
+          "part": "BFP183R"
+        },
+        {
+          "id": "awbbfp183w",
+          "part": "BFP183W"
+        },
+        {
+          "id": "awbbfp193",
+          "part": "BFP193"
+        },
+        {
+          "id": "awbbfp193w",
+          "part": "BFP193W"
+        },
+        {
+          "id": "awbbfp196",
+          "part": "BFP196"
+        },
+        {
+          "id": "awbbfp196w",
+          "part": "BFP196W"
+        },
+        {
+          "id": "awbbfp280",
+          "part": "BFP280"
+        },
+        {
+          "id": "awbbfp280w",
+          "part": "BFP280W"
+        },
+        {
+          "id": "awbbfp405",
+          "part": "BFP405"
+        },
+        {
+          "id": "awbbfp420",
+          "part": "BFP420"
+        },
+        {
+          "id": "awbbfp450",
+          "part": "BFP450"
+        },
+        {
+          "id": "awbbfp490",
+          "part": "BFP490"
+        },
+        {
+          "id": "awbbfp81",
+          "part": "BFP81"
+        },
+        {
+          "id": "awbbfp93a",
+          "part": "BFP93A"
+        },
+        {
+          "id": "awbbfq81",
+          "part": "BFQ81"
+        },
+        {
+          "id": "awbbfr106",
+          "part": "BFR106"
+        },
+        {
+          "id": "awbbfr180",
+          "part": "BFR180"
+        },
+        {
+          "id": "awbbfr180w",
+          "part": "BFR180W"
+        },
+        {
+          "id": "awbbfr181",
+          "part": "BFR181"
+        },
+        {
+          "id": "awbbfr181w",
+          "part": "BFR181W"
+        },
+        {
+          "id": "awbbfr182",
+          "part": "BFR182"
+        },
+        {
+          "id": "awbbfr182w",
+          "part": "BFR182W"
+        },
+        {
+          "id": "awbbfr183",
+          "part": "BFR183"
+        },
+        {
+          "id": "awbbfr183w",
+          "part": "BFR183W"
+        },
+        {
+          "id": "awbbfr193",
+          "part": "BFR193"
+        },
+        {
+          "id": "awbbfr193w",
+          "part": "BFR193W"
+        },
+        {
+          "id": "awbbfr280",
+          "part": "BFR280"
+        },
+        {
+          "id": "awbbfr280w",
+          "part": "BFR280W"
+        },
+        {
+          "id": "awbbfr92p",
+          "part": "BFR92P"
+        },
+        {
+          "id": "awbbfr92w",
+          "part": "BFR92W"
+        },
+        {
+          "id": "awbbfr93a",
+          "part": "BFR93A"
+        },
+        {
+          "id": "awbbfr93aw",
+          "part": "BFR93AW"
+        },
+        {
+          "id": "awbbfs17p",
+          "part": "BFS17P"
+        },
+        {
+          "id": "awbbfs17w",
+          "part": "BFS17W"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/rfbjp.lib",
+      "sha256": "eafc1a1b261d2c7e239f996c1e65674137f58d0815e90fe4a6b1039412924d35",
+      "models": [
+        {
+          "id": "awbbfg194",
+          "part": "BFG194"
+        },
+        {
+          "id": "awbbfp194",
+          "part": "BFP194"
+        },
+        {
+          "id": "awbbfr194",
+          "part": "BFR194"
+        },
+        {
+          "id": "awbbft92",
+          "part": "BFT92"
+        },
+        {
+          "id": "awbbft92w",
+          "part": "BFT92W"
+        },
+        {
+          "id": "awbbft93",
+          "part": "BFT93"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/rfdio.lib",
+      "sha256": "f06e00b271544b1a17815832f923c815acde85a067fe20d295e879f7260a4629",
+      "models": [
+        {
+          "id": "awbba582",
+          "part": "BA582"
+        },
+        {
+          "id": "awbba592",
+          "part": "BA592"
+        },
+        {
+          "id": "awbba892",
+          "part": "BA892"
+        },
+        {
+          "id": "awbbar6302w",
+          "part": "BAR6302W"
+        },
+        {
+          "id": "awbbar6303w",
+          "part": "BAR6303W"
+        },
+        {
+          "id": "awbbar63",
+          "part": "BAR63"
+        },
+        {
+          "id": "awbbas140w",
+          "part": "BAS140W"
+        },
+        {
+          "id": "awbbas170w",
+          "part": "BAS170W"
+        },
+        {
+          "id": "awbbas40",
+          "part": "BAS40"
+        },
+        {
+          "id": "awbbas70",
+          "part": "BAS70"
+        },
+        {
+          "id": "awbbat1503w",
+          "part": "BAT1503W"
+        },
+        {
+          "id": "awbbat15098",
+          "part": "BAT15098"
+        },
+        {
+          "id": "awbbat17w",
+          "part": "BAT17W"
+        },
+        {
+          "id": "awbbat18",
+          "part": "BAT18"
+        },
+        {
+          "id": "awbbb515",
+          "part": "BB515"
+        },
+        {
+          "id": "awbbb535",
+          "part": "BB535"
+        },
+        {
+          "id": "awbbb555",
+          "part": "BB555"
+        },
+        {
+          "id": "awbbb619c",
+          "part": "BB619C"
+        },
+        {
+          "id": "awbbb639c",
+          "part": "BB639C"
+        },
+        {
+          "id": "awbbb659c",
+          "part": "BB659C"
+        },
+        {
+          "id": "awbbb835",
+          "part": "BB835"
+        },
+        {
+          "id": "awbbby5102w",
+          "part": "BBY5102W"
+        },
+        {
+          "id": "awbbby5103w",
+          "part": "BBY5103W"
+        },
+        {
+          "id": "awbbby5202w",
+          "part": "BBY5202W"
+        },
+        {
+          "id": "awbbby5203w",
+          "part": "BBY5203W"
+        },
+        {
+          "id": "awbbby5302w",
+          "part": "BBY5302W"
+        },
+        {
+          "id": "awbbby5303w",
+          "part": "BBY5303W"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/sah.lib",
+      "sha256": "adfc77b65ab04da9fcf7419f1403514965a5fec28438a3d0cdd6d9ea8943a96c",
+      "models": [
+        {
+          "id": "awbha5320",
+          "part": "HA5320"
+        },
+        {
+          "id": "awblf398h",
+          "part": "LF398H"
+        },
+        {
+          "id": "awblf398j",
+          "part": "LF398J"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/spe.lib",
+      "sha256": "4e54e82fda939e62313e212f63fa5058d1362dd8e66c75ae33c2915ad64e9422",
+      "models": [
+        {
+          "id": "awbca3046",
+          "part": "CA3046"
+        },
+        {
+          "id": "awbca3080",
+          "part": "CA3080"
+        },
+        {
+          "id": "awbca3094",
+          "part": "CA3094"
+        },
+        {
+          "id": "awbca3096",
+          "part": "CA3096"
+        },
+        {
+          "id": "awblm13600",
+          "part": "LM13600"
+        },
+        {
+          "id": "awblm2907n14",
+          "part": "LM2907N14"
+        },
+        {
+          "id": "awblm2917n14",
+          "part": "LM2917N14"
+        },
+        {
+          "id": "awblm3046",
+          "part": "LM3046"
+        },
+        {
+          "id": "awblm359",
+          "part": "LM359"
+        },
+        {
+          "id": "awblm733",
+          "part": "LM733"
+        },
+        {
+          "id": "awblm733c",
+          "part": "LM733C"
+        },
+        {
+          "id": "awbmpq6501",
+          "part": "MPQ6501"
+        },
+        {
+          "id": "awbne592",
+          "part": "NE592"
+        },
+        {
+          "id": "awbne592p10",
+          "part": "NE592P10"
+        },
+        {
+          "id": "awbne592p8",
+          "part": "NE592P8"
+        },
+        {
+          "id": "awbnjm386",
+          "part": "NJM386"
+        },
+        {
+          "id": "awbsn5400",
+          "part": "SN5400"
+        },
+        {
+          "id": "awbsn5402",
+          "part": "SN5402"
+        },
+        {
+          "id": "awbsn5404",
+          "part": "SN5404"
+        },
+        {
+          "id": "awbtcf6000",
+          "part": "TCF6000"
+        },
+        {
+          "id": "awbtl441am",
+          "part": "TL441AM"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/thy1.lib",
+      "sha256": "d032f90da91d0bb838c705017f310246df58576a6716ea91361afb50b9a88d17",
+      "models": [
+        {
+          "id": "awb2n1595",
+          "part": "2N1595"
+        },
+        {
+          "id": "awb2n1596",
+          "part": "2N1596"
+        },
+        {
+          "id": "awb2n1597",
+          "part": "2N1597"
+        },
+        {
+          "id": "awb2n1598",
+          "part": "2N1598"
+        },
+        {
+          "id": "awb2n1599",
+          "part": "2N1599"
+        },
+        {
+          "id": "awb2n1772",
+          "part": "2N1772"
+        },
+        {
+          "id": "awb2n1775",
+          "part": "2N1775"
+        },
+        {
+          "id": "awb2n1777",
+          "part": "2N1777"
+        },
+        {
+          "id": "awb2n1792",
+          "part": "2N1792"
+        },
+        {
+          "id": "awb2n1793",
+          "part": "2N1793"
+        },
+        {
+          "id": "awb2n1794",
+          "part": "2N1794"
+        },
+        {
+          "id": "awb2n1795",
+          "part": "2N1795"
+        },
+        {
+          "id": "awb2n1796",
+          "part": "2N1796"
+        },
+        {
+          "id": "awb2n1797",
+          "part": "2N1797"
+        },
+        {
+          "id": "awb2n1798",
+          "part": "2N1798"
+        },
+        {
+          "id": "awb2n1799",
+          "part": "2N1799"
+        },
+        {
+          "id": "awb2n1800",
+          "part": "2N1800"
+        },
+        {
+          "id": "awb2n1801",
+          "part": "2N1801"
+        },
+        {
+          "id": "awb2n1802",
+          "part": "2N1802"
+        },
+        {
+          "id": "awb2n1803",
+          "part": "2N1803"
+        },
+        {
+          "id": "awb2n1804",
+          "part": "2N1804"
+        },
+        {
+          "id": "awb2n1842a",
+          "part": "2N1842A"
+        },
+        {
+          "id": "awb2n1843a",
+          "part": "2N1843A"
+        },
+        {
+          "id": "awb2n1844a",
+          "part": "2N1844A"
+        },
+        {
+          "id": "awb2n1845a",
+          "part": "2N1845A"
+        },
+        {
+          "id": "awb2n1846a",
+          "part": "2N1846A"
+        },
+        {
+          "id": "awb2n1847a",
+          "part": "2N1847A"
+        },
+        {
+          "id": "awb2n1848a",
+          "part": "2N1848A"
+        },
+        {
+          "id": "awb2n1849a",
+          "part": "2N1849A"
+        },
+        {
+          "id": "awb2n1850a",
+          "part": "2N1850A"
+        },
+        {
+          "id": "awb2n2619",
+          "part": "2N2619"
+        },
+        {
+          "id": "awb2n3870",
+          "part": "2N3870"
+        },
+        {
+          "id": "awb2n3871",
+          "part": "2N3871"
+        },
+        {
+          "id": "awb2n3872",
+          "part": "2N3872"
+        },
+        {
+          "id": "awb2n3873",
+          "part": "2N3873"
+        },
+        {
+          "id": "awb2n3896",
+          "part": "2N3896"
+        },
+        {
+          "id": "awb2n3897",
+          "part": "2N3897"
+        },
+        {
+          "id": "awb2n3898",
+          "part": "2N3898"
+        },
+        {
+          "id": "awb2n3899",
+          "part": "2N3899"
+        },
+        {
+          "id": "awb2n4167",
+          "part": "2N4167"
+        },
+        {
+          "id": "awb2n4168",
+          "part": "2N4168"
+        },
+        {
+          "id": "awb2n4169",
+          "part": "2N4169"
+        },
+        {
+          "id": "awb2n4170",
+          "part": "2N4170"
+        },
+        {
+          "id": "awb2n4171",
+          "part": "2N4171"
+        },
+        {
+          "id": "awb2n4172",
+          "part": "2N4172"
+        },
+        {
+          "id": "awb2n4173",
+          "part": "2N4173"
+        },
+        {
+          "id": "awb2n4174",
+          "part": "2N4174"
+        },
+        {
+          "id": "awb2n4441",
+          "part": "2N4441"
+        },
+        {
+          "id": "awb2n4442",
+          "part": "2N4442"
+        },
+        {
+          "id": "awb2n4443",
+          "part": "2N4443"
+        },
+        {
+          "id": "awb2n4444",
+          "part": "2N4444"
+        },
+        {
+          "id": "awb2n5060",
+          "part": "2N5060"
+        },
+        {
+          "id": "awb2n5061",
+          "part": "2N5061"
+        },
+        {
+          "id": "awb2n5062",
+          "part": "2N5062"
+        },
+        {
+          "id": "awb2n5063",
+          "part": "2N5063"
+        },
+        {
+          "id": "awb2n5064",
+          "part": "2N5064"
+        },
+        {
+          "id": "awb2n5724",
+          "part": "2N5724"
+        },
+        {
+          "id": "awb2n5725",
+          "part": "2N5725"
+        },
+        {
+          "id": "awb2n5726",
+          "part": "2N5726"
+        },
+        {
+          "id": "awb2n5727",
+          "part": "2N5727"
+        },
+        {
+          "id": "awb2n5728",
+          "part": "2N5728"
+        },
+        {
+          "id": "awb2n6171",
+          "part": "2N6171"
+        },
+        {
+          "id": "awb2n6172",
+          "part": "2N6172"
+        },
+        {
+          "id": "awb2n6173",
+          "part": "2N6173"
+        },
+        {
+          "id": "awb2n6174",
+          "part": "2N6174"
+        },
+        {
+          "id": "awb2n6400",
+          "part": "2N6400"
+        },
+        {
+          "id": "awb2n6401",
+          "part": "2N6401"
+        },
+        {
+          "id": "awb2n6402",
+          "part": "2N6402"
+        },
+        {
+          "id": "awb2n6403",
+          "part": "2N6403"
+        },
+        {
+          "id": "awb2n6404",
+          "part": "2N6404"
+        },
+        {
+          "id": "awb2n6405",
+          "part": "2N6405"
+        },
+        {
+          "id": "awb2n681",
+          "part": "2N681"
+        },
+        {
+          "id": "awb2n682",
+          "part": "2N682"
+        },
+        {
+          "id": "awb2n683",
+          "part": "2N683"
+        },
+        {
+          "id": "awb2n684",
+          "part": "2N684"
+        },
+        {
+          "id": "awb2n685",
+          "part": "2N685"
+        },
+        {
+          "id": "awb2n686",
+          "part": "2N686"
+        },
+        {
+          "id": "awb2n687",
+          "part": "2N687"
+        },
+        {
+          "id": "awb2n688",
+          "part": "2N688"
+        },
+        {
+          "id": "awb2n689",
+          "part": "2N689"
+        },
+        {
+          "id": "awb2n690",
+          "part": "2N690"
+        },
+        {
+          "id": "awb2n691",
+          "part": "2N691"
+        },
+        {
+          "id": "awb2n692",
+          "part": "2N692"
+        },
+        {
+          "id": "awb50ria120",
+          "part": "50RIA120"
+        },
+        {
+          "id": "awb50ria5",
+          "part": "50RIA5"
+        },
+        {
+          "id": "awbavs10cb",
+          "part": "AVS10CB"
+        },
+        {
+          "id": "awbbrx44",
+          "part": "BRX44"
+        },
+        {
+          "id": "awbbrx45",
+          "part": "BRX45"
+        },
+        {
+          "id": "awbbrx46",
+          "part": "BRX46"
+        },
+        {
+          "id": "awbbrx47",
+          "part": "BRX47"
+        },
+        {
+          "id": "awbbtb12_200",
+          "part": "BTB12_200"
+        },
+        {
+          "id": "awbbtb12_700",
+          "part": "BTB12_700"
+        },
+        {
+          "id": "awbbtb16_200bw",
+          "part": "BTB16_200BW"
+        },
+        {
+          "id": "awbbtb16_600bw",
+          "part": "BTB16_600BW"
+        },
+        {
+          "id": "awbbtw68_600",
+          "part": "BTW68_600"
+        },
+        {
+          "id": "awbbtw68_800",
+          "part": "BTW68_800"
+        },
+        {
+          "id": "awbmcr201",
+          "part": "MCR201"
+        },
+        {
+          "id": "awbmcr202",
+          "part": "MCR202"
+        },
+        {
+          "id": "awbmcr203",
+          "part": "MCR203"
+        },
+        {
+          "id": "awbmcr204",
+          "part": "MCR204"
+        },
+        {
+          "id": "awbmcr205",
+          "part": "MCR205"
+        },
+        {
+          "id": "awbmcr206",
+          "part": "MCR206"
+        },
+        {
+          "id": "awbmcr22_2",
+          "part": "MCR22_2"
+        },
+        {
+          "id": "awbmcr22_3",
+          "part": "MCR22_3"
+        },
+        {
+          "id": "awbmcr22_4",
+          "part": "MCR22_4"
+        },
+        {
+          "id": "awbmcr22_6",
+          "part": "MCR22_6"
+        },
+        {
+          "id": "awbmcr22_8",
+          "part": "MCR22_8"
+        },
+        {
+          "id": "awbmcr265_10",
+          "part": "MCR265_10"
+        },
+        {
+          "id": "awbmcr265_2",
+          "part": "MCR265_2"
+        },
+        {
+          "id": "awbmcr265_4",
+          "part": "MCR265_4"
+        },
+        {
+          "id": "awbmcr265_6",
+          "part": "MCR265_6"
+        },
+        {
+          "id": "awbmcr265_8",
+          "part": "MCR265_8"
+        },
+        {
+          "id": "awbmcr649ap_10",
+          "part": "MCR649AP_10"
+        },
+        {
+          "id": "awbmcr649ap_1",
+          "part": "MCR649AP_1"
+        },
+        {
+          "id": "awbmcr649ap_2",
+          "part": "MCR649AP_2"
+        },
+        {
+          "id": "awbmcr649ap_3",
+          "part": "MCR649AP_3"
+        },
+        {
+          "id": "awbmcr649ap_4",
+          "part": "MCR649AP_4"
+        },
+        {
+          "id": "awbmcr68_2",
+          "part": "MCR68_2"
+        },
+        {
+          "id": "awbmcr649ap_5",
+          "part": "MCR649AP_5"
+        },
+        {
+          "id": "awbmcr649ap_6",
+          "part": "MCR649AP_6"
+        },
+        {
+          "id": "awbmcr649ap_7",
+          "part": "MCR649AP_7"
+        },
+        {
+          "id": "awbmcr649ap_8",
+          "part": "MCR649AP_8"
+        },
+        {
+          "id": "awbmcr649ap_9",
+          "part": "MCR649AP_9"
+        },
+        {
+          "id": "awbmcr68_3",
+          "part": "MCR68_3"
+        },
+        {
+          "id": "awbmcr68_6",
+          "part": "MCR68_6"
+        },
+        {
+          "id": "awbmcr70_2",
+          "part": "MCR70_2"
+        },
+        {
+          "id": "awbmcr70_3",
+          "part": "MCR70_3"
+        },
+        {
+          "id": "awbmcr70_6",
+          "part": "MCR70_6"
+        },
+        {
+          "id": "awbmcr71_2",
+          "part": "MCR71_2"
+        },
+        {
+          "id": "awbmcr71_3",
+          "part": "MCR71_3"
+        },
+        {
+          "id": "awbmcr71_6",
+          "part": "MCR71_6"
+        },
+        {
+          "id": "awbmcr72_2",
+          "part": "MCR72_2"
+        },
+        {
+          "id": "awbmcr72_3",
+          "part": "MCR72_3"
+        },
+        {
+          "id": "awbmcr72_4",
+          "part": "MCR72_4"
+        },
+        {
+          "id": "awbmcr72_6",
+          "part": "MCR72_6"
+        },
+        {
+          "id": "awbmcr72_8",
+          "part": "MCR72_8"
+        },
+        {
+          "id": "awbt627011584dn",
+          "part": "T627011584DN"
+        },
+        {
+          "id": "awbt627031544dn",
+          "part": "T627031544DN"
+        },
+        {
+          "id": "awbt627031554dn",
+          "part": "T627031554DN"
+        },
+        {
+          "id": "awbt627031564dn",
+          "part": "T627031564DN"
+        },
+        {
+          "id": "awbt627051534dn",
+          "part": "T627051534DN"
+        },
+        {
+          "id": "awbt627051544dn",
+          "part": "T627051544DN"
+        },
+        {
+          "id": "awbt627051554dn",
+          "part": "T627051554DN"
+        },
+        {
+          "id": "awbt627051564dn",
+          "part": "T627051564DN"
+        },
+        {
+          "id": "awbt627051574dn",
+          "part": "T627051574DN"
+        },
+        {
+          "id": "awbt627121574dn",
+          "part": "T627121574DN"
+        },
+        {
+          "id": "awbta20221803",
+          "part": "TA20221803"
+        },
+        {
+          "id": "awbtpdv125",
+          "part": "TPDV125"
+        },
+        {
+          "id": "awbtpdv225",
+          "part": "TPDV225"
+        },
+        {
+          "id": "awbtyn516",
+          "part": "TYN516"
+        },
+        {
+          "id": "awbtyn682",
+          "part": "TYN682"
+        },
+        {
+          "id": "awbtyn683",
+          "part": "TYN683"
+        },
+        {
+          "id": "awbtyn816",
+          "part": "TYN816"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/vd.lib",
+      "sha256": "5b420b842d79f42ed9f9b0a3af1d3763143f2a4d9702519a2f7907da4a10f29a",
+      "models": [
+        {
+          "id": "awbmc33064",
+          "part": "MC33064"
+        },
+        {
+          "id": "awbs8052alb",
+          "part": "S8052ALB"
+        },
+        {
+          "id": "awbs8052alo",
+          "part": "S8052ALO"
+        },
+        {
+          "id": "awbs8052alr",
+          "part": "S8052ALR"
+        },
+        {
+          "id": "awbs8052aly",
+          "part": "S8052ALY"
+        },
+        {
+          "id": "awbs8053alb",
+          "part": "S8053ALB"
+        },
+        {
+          "id": "awbs8053alr",
+          "part": "S8053ALR"
+        },
+        {
+          "id": "awbs8053hlb",
+          "part": "S8053HLB"
+        },
+        {
+          "id": "awbs8054alb",
+          "part": "S8054ALB"
+        },
+        {
+          "id": "awbs8054alo",
+          "part": "S8054ALO"
+        },
+        {
+          "id": "awbs8054alr",
+          "part": "S8054ALR"
+        },
+        {
+          "id": "awbs8054aly",
+          "part": "S8054ALY"
+        }
+      ]
+    },
+    {
+      "path": "tools/pspice/library/vr.lib",
+      "sha256": "1ff3a7ef6f44e3521e6f901d52429eb0b90fe94c7b98cfdae43977e0d8dc59d2",
+      "models": [
+        {
+          "id": "awbad584",
+          "part": "AD584"
+        },
+        {
+          "id": "awblm136",
+          "part": "LM136"
+        },
+        {
+          "id": "awblm236",
+          "part": "LM236"
+        },
+        {
+          "id": "awblm336",
+          "part": "LM336"
+        },
+        {
+          "id": "awbs81250ag",
+          "part": "S81250AG"
+        },
+        {
+          "id": "awbs81250hg",
+          "part": "S81250HG"
+        },
+        {
+          "id": "awbtea7605",
+          "part": "TEA7605"
+        },
+        {
+          "id": "awbtl431",
+          "part": "TL431"
+        },
+        {
+          "id": "awbtl431clp",
+          "part": "TL431CLP"
+        }
+      ]
+    }
+  ]
+}

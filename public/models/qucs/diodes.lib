@@ -1,0 +1,367 @@
+* Qucs-S community reference models; converted 2026-09-24.
+* GPL-2.0-or-later; see COPYING, README.md and upstream/.
+* Single transistor / diode model, not a complete multi-die package.
+* Original electrical constants retained; _QUCS distinguishes this source.
+
+* 1N4148 / Diodes Inc.
+.model 1N4148_QUCS D(IS=222p N=1.65 CJO=4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=68.6m TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4148W / Diodes Inc.
+.model 1N4148W_QUCS D(IS=10.4n N=2.07 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=51.5m TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4148WS / Diodes Inc.
+.model 1N4148WS_QUCS D(IS=10.4n N=2.07 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=51.5m TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4148WT / Diodes Inc.
+.model 1N4148WT_QUCS D(IS=111n N=1.7 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.628 TT=5.76n KF=0 AF=1 BV=80 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4001 / Diodes Inc.
+.model 1N4001_QUCS D(IS=76.9p N=1.45 CJO=39.8p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=50 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4002 / Diodes Inc.
+.model 1N4002_QUCS D(IS=76.9p N=1.45 CJO=39.8p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=100 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4003 / Diodes Inc.
+.model 1N4003_QUCS D(IS=76.9p N=1.45 CJO=39.8p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=200 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4004 / Diodes Inc.
+.model 1N4004_QUCS D(IS=76.9p N=1.45 CJO=39.8p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=400 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4005 / Diodes Inc.
+.model 1N4005_QUCS D(IS=76.9p N=1.45 CJO=26.5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=600 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4006 / Diodes Inc.
+.model 1N4006_QUCS D(IS=76.9p N=1.45 CJO=26.5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=800 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N4007 / Diodes Inc.
+.model 1N4007_QUCS D(IS=76.9p N=1.45 CJO=26.5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=1k IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N5400 / Diodes Inc.
+.model 1N5400_QUCS D(IS=63n N=1.7 CJO=125p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14.1m TT=4.32u KF=0 AF=1 BV=50 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N5401 / Diodes Inc.
+.model 1N5401_QUCS D(IS=63n N=1.7 CJO=125p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14.1m TT=4.32u KF=0 AF=1 BV=100 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N5402 / Diodes Inc.
+.model 1N5402_QUCS D(IS=63n N=1.7 CJO=125p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14.1m TT=4.32u KF=0 AF=1 BV=200 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N5404 / Diodes Inc.
+.model 1N5404_QUCS D(IS=63n N=1.7 CJO=125p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14.1m TT=4.32u KF=0 AF=1 BV=400 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N5406 / Diodes Inc.
+.model 1N5406_QUCS D(IS=63n N=1.7 CJO=53p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14.1m TT=4.32u KF=0 AF=1 BV=600 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N5407 / Diodes Inc.
+.model 1N5407_QUCS D(IS=63n N=1.7 CJO=53p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14.1m TT=4.32u KF=0 AF=1 BV=800 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 1N5408 / Diodes Inc.
+.model 1N5408_QUCS D(IS=63n N=1.7 CJO=53p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14.1m TT=4.32u KF=0 AF=1 BV=1k IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 6A05 / Diodes Inc.
+.model 6A05_QUCS D(IS=52.4n N=1.7 CJO=60p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=7m TT=2.88u KF=0 AF=1 BV=50 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 6A01 / Diodes Inc.
+.model 6A01_QUCS D(IS=52.4n N=1.7 CJO=60p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=7m TT=2.88u KF=0 AF=1 BV=100 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 6A02 / Diodes Inc.
+.model 6A02_QUCS D(IS=52.4n N=1.7 CJO=60p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=7m TT=2.88u KF=0 AF=1 BV=200 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 6A04 / Diodes Inc.
+.model 6A04_QUCS D(IS=52.4n N=1.7 CJO=60p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=7m TT=2.88u KF=0 AF=1 BV=400 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 6A06 / Diodes Inc.
+.model 6A06_QUCS D(IS=52.4n N=1.7 CJO=60p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=7m TT=2.88u KF=0 AF=1 BV=600 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 6A08 / Diodes Inc.
+.model 6A08_QUCS D(IS=52.4n N=1.7 CJO=60p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=7m TT=2.88u KF=0 AF=1 BV=800 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 6A10 / Diodes Inc.
+.model 6A10_QUCS D(IS=52.4n N=1.7 CJO=60p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=7m TT=2.88u KF=0 AF=1 BV=1k IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 10A01 / Diodes Inc.
+.model 10A01_QUCS D(IS=844n N=2.06 CJO=277p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=2.06m TT=4.32u KF=0 AF=1 BV=50 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 10A02 / Diodes Inc.
+.model 10A02_QUCS D(IS=844n N=2.06 CJO=277p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=2.06m TT=4.32u KF=0 AF=1 BV=100 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 10A03 / Diodes Inc.
+.model 10A03_QUCS D(IS=844n N=2.06 CJO=277p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=2.06m TT=4.32 KF=0 AF=1 BV=200 IBV=10.0u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 10A04 / Diodes Inc.
+.model 10A04_QUCS D(IS=844n N=2.06 CJO=277p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=2.06m TT=4.32u KF=0 AF=1 BV=400 IBV=10.0u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 10A05 / Diodes Inc.
+.model 10A05_QUCS D(IS=844n N=2.06 CJO=148p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=2.06m TT=4.32u KF=0 AF=1 BV=600 IBV=10.0u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 10A06 / Diodes Inc.
+.model 10A06_QUCS D(IS=844n N=2.06 CJO=148p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=2.06m TT=4.32u KF=0 AF=1 BV=800 IBV=10.0u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* 10A07 / Diodes Inc.
+.model 10A07_QUCS D(IS=844n N=2.06 CJO=148p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=2.06m TT=4.32u KF=0 AF=1 BV=1k IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* DFLR1200 / Diodes Inc.
+.model DFLR1200_QUCS D(IS=5.9n N=1.88 CJO=18.5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=44.7m TT=4.32u KF=0 AF=1 BV=200 IBV=3u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* DLFR1400 / Diodes Inc.
+.model DLFR1400_QUCS D(IS=5.9n N=1.88 CJO=18.5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=44.7m TT=4.32u KF=0 AF=1 BV=400 IBV=3u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1A / Diodes Inc.
+.model S1A_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=50 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1AB / Diodes Inc.
+.model S1AB_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4 M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=50 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1B / Diodes Inc.
+.model S1B_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=100 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1BB / Diodes Inc.
+.model S1BB_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=100 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1D / Diodes Inc.
+.model S1D_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=200 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1DB / Diodes Inc.
+.model S1DB_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=200 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1G / Diodes Inc.
+.model S1G_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=400 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1GB / Diodes Inc.
+.model S1GB_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=400 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1J / Diodes Inc.
+.model S1J_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=600 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1JB / Diodes Inc.
+.model S1JB_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=600 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1K / Diodes Inc.
+.model S1K_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=800 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1KB / Diodes Inc.
+.model S1KB_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=800 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1M / Diodes Inc.
+.model S1M_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=1k IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S1MB / Diodes Inc.
+.model S1MB_QUCS D(IS=7.31e-18 N=0.775 CJO=42.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=42m TT=4.32u KF=0 AF=1 BV=1k IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S2A / Diodes Inc.
+.model S2A_QUCS D(IS=1.3u N=2.58 CJO=37p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.92m TT=4.32u KF=0 AF=1 BV=50 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S2B / Diodes Inc.
+.model S2B_QUCS D(IS=1.3u N=2.58 CJO=37p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.92m TT=4.32u KF=0 AF=1 BV=100 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S2D / Diodes Inc.
+.model S2D_QUCS D(IS=1.3u N=2.58 CJO=37 M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.92m TT=4.32u KF=0 AF=1 BV=200 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S2G / Diodes Inc.
+.model S2G_QUCS D(IS=1.3u N=2.58 CJO=37p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.92m TT=4.32u KF=0 AF=1 BV=400 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S2J / Diodes Inc.
+.model S2J_QUCS D(IS=1.3u N=2.58 CJO=37p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.92m TT=4.32u KF=0 AF=1 BV=600 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S2K / Diodes Inc.
+.model S2K_QUCS D(IS=1.3 N=2.58 CJO=37p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.92m TT=4.32u KF=0 AF=1 BV=800 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S2M / Diodes Inc.
+.model S2M_QUCS D(IS=1.3u N=2.58 CJO=37p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.92m TT=4.32u KF=0 AF=1 BV=1k IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S3A / Diodes Inc.
+.model S3A_QUCS D(IS=1.37n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14m TT=4.32u KF=0 AF=1 BV=50 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S3BB / Diodes Inc.
+.model S3BB_QUCS D(IS=1.37n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14m TT=4.32u KF=0 AF=1 BV=100 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S3D / Diodes Inc.
+.model S3D_QUCS D(IS=1.37n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14m TT=4.32u KF=0 AF=1 BV=200 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S3GB / Diodes Inc.
+.model S3GB_QUCS D(IS=1.37n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14m TT=4.32u KF=0 AF=1 BV=400 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S3K / Diodes Inc.
+.model S3K_QUCS D(IS=1.37n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14m TT=4.32u KF=0 AF=1 BV=800 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S3M / Diodes Inc.
+.model S3M_QUCS D(IS=1.37n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=14m TT=4.32u KF=0 AF=1 BV=1k IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S5AC / Diodes Inc.
+.model S5AC_QUCS D(IS=2.28n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.4m TT=2.88u KF=0 AF=1 BV=50 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S5BC / Diodes Inc.
+.model S5BC_QUCS D(IS=2.28n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.4m TT=2.88u KF=0 AF=1 BV=100 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S5DC / Diodes Inc.
+.model S5DC_QUCS D(IS=2.28n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.4m TT=2.88u KF=0 AF=1 BV=200 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S5GC / Diodes Inc.
+.model S5GC_QUCS D(IS=2.28n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.4m TT=2.88u KF=0 AF=1 BV=400 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S5JC / Diodes Inc.
+.model S5JC_QUCS D(IS=2.28n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.4m TT=2.88u KF=0 AF=1 BV=600 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S5KC / Diodes Inc.
+.model S5KC_QUCS D(IS=2.28n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.4m TT=2.88u KF=0 AF=1 BV=800 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* S5MC / Diodes Inc.
+.model S5MC_QUCS D(IS=2.28n N=1.7 CJO=74p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=8.4m TT=2.88u KF=0 AF=1 BV=1k IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAL99 / Diodes Inc.
+.model BAL99_QUCS D(IS=31.2n N=2.35 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.36 TT=5.76n KF=0 AF=1 BV=75 IBV=2.5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS116 / Diodes Inc.
+.model BAS116_QUCS D(IS=4.53u N=4.07 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.383 TT=4.32u KF=0 AF=1 BV=60 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS116T / Diodes Inc.
+.model BAS116T_QUCS D(IS=10.5p N=1.61 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.196 TT=4.32u KF=0 AF=1 BV=85 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS16T / Diodes Inc.
+.model BAS16T_QUCS D(IS=2.69n N=1.95 CJO=1.99p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.271 TT=5.76n KF=0 AF=1 BV=85 IBV=2u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS16TW / Diodes Inc.
+.model BAS16TW_QUCS D(IS=68.6n N=2.34 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.377 TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS16V / Diodes Inc.
+.model BAS16V_QUCS D(IS=412p N=1.7 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.14 TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS16W / Diodes Inc.
+.model BAS16W_QUCS D(IS=68.6n N=2.34 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.377 TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS19 / Diodes Inc.
+.model BAS19_QUCS D(IS=41.7n N=2.35 CJO=2.98p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.27 TT=72n KF=0 AF=1 BV=100 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS19W / Diodes Inc.
+.model BAS19W_QUCS D(IS=114n N=2.58 CJO=2.98p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.172 TT=72n KF=0 AF=1 BV=100 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS20 / Diodes Inc.
+.model BAS20_QUCS D(IS=41.7n N=2.35 CJO=2.98p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.27 TT=72n KF=0 AF=1 BV=150 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS20W / Diodes Inc.
+.model BAS20W_QUCS D(IS=114n N=2.58 CJO=2.98p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.172 TT=72n KF=0 AF=1 BV=150 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS21 / Diodes Inc.
+.model BAS21_QUCS D(IS=41.7n N=2.35 CJO=2.98p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.27 TT=72n KF=0 AF=1 BV=200 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS21T / Diodes Inc.
+.model BAS21T_QUCS D(IS=401n N=2.87 CJO=5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.105 TT=72n KF=0 AF=1 BV=200 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS21W / Diodes Inc.
+.model BAS21W_QUCS D(IS=114n N=2.58 CJO=2.98p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.172 TT=72n KF=0 AF=1 BV=200 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV116W / Diodes Inc.
+.model BAV116W_QUCS D(IS=22.5p N=1.67 CJO=2.4p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.282 TT=4.32u KF=0 AF=1 BV=130 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV16W / Diodes Inc.
+.model BAV16W_QUCS D(IS=10.4n N=2.07 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=51.5m TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV16WS / Diodes Inc.
+.model BAV16WS_QUCS D(IS=10.4n N=2.07 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=51.5m TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV170 / Diodes Inc.
+.model BAV170_QUCS D(IS=31.5p N=1.7 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.195 TT=4.32u KF=0 AF=1 BV=85 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV170T / Diodes Inc.
+.model BAV170T_QUCS D(IS=10.5p N=1.61 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.196 TT=4.32u KF=0 AF=1 BV=85 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV199 / Diodes Inc.
+.model BAV199_QUCS D(IS=59p N=1.78 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.262 TT=4.32u KF=0 AF=1 BV=85 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV199DW / Diodes Inc.
+.model BAV199DW_QUCS D(IS=59p N=1.78 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.262 TT=4.32u KF=0 AF=1 BV=85 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV199T / Diodes Inc.
+.model BAV199T_QUCS D(IS=10.5p N=1.61 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.196 TT=4.32u KF=0 AF=1 BV=85 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV19W / Diodes Inc.
+.model BAV19W_QUCS D(IS=1.09u N=3.29 CJO=5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.105 TT=72n KF=0 AF=1 BV=100 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV19WS / Diodes Inc.
+.model BAV19WS_QUCS D(IS=1.09u N=3.29 CJO=5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.105 TT=72n KF=0 AF=1 BV=100 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV20W / Diodes Inc.
+.model BAV20W_QUCS D(IS=1.09u N=3.29 CJO=5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.105 TT=72n KF=0 AF=1 BV=150 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV20WS / Diodes Inc.
+.model BAV20WS_QUCS D(IS=1.09u N=3.29 CJO=5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.105 TT=72n KF=0 AF=1 BV=150 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV21W / Diodes Inc.
+.model BAV21W_QUCS D(IS=1.09u N=3.29 CJO=5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.105 TT=72n KF=0 AF=1 BV=200 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV21WS / Diodes Inc.
+.model BAV21WS_QUCS D(IS=1.09u N=3.29 CJO=5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.105 TT=72n KF=0 AF=1 BV=200 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV23A / Diodes Inc.
+.model BAV23A_QUCS D(IS=237n N=2.69 CJO=3.05p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.26 TT=72n KF=0 AF=1 BV=200 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV23C / Diodes Inc.
+.model BAV23C_QUCS D(IS=237n N=2.69 CJO=3.05p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.26 TT=72n KF=0 AF=1 BV=200 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV23S / Diodes Inc.
+.model BAV23S_QUCS D(IS=237n N=2.69 CJO=3.05p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.26 TT=72n KF=0 AF=1 BV=200 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV3004W / Diodes Inc.
+.model BAV3004W_QUCS D(IS=58.9n N=2.37 CJO=1.17p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.412 TT=72n KF=0 AF=1 BV=350 IBV=100n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV70 / Diodes Inc.
+.model BAV70_QUCS D(IS=308p N=1.7 CJO=2.65p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.329 TT=5.76n KF=0 AF=1 BV=75 IBV=2.5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV70T / Diodes Inc.
+.model BAV70T_QUCS D(IS=2.69n N=1.95 CJO=1.99p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.271 TT=5.76n KF=0 AF=1 BV=85 IBV=2u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV70W / Diodes Inc.
+.model BAV70W_QUCS D(IS=68.6n N=2.34 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.377 TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV756DW / Diodes Inc.
+.model BAV756DW_QUCS D(IS=49.2n N=2.45 CJO=2.65p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.141 TT=5.76n KF=0 AF=1 BV=75 IBV=2.5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV99 / Diodes Inc.
+.model BAV99_QUCS D(IS=261p N=1.7 CJO=1.19p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.14 TT=5.76n KF=0 AF=1 BV=75 IBV=2.5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV99BRW / Diodes Inc.
+.model BAV99BRW_QUCS D(IS=412p N=1.7 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.14 TT=5.76n KF=0 AF=1 BV=75 IBV=2.5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV99DW / Diodes Inc.
+.model BAV99DW_QUCS D(IS=412p N=1.7 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.14 TT=5.76n KF=0 AF=1 BV=75 IBV=2.5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV99T / Diodes Inc.
+.model BAV99T_QUCS D(IS=2.69n N=1.95 CJO=1.99p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.271 TT=5.76n KF=0 AF=1 BV=85 IBV=2u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAV99W / Diodes Inc.
+.model BAV99W_QUCS D(IS=68.6n N=2.34 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.377 TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAW156 / Diodes Inc.
+.model BAW156_QUCS D(IS=59p N=1.78 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.262 TT=4.32u KF=0 AF=1 BV=85 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAW156T / Diodes Inc.
+.model BAW156T_QUCS D(IS=10.5p N=1.61 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.196 TT=4.32u KF=0 AF=1 BV=85 IBV=5n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAW56 / Diodes Inc.
+.model BAW56_QUCS D(IS=68.6n N=2.34 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.377 TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAW567DW / Diodes Inc.
+.model BAW567DW_QUCS D(IS=68.6n N=2.34 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.377 TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAW56DW / Diodes Inc.
+.model BAW56DW_QUCS D(IS=68.6n N=2.34 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.377 TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAW56T / Diodes Inc.
+.model BAW56T_QUCS D(IS=2.69n N=1.95 CJO=1.99p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.271 TT=5.76n KF=0 AF=1 BV=85 IBV=2u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAW56W / Diodes Inc.
+.model BAW56W_QUCS D(IS=68.6n N=2.34 CJO=1.72p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.377 TT=5.76n KF=0 AF=1 BV=75 IBV=1u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* LL4148 / Diodes Inc.
+.model LL4148_QUCS D(IS=1.06n N=1.87 CJO=3p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.316 TT=5.76u KF=0 AF=1 BV=75 IBV=5u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS40 / Diodes Inc.
+.model BAS40_QUCS D(IS=6.12u N=2.61 CJO=5p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.12 TT=7.2n KF=0 AF=1 BV=40 IBV=200n XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS70 / Diodes Inc.
+.model BAS70_QUCS D(IS=99.5p N=1.7 CJO=2p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.6 TT=7.2n KF=0 AF=1 BV=70 IBV=10u XTI=3.0 EG=1.11 TBV1=0.0 TRS1=0.0 TNOM=26.85 mfg="Diodes Inc." type="Qucs 单管芯参考")
+
+* BAS40_Philips / Philips
+.model BAS40_Philips_QUCS D(IS=1.419e-08 N=1.025 CJO=4.046e-12 M=0.4154 VJ=0.323 FC=0.5 ISR=0 NR=2 RS=4.942 TT=0 KF=0 AF=1 BV=44 IBV=1.255e-07 XTI=2 EG=0.69 TBV1=0 TRS1=0 TNOM=26.85 mfg="Philips" type="Qucs 单管芯参考")
+
+* BAS70_Philips / Philips
+.model BAS70_Philips_QUCS D(IS=3.22e-09 N=1.018 CJO=1.655e-12 M=0.3583 VJ=0.349 FC=0.5 ISR=0 NR=2 RS=20.89 TT=0 KF=0 AF=1 BV=77 IBV=1.67e-07 XTI=2 EG=0.69 TBV1=0 TRS1=0 TNOM=26.85 mfg="Philips" type="Qucs 单管芯参考")

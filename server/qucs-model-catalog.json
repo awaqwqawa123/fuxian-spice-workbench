@@ -1,0 +1,502 @@
+{
+  "repo": "ra3xdh/qucs_s",
+  "revision": "e0c0e154edb4f8403d53c5c5601c2ee133c9e970",
+  "rootPath": "library",
+  "label": "Qucs-S 社区完整器件模型（按需下载）",
+  "license": "Qucs-S 软件使用 GPL-2.0-or-later；器件宏模型仍适用原作者/厂商条款，独立再分发授权未确认，工作台不随附宏模型原文。",
+  "attribution": "Qucs-S 贡献者与原作者/厂商；从固定提交下载，保留完整电气网络和依赖，仅作明确记录的等价语法转换。多通道器件通常只表示单通道参考模型。",
+  "files": [
+    {
+      "path": "library/SpiceOpamp.lib",
+      "names": [
+        "LM311",
+        "LM324",
+        "LM358",
+        "MAX495",
+        "NE5532",
+        "NE5534",
+        "ad822",
+        "LF411"
+      ],
+      "size": 50994,
+      "sha256": "efb2a9176e6acfa04704adf37971507485e3501d258aa132c66fee77581abf0e",
+      "gitBlobSha1": "b1dbc54c025854cafb402036c7544c65508e7380",
+      "models": [
+        {
+          "name": "LM311",
+          "adaptedId": "LM311_QUCS",
+          "pins": [
+            "gnd",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ]
+        },
+        {
+          "name": "LM324",
+          "adaptedId": "LM324_QUCS",
+          "pins": [
+            "gnd",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "LM358",
+          "adaptedId": "LM358_QUCS",
+          "pins": [
+            "gnd",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "MAX495",
+          "adaptedId": "MAX495_QUCS",
+          "pins": [
+            "gnd",
+            "111",
+            "112",
+            "99",
+            "50",
+            "97"
+          ]
+        },
+        {
+          "name": "NE5532",
+          "adaptedId": "NE5532_QUCS",
+          "pins": [
+            "gnd",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        {
+          "name": "NE5534",
+          "adaptedId": "NE5534_QUCS",
+          "pins": [
+            "gnd",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ]
+        },
+        {
+          "name": "ad822",
+          "adaptedId": "ad822_QUCS",
+          "pins": [
+            "gnd",
+            "1",
+            "2",
+            "99",
+            "50",
+            "25"
+          ]
+        },
+        {
+          "name": "LF411",
+          "adaptedId": "LF411_QUCS",
+          "pins": [
+            "gnd",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "library/VoltageComparators.lib",
+      "names": [
+        "LM311",
+        "LM339",
+        "LMV339"
+      ],
+      "size": 71101,
+      "sha256": "c7e09489fd6e17fc6bc0fb33794544cd1a6a270e7cb0ea444020de8085562ae8",
+      "gitBlobSha1": "928a20378746f27b67a0b2a4ef801ff1b15fa950",
+      "models": [
+        {
+          "name": "LM311",
+          "adaptedId": "LM311_COMP_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net1",
+            "_net2",
+            "_net3",
+            "_net4",
+            "_net5"
+          ]
+        },
+        {
+          "name": "LM339",
+          "adaptedId": "LM339_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net2",
+            "_net1",
+            "_net4",
+            "_net3"
+          ]
+        },
+        {
+          "name": "LMV339",
+          "adaptedId": "LMV339_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net2",
+            "_net1",
+            "_net4",
+            "_net3"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "library/VoltageReferences.lib",
+      "names": [
+        "AD581",
+        "REF191",
+        "TL431"
+      ],
+      "size": 12610,
+      "sha256": "74e08a9bde346a29578e2a5e45a005c2c4a755eaaaefffece6acc1052aa49413",
+      "gitBlobSha1": "1a381240e4fa4980528d31021ad7d961890b01de",
+      "models": [
+        {
+          "name": "TL431",
+          "adaptedId": "TL431_QUCS",
+          "rootSubcircuit": "nTL431",
+          "pins": [
+            "CATHODE",
+            "ANODE",
+            "REF"
+          ]
+        },
+        {
+          "name": "AD581",
+          "adaptedId": "AD581_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net1",
+            "_net2"
+          ]
+        },
+        {
+          "name": "REF191",
+          "adaptedId": "REF191_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net1",
+            "_net2",
+            "_net3"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "library/VoltageRegulators.lib",
+      "names": [
+        "LM7805",
+        "LM7809",
+        "LM7909"
+      ],
+      "size": 33590,
+      "sha256": "2f66f224f30d2ffd1f7a3eddd3c6651f1370ebfe276f08f785405eab0aac9cbb",
+      "gitBlobSha1": "b91f78690adb13ea2ee20ed69256f24f8ac4bf20",
+      "models": [
+        {
+          "name": "LM7805",
+          "adaptedId": "LM7805_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net2",
+            "_net1"
+          ]
+        },
+        {
+          "name": "LM7809",
+          "adaptedId": "LM7809_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net2",
+            "_net1"
+          ]
+        },
+        {
+          "name": "LM7909",
+          "adaptedId": "LM7909_QUCS",
+          "pins": [
+            "gnd",
+            "_net1",
+            "_net0",
+            "_net2"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "library/Optocoupler.lib",
+      "names": [
+        "4N25"
+      ],
+      "size": 17874,
+      "sha256": "f3d9207a1e4aec259d32fdf93de8666ee70d7f727a75f097c4b229e1fd7d3e28",
+      "gitBlobSha1": "55dc48d8d7df6263bd44c30a7e263db320175c6f",
+      "models": [
+        {
+          "name": "4N25",
+          "adaptedId": "4N25_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net1",
+            "_net2",
+            "_net3"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "library/Thyristor.lib",
+      "names": [
+        "2N1595",
+        "2N6397",
+        "DB3",
+        "L6008L6",
+        "Q5010L5",
+        "S8020L"
+      ],
+      "size": 13392,
+      "sha256": "b91cbb97aa292e7077d588b7ea848dd202a1f168d400651433eae28142928c84",
+      "gitBlobSha1": "bfc3671f6ffaf956df900ad3c9729383063fea4d",
+      "models": [
+        {
+          "name": "2N1595",
+          "adaptedId": "2N1595_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net1",
+            "_net2"
+          ]
+        },
+        {
+          "name": "2N6397",
+          "adaptedId": "2N6397_QUCS",
+          "pins": [
+            "gnd",
+            "_net1",
+            "_net2",
+            "_net0"
+          ]
+        },
+        {
+          "name": "DB3",
+          "adaptedId": "DB3_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net1"
+          ]
+        },
+        {
+          "name": "L6008L6",
+          "adaptedId": "L6008L6_QUCS",
+          "pins": [
+            "gnd",
+            "_net2",
+            "_net0",
+            "_net1"
+          ]
+        },
+        {
+          "name": "Q5010L5",
+          "adaptedId": "Q5010L5_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net1",
+            "_net2"
+          ]
+        },
+        {
+          "name": "S8020L",
+          "adaptedId": "S8020L_QUCS",
+          "pins": [
+            "gnd",
+            "_net0",
+            "_net1",
+            "_net2"
+          ]
+        }
+      ]
+    }
+  ],
+  "publicModels": 24,
+  "skipped": [
+    {
+      "upstream": "SpiceOpamp.lib",
+      "part": "TL071",
+      "reason": "暂不支持电气参数 T_ABS；模型未导入，原定义不会被删减; 子电路 TL071_QUCS 引用缺失的 .subckt Qa93ea020_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "SpiceOpamp.lib",
+      "part": "OP491",
+      "reason": "未导入内容：.END。仅接受独立 .model，不能执行控制语句或引用外部文件"
+    },
+    {
+      "upstream": "SpiceOpamp.lib",
+      "part": "LF356",
+      "reason": "未导入内容：.END。仅接受独立 .model，不能执行控制语句或引用外部文件"
+    },
+    {
+      "upstream": "VoltageComparators.lib",
+      "part": "AD8561",
+      "reason": "模型类型 VSWITCH 暂不支持；支持 D、NPN、PNP、NMOS、PMOS、VDMOS、NJF、PJF; 子电路 AD8561_QUCS 引用缺失的 .subckt Q6e0271b5_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageComparators.lib",
+      "part": "AD8611",
+      "reason": "模型类型 VSWITCH 暂不支持；支持 D、NPN、PNP、NMOS、PMOS、VDMOS、NJF、PJF; 子电路 AD8611_QUCS 引用缺失的 .subckt Qa85d4266_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageComparators.lib",
+      "part": "LM311TI",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 第 91 行包含不支持的元件：T_TPD         N03175 0 VOUT 0 Z0=50 TD=115n; 模型类型 VSWITCH 暂不支持；支持 D、NPN、PNP、NMOS、PMOS、VDMOS、NJF、PJF; 暂不支持电气参数 LEVEL；模型未导入，原定义不会被删减; 子电路 LM311TI_QUCS 引用缺失的 .subckt Qf403b498_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageComparators.lib",
+      "part": "LM319",
+      "reason": "子电路依赖外部 .model 28；请提供自包含定义; 子电路 LM319_QUCS 引用缺失的 .subckt Q62424a3e_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageComparators.lib",
+      "part": "TL3016",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 第 97 行的 X 实例带有不支持的参数或子电路名称; 暂不支持电气参数 T_ABS；模型未导入，原定义不会被删减; 子电路 TL3016_QUCS 引用缺失的 .subckt Qe971b0b3_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageComparators.lib",
+      "part": "TLV3501",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 第 102 行包含不支持的元件：T_TPD         N03175 0 VOUT 0 Z0=50 TD=4.5n; 模型类型 VSWITCH 暂不支持；支持 D、NPN、PNP、NMOS、PMOS、VDMOS、NJF、PJF; 暂不支持电气参数 LEVEL；模型未导入，原定义不会被删减; 子电路 TLV3501_QUCS 引用缺失的 .subckt Qefb045ee_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageComparators.lib",
+      "part": "TLV3601",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 第 76 行包含不支持的元件：T_TPD         N03175 0 VOUT 0 Z0=50 TD=2.5n; 模型类型 VSWITCH 暂不支持；支持 D、NPN、PNP、NMOS、PMOS、VDMOS、NJF、PJF; 暂不支持电气参数 LEVEL；模型未导入，原定义不会被删减; 子电路 TLV3601_QUCS 引用缺失的 .subckt Q30b455ae_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageComparators.lib",
+      "part": "TLV3603",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 第 40 行包含不支持的元件：T_T1         N059950 0 VOUT 0 Z0=50 TD=1n; 第 107 行包含不支持的元件：T_TPD         N03175 0 VOUT 0 Z0=50 TD=2.5n; 模型类型 VSWITCH 暂不支持；支持 D、NPN、PNP、NMOS、PMOS、VDMOS、NJF、PJF; 子电路 TLV3603_QUCS 引用缺失的 .subckt Q5fcdc97a_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageReferences.lib",
+      "part": "LM334",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 子电路 LM334_QUCS 引用缺失的 .subckt Q2ea6a1f9_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageReferences.lib",
+      "part": "LM4041_1",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 子电路 LM4041_1_QUCS 引用缺失的 .subckt Q9da2c5b4_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageReferences.lib",
+      "part": "LM4041_ADJ",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 子电路 LM4041_ADJ_QUCS 引用缺失的 .subckt Q6040f3e7_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageRegulators.lib",
+      "part": "LM1084_ADJ",
+      "reason": "第 22 行的 X 实例带有不支持的参数或子电路名称; 子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 子电路 LM1084_ADJ_QUCS 引用缺失的 .subckt Q9b19eed3_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageRegulators.lib",
+      "part": "LM317",
+      "reason": "第 22 行的 X 实例带有不支持的参数或子电路名称; 子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 子电路 LM317_QUCS 引用缺失的 .subckt Q1ff5149e_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageRegulators.lib",
+      "part": "LM320_05",
+      "reason": "暂不支持电气参数 CCS；模型未导入，原定义不会被删减; 子电路 LM320_05_QUCS 引用缺失的 .subckt Qdef257b2_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageRegulators.lib",
+      "part": "LM337",
+      "reason": "第 17 行的 X 实例带有不支持的参数或子电路名称; 子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 子电路 LM337_QUCS 引用缺失的 .subckt Q241c72ff_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "VoltageRegulators.lib",
+      "part": "LM340_05",
+      "reason": "暂不支持电气参数 CCS；模型未导入，原定义不会被删减; 子电路 LM340_05_QUCS 引用缺失的 .subckt Qf286908f_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "Optocoupler.lib",
+      "part": "4N33",
+      "reason": "模型参数括号不匹配，或包含暂不支持的表达式; 子电路 Qf9be921f_0 引用缺失的 .subckt Qf9be921f_2；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "Optocoupler.lib",
+      "part": "ACPLK30T",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持; 子电路 ACPLK30T_QUCS 引用缺失的 .subckt Q77358f81_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "Optocoupler.lib",
+      "part": "MOC223",
+      "reason": "第 25 行包含不支持的元件：TD\t10\t0\t11\t0\tZ0=50 TD=3e-06; 子电路 Qde19713b_0 引用缺失的 .subckt Qde19713b_2；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "Optocoupler.lib",
+      "part": "MOC3082",
+      "reason": "子电路依赖外部 .model 0；请提供自包含定义; 子电路 MOC3082_QUCS 引用缺失的 .subckt Q57251fcd_0；请提供展开依赖的模型文件"
+    },
+    {
+      "upstream": "Optocoupler.lib",
+      "part": "MOC3052",
+      "reason": "Depends on an external SpiceAttach file"
+    },
+    {
+      "upstream": "Optocoupler.lib",
+      "part": "MOC3063",
+      "reason": "Depends on an external SpiceAttach file"
+    },
+    {
+      "upstream": "Thyristor.lib",
+      "part": "TriacGeneric",
+      "reason": "子电路须有 2～32 个有效端口；带 PARAMS 的表头暂不支持"
+    }
+  ],
+  "rightsEvidence": {
+    "SpiceOpamp.lib": "Description names Vadim Kuznetsov and Timofey Moiseev; no independent macro-model redistribution grant.",
+    "VoltageComparators.lib": "Contains Texas Instruments Transient Model declaration; software GPL does not replace original model terms.",
+    "VoltageReferences.lib": "Includes AD581_AD/REF191_AD macro models without independent redistribution grants.",
+    "VoltageRegulators.lib": "Contains (C) Texas Instruments Incorporated.",
+    "Optocoupler.lib": "Contains Copyright 2014 Avago Technologies; 4N25 refers to TURBO SPICE User Library, original grant not confirmed.",
+    "Thyristor.lib": "Contains Motorola/Littelfuse/ST model descriptions without independent redistribution grants."
+  }
+}

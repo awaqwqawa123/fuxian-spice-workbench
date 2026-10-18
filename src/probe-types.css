@@ -1,0 +1,53 @@
+.typed-probe-tray { padding:12px; background:#f7f8f3; border-top:1px solid #d4dfd4; }
+.typed-probe-tray .probe-tray-tools { gap:8px; color:#335647; }
+.typed-probe-tray .probe-tray-tools>strong { display:flex; align-items:center; gap:6px; font-size:12px; }
+.typed-probe-tray .probe-tray-tools>.probe-count { margin-left:auto; font:11px var(--mono); color:#6d796e; }
+.typed-probe-tray .probe-tray-tools>button { min-height:30px; color:#3f6550; background:#fff; border:1px solid #d8e2d6; padding:5px 9px; }
+.probe-mode-buttons { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:10px; }
+.probe-mode-button { --instrument:#2676bd; --instrument-tint:#edf5ff; position:relative; display:flex; align-items:center; gap:9px; min-height:62px; border:1px solid #d4deda; border-radius:10px; background:#fff; padding:9px 11px; text-align:left; color:#263c37; box-shadow:0 1px 2px #17392a05; transition:border-color .15s,background .15s,box-shadow .15s; }
+.probe-mode-current { --instrument:#a76512; --instrument-tint:#fff5e3; }
+.probe-mode-differential { --instrument:#7957b4; --instrument-tint:#f4efff; }
+.probe-mode-button:hover { background:var(--instrument-tint); border-color:var(--instrument); }
+.probe-mode-button:focus-visible,.typed-probe-tray button:focus-visible { outline:3px solid #87b5df; outline-offset:2px; }
+.probe-mode-button>b { display:grid; place-items:center; flex-shrink:0; width:38px; height:38px; border:0; border-radius:9px; color:var(--instrument); background:var(--instrument-tint); }
+.probe-mode-button .probe-instrument-icon { width:30px; height:30px; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.probe-instrument-icon .probe-icon-surface { fill:var(--instrument-tint); }
+.probe-instrument-icon .probe-icon-accent { stroke-width:2.5; }
+.probe-mode-button>span { display:flex; flex-direction:column; gap:4px; min-width:0; }
+.probe-mode-button strong { font-size:13px; font-weight:750; }
+.probe-mode-button strong em { margin-left:7px; color:var(--instrument); opacity:.75; font:11px var(--mono); }
+.probe-mode-button small { color:#657d6f; font-size:10px; line-height:1.4; }
+.probe-mode-button[aria-pressed=true] { border-color:var(--instrument); background:var(--instrument-tint); box-shadow:inset 0 0 0 1px var(--instrument),0 2px 5px #14372508; }
+.probe-mode-button[aria-pressed=true]>b { background:#fff; }
+.probe-mode-button>i { position:absolute; top:7px; right:7px; width:5px; height:5px; border-radius:50%; background:var(--instrument); }
+.typed-probe-tray .probe-instruction { display:flex; align-items:center; gap:9px; margin-top:9px; color:#5f7061; font-size:11px; min-height:37px; line-height:1.65; }
+.probe-instruction-symbol,.probe-step-sign { flex-shrink:0; font:700 15px var(--mono); color:#3c6952; width:25px; text-align:center; }
+.typed-probe-tray .probe-instruction>span:nth-child(2) { flex:1; }
+.typed-probe-tray .probe-instruction small { display:block; color:#7a8272; font-size:10px; }
+.typed-probe-tray .probe-instruction button { text-decoration:none; border:1px solid #ced9c7; border-radius:4px; padding:6px 8px; color:#456c50; white-space:nowrap; background:#fff; margin:0; }
+.typed-probe-tray .probe-instruction.has-pending { padding:8px; background:#fff2d6; border:1px solid #e2bd78; border-radius:5px; color:#785421; }
+.probe-instruction.has-pending strong { display:block; font-size:12px; }
+.probe-instruction.has-pending .probe-step-sign { color:#9b5b12; border:1px solid #cca250; border-radius:50%; width:25px; height:25px; display:grid; place-items:center; }
+.typed-probe-tray .probe-chip button { font-size:11px; gap:6px; min-height:33px; }
+.probe-chip-type { display:grid; place-items:center; min-width:21px; height:21px; padding:0 3px; border:1px solid var(--probe-color); border-radius:50%; color:var(--probe-color); font:700 11px var(--mono); }
+.probe-chip-current .probe-chip-type { border-radius:4px; }
+.probe-chip-differential .probe-chip-type { border-radius:4px; border-style:dashed; }
+.probe-chip em { font:10px var(--mono); color:#9b692b; }
+.probe-chip.unavailable { background:#fffcf2; }
+.probe-tip-current { cursor:pointer; }
+.probe-tip-wire { cursor:grab; }
+.probe-tip-wire:active { cursor:grabbing; }
+.measurement-marker .probe-badge { filter:drop-shadow(0 2px 3px #12322516); }
+.measurement-marker .probe-tip { filter:drop-shadow(0 1px 2px #12322516); }
+.measurement-marker .probe-leader { opacity:.7; }
+.measurement-marker.active .probe-badge { filter:drop-shadow(0 2px 5px #12322530); }
+.tool-probe-current .editor-wire:hover .wire-line { stroke:#a76512; stroke-width:4; }
+.probe-target-current>path { stroke:#c1852a; }
+.probe-tip-current .probe-current-arrow { pointer-events:none; }
+.tool-probe-current .current-probe-target:hover .device-hit, .tool-probe-current .current-probe-target.device-hovered .device-hit { fill:#fff5e3; stroke:#a76512; stroke-width:2; }
+.measurement-marker-differential .probe-leader { stroke-dasharray:5 3; }
+.measurement-marker-negative .probe-badge rect { stroke-dasharray:4 2; }
+.probe-badge .probe-type-divider { opacity:.4; }
+.probe-pending-endpoint text { font-family:var(--mono); }
+@media(max-width:1100px) { .probe-mode-button { gap:6px; padding:8px 7px; }.probe-mode-button>b { width:28px; height:28px; }.probe-mode-button small { font-size:9px; } }
+@media(max-width:440px) { .probe-mode-buttons { gap:5px; }.probe-mode-button { flex-direction:column; align-items:flex-start; gap:5px; }.probe-mode-button>b { width:26px; height:26px; font-size:15px; }.typed-probe-tray { padding:9px; }.typed-probe-tray .probe-instruction { align-items:flex-start; }.probe-chip em { display:none; } }

@@ -1,0 +1,5 @@
+* Pinned Qucs-S community reference; GPL-2.0-or-later; NOT a manufacturer original.
+* DiodesSchottky/SDM40E20LS; e0c0e154edb4f8403d53c5c5601c2ee133c9e970
+* Converted Qucs native diode/voltage network using pinned diode.cpp property order, constructor defaults and K,A to A,K diode port mapping; Vdc port order preserved per volt_dc.cpp
+* 
+.model SDM40E20LS_QUCS D(IS=54.8u N=1.34 CJO=199p M=0.333 VJ=0.7 FC=0.5 ISR=0 NR=2 RS=0.132 TT=7.2n KF=0 AF=1 BV=20 IBV=250u XTI=3 EG=1.11 TBV1=0 TRS1=0 TNOM=26.85 mfg="Qucs community / unspecified manufacturer" type="Schottky single die")

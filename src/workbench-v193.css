@@ -1,0 +1,100 @@
+/* One persistent navigation column spans the header, toolbar and work surface. */
+.workbench-with-assistant.workspace-shell > .workspace-navigation-rail {
+  display:flex;
+  flex:0 0 56px;
+  flex-direction:column;
+  align-self:stretch;
+  width:56px;
+  height:100%;
+  min-height:0;
+  padding:0;
+  border-right:1px solid #334f45;
+  background:#193632;
+  color:#bcd0c2;
+  overflow-y:auto;
+  scrollbar-width:none;
+}
+.workbench-with-assistant.workspace-shell > .free-app {
+  flex:1 1 0;
+  width:0;
+}
+.workspace-navigation-rail .workspace-rail-brand {
+  display:flex;
+  flex:0 0 48px;
+  align-items:center;
+  justify-content:center;
+  height:48px;
+  color:#e5f0df;
+  border-bottom:1px solid #334f45;
+}
+.workspace-navigation-rail .workspace-rail-tabs {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  padding:8px 5px;
+}
+.workspace-navigation-rail .workspace-rail-tabs > button {
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  flex:none;
+  gap:5px;
+  width:45px;
+  min-height:55px;
+  padding:8px 2px;
+  border:1px solid transparent;
+  border-radius:6px;
+  color:#abc5b7;
+  background:transparent;
+  font-size:10px;
+  line-height:1.2;
+  white-space:nowrap;
+  transition:background-color .12s ease,color .12s ease;
+}
+.workspace-navigation-rail .workspace-rail-tabs > button > svg { flex:none; stroke-width:1.6; }
+.workspace-navigation-rail .workspace-rail-tabs > button:hover { color:#f2f8ed; background:#294d40; }
+.workspace-navigation-rail .workspace-rail-tabs > button[aria-expanded=true] {
+  border-color:#65876b;
+  background:#385d48;
+  color:#f1f8e9;
+}
+.workspace-navigation-rail .workspace-rail-tabs > button[aria-expanded=true]::before {
+  content:'';
+  position:absolute;
+  left:-6px;
+  top:13px;
+  bottom:13px;
+  width:3px;
+  border-radius:0 2px 2px 0;
+  background:#c4e5ad;
+}
+.workspace-navigation-rail :is(button,a):focus-visible { outline:2px solid #c4e5ad; outline-offset:-3px; }
+
+.workspace-navigation-rail .workspace-rail-bottom {
+  margin-top:auto;
+  padding:8px 6px 12px;
+  display:flex;
+  justify-content:center;
+  border-top:1px solid rgba(196,229,173,.18);
+}
+.workspace-navigation-rail .workspace-rail-bottom button {
+  width:44px;
+  min-height:44px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  border:1px solid transparent;
+  border-radius:7px;
+  color:#c8dccb;
+  background:transparent;
+  font-size:10px;
+}
+.workspace-navigation-rail .workspace-rail-bottom button:hover { color:#f2f8ed; background:#294d40; }
+
+@media(prefers-reduced-motion:reduce) {
+  .workspace-navigation-rail .workspace-rail-tabs > button { transition:none; }
+}

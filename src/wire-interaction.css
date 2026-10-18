@@ -1,0 +1,8 @@
+.editor-canvas.tool-wire .wire-hit { stroke-width:20; vector-effect:non-scaling-stroke; cursor:crosshair; }
+.wire-follow-preview .pending-wire { stroke:#228257; stroke-width:2; stroke-dasharray:none; opacity:.9; }
+.wire-grid-landing { fill:none; stroke:#228257; stroke-width:1.4; }
+.wire-grid-landing circle { stroke-dasharray:2 3; opacity:.5; }
+.wire-snap-conductor { fill:none; stroke:#278967; stroke-width:5; opacity:.35; }
+.wire-snap-ring { fill:#e7faee; stroke:#168053; stroke-width:2; }
+.wire-snap-dot { fill:#168053; }
+.wire-snap-preview text { font-size:11px; font-weight:750; fill:#116440; paint-order:stroke; stroke:#fcfdfb; stroke-width:4px; stroke-linejoin:round; }

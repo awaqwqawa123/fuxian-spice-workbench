@@ -1,0 +1,27 @@
+.inspector-panel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line, #d9e0e8);
+}
+.inspector-panel-controls > strong { font-size: 12px; white-space: nowrap; }
+.inspector-panel-controls > div { display: flex; gap: 4px; }
+.inspector-panel-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px 7px;
+  border: 1px solid var(--line, #d9e0e8);
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.inspector-panel-controls button:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+.inspector-panel-controls button:focus-visible { outline: 2px solid var(--accent, #2676d8); outline-offset: 2px; }

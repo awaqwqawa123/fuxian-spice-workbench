@@ -1,0 +1,26 @@
+.canvas-waveform-controls{display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:4px 6px;border-bottom:1px solid var(--border,#d8e2dd);background:var(--surface,#f5f8f5);color:var(--text,#233a31);flex:none;font:10px/1.25 var(--font-ui,inherit)}
+.canvas-waveform-controls label{display:flex;align-items:center;gap:4px;min-width:0}
+.canvas-waveform-controls label:first-child{flex:1;min-width:100px}
+.canvas-waveform-controls label:first-child select{min-width:40px;width:100%}
+.canvas-waveform-controls select,.canvas-waveform-controls button{min-height:23px;height:23px;padding:1px 5px;font-size:10px;border:1px solid var(--border,#cbd9d0);border-radius:4px;color:inherit;background:var(--surface-raised,#fff)}
+.canvas-waveform-controls button{display:inline-flex;align-items:center;gap:3px}
+.canvas-waveform-arrange{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding-left:6px;border-left:1px solid var(--border,#d8e2dd)}
+.canvas-waveform-arrange button{white-space:nowrap}
+.canvas-waveform-arrange button:disabled{opacity:.5}
+.canvas-waveform-content{min-height:0;height:100%;display:flex;flex-direction:column}
+.canvas-waveform-preview{flex:1;min-height:0}
+.canvas-waveform-preview-panel{position:relative;min-height:0;outline-offset:-2px}
+.canvas-waveform-preview-panel[role=button]{cursor:crosshair}
+.canvas-waveform-preview-panel.is-probe-target{outline:none;border-color:var(--accent,#257a58)}
+.wave-pane-target{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;color:inherit;white-space:nowrap;padding:3px 5px;border-radius:4px;font-size:12px}
+.wave-pane-target[aria-pressed=true]{color:var(--accent,#257a58);background:var(--accent-soft,#e6f1eb)}
+.wave-pane-target small{font-size:10px;font-weight:500}
+.wave-view.is-probe-target{border-color:var(--accent,#257a58)}
+/* The foreignObject scales the entire embedded layout, including all statuses. */
+.canvas-diagram-content .canvas-waveform-controls label{white-space:nowrap;flex:0 0 auto}
+.canvas-diagram-content .canvas-waveform-controls label>span{flex:none}
+.canvas-diagram-content .canvas-waveform-controls label:first-child{flex:1 1 140px;min-width:90px;max-width:none}
+.canvas-diagram-content .canvas-waveform-controls label:first-child select{box-sizing:border-box;flex:1 1 0;min-width:0;max-width:none;width:100%}
+.canvas-diagram-content .canvas-waveform-controls label:not(:first-child) select{box-sizing:border-box;min-width:48px;max-width:90px}
+.canvas-diagram-content .canvas-waveform-controls button{flex:none;white-space:nowrap}
+.canvas-diagram-content .canvas-waveform-controls button svg{width:12px;height:12px}

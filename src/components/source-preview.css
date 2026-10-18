@@ -1,0 +1,14 @@
+.source-waveform-preview { min-width: 0; width: 100%; padding: 12px; border: 1px solid var(--line, #d9e2ef); border-radius: 12px; background: var(--surface, transparent); box-sizing: border-box; }
+.source-preview-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; margin-bottom: 10px; }
+.source-preview-heading span { color: var(--muted, #66758d); font-size: 11px; white-space: nowrap; }
+.source-preview-window { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr) auto; gap: 6px; align-items: end; margin-bottom: 8px; }
+.source-waveform-preview .source-preview-window label { min-width: 0; font-size: 11px; gap: 4px; }
+.source-waveform-preview .source-preview-window input { min-width: 0; width: 100%; box-sizing: border-box; padding: 6px; font-size: 11px; }
+.source-waveform-preview .source-preview-window button { font-size: 11px; padding: 6px 8px; min-height: 30px; }
+.source-waveform-preview svg { width: 100%; display: block; overflow: visible; font-size: 9px; fill: var(--muted, #66758d); }
+.source-preview-grid { stroke: var(--line, #d9e2ef); stroke-width: .7; stroke-dasharray: 2 3; }
+.source-preview-axis { stroke: var(--muted, #66758d); fill: none; stroke-width: 1; }
+.source-preview-line { stroke: var(--accent, #3563df); fill: none; stroke-width: 1.8; stroke-linejoin: round; }
+.source-waveform-preview small { display: block; color: var(--muted, #66758d); font-size: 11px; line-height: 1.5; margin-top: 6px; }
+.source-expression-help { display: grid; gap: 6px; }
+.source-expression-help small { font-size: 11px; line-height: 1.5; }

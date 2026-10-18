@@ -1,0 +1,45 @@
+.assistant-markdown {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  color: inherit;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.assistant-markdown > :first-child { margin-top: 0; }
+.assistant-markdown > :last-child { margin-bottom: 0; }
+.assistant-markdown.agent-result-summary { margin: 12px 0; }
+.assistant-markdown p { margin: .65em 0; }
+.assistant-markdown strong { display: inline; margin: 0; font-size: inherit; letter-spacing: normal; color: inherit; font-weight: 650; }
+.assistant-markdown :is(h1,h2,h3,h4,h5,h6) { margin: 1.1em 0 .45em; font-size: 13px; line-height: 1.5; letter-spacing: 0; }
+.assistant-markdown :is(ul,ol) { padding-left: 1.5em; margin: .6em 0; }
+.assistant-markdown li { margin: .3em 0; }
+.assistant-markdown li > p { margin: .3em 0; }
+.assistant-markdown code { padding: .1em .32em; border-radius: 3px; background: #284b370c; color: #315b3d; font: .95em/1.6 var(--mono); }
+.assistant-markdown pre { margin: .75em 0; padding: 10px 12px; border: 1px solid #d6e1d1; border-radius: 6px; background: #f3f6ef; white-space: pre; overflow: auto; max-height: 300px; }
+.assistant-markdown pre code { padding: 0; border: 0; background: none; color: inherit; }
+.assistant-markdown blockquote { margin: .75em 0; padding: 2px 12px; border-left: 3px solid #b7caa8; color: #5e725c; }
+.assistant-markdown a { color: #21664f; text-decoration: underline; text-underline-offset: 3px; }
+.assistant-markdown .assistant-table-scroll { overflow-x: auto; white-space: normal; margin: .75em 0; }
+.assistant-markdown table { border-collapse: collapse; width: 100%; font-size: 11px; }
+.assistant-markdown :is(th,td) { padding: 6px 8px; border: 1px solid #d6e1d1; text-align: left; }
+.assistant-markdown th { background: #edf3e7; }
+.assistant-markdown hr { margin: 1em 0; border: 0; border-top: 1px solid #d6e1d1; }
+.assistant-markdown input[type=checkbox] { display: inline; width: auto; margin: 0 .4em 0 0; }
+.assistant-markdown .task-list-item { list-style: none; }
+.assistant-markdown .katex { font-size: 1.08em; white-space: nowrap; overflow-wrap: normal; }
+.assistant-markdown .katex-display {
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: .8em 0;
+  padding: .65em .75em;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid var(--ui-border, #d6e1d1);
+  border-radius: 7px;
+  background: var(--ui-soft, #f5f8f3);
+  text-align: center;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+.assistant-markdown .katex-display > .katex { display: inline-block; min-width: min-content; text-align: initial; }

@@ -1,0 +1,17 @@
+.workspace-commandbar .probe-toolbar-inline,
+.workspace-commandbar .probe-toolbar-modes,
+.workspace-commandbar .probe-toolbar-records { display:flex; flex:none; align-items:center; gap:2px; }
+.workspace-commandbar .probe-toolbar-inline { border-inline:1px solid #d5dfce; padding-inline:5px; margin-inline:3px; }
+.workspace-commandbar .probe-toolbar-modes { gap:0; border:1px solid #d2dfcf; border-radius:5px; background:#fff; }
+.workspace-shell .workspace-commandbar .probe-toolbar-modes button { min-width:38px; min-height:28px; padding:3px 5px; gap:2px; border-radius:3px; }
+.workspace-commandbar .probe-inline-mode b { font:600 10px var(--mono); }
+.workspace-commandbar .probe-mode-voltage { --probe-color:#4b79be; }
+.workspace-commandbar .probe-mode-current { --probe-color:#b57524; }
+.workspace-commandbar .probe-mode-differential { --probe-color:#8b5eaf; }
+.workspace-shell .workspace-commandbar .probe-inline-mode[aria-pressed=true] { color:var(--probe-color); border-color:currentColor; background:#f5f8f1; }
+.workspace-commandbar .probe-instrument-icon { flex:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.workspace-commandbar .probe-record-select { width:150px; height:28px; margin-left:5px; padding:3px 4px; border:1px solid #d2dfcf; border-radius:4px; background:#fff; color:#355740; font-size:10px; }
+.workspace-commandbar .probe-record-select:focus-visible { outline:2px solid #408451; }
+.workspace-commandbar .probe-toolbar-pending { color:#926929; }
+.connection-check-window { width:min(620px,calc(100vw - 40px)); }
+.connection-check-window .editor-issues { display:block; padding:12px 24px 24px; max-height:60vh; overflow:auto; }

@@ -1,0 +1,13 @@
+/* Resize targets retain a useful screen size even when the sheet is zoomed out. */
+.canvas-waveform-diagram .canvas-diagram-content { cursor:grab; user-select:none }
+.canvas-waveform-diagram .canvas-diagram-content :is(input,textarea,[contenteditable]) { cursor:text; user-select:text }
+.canvas-waveform-diagram .canvas-diagram-content :is(button,summary,select) { cursor:pointer }
+.canvas-waveform-diagram.is-manipulating,.canvas-waveform-diagram.is-manipulating .canvas-diagram-content { cursor:grabbing }
+.canvas-diagram-edge-resize,.canvas-diagram-corner-resize { outline:none }
+.canvas-diagram-edge-resize.edge-n,.canvas-diagram-edge-resize.edge-s { cursor:ns-resize }
+.canvas-diagram-edge-resize.edge-e,.canvas-diagram-edge-resize.edge-w { cursor:ew-resize }
+.canvas-diagram-corner-resize.edge-nw { cursor:nwse-resize }
+.canvas-diagram-corner-resize.edge-ne,.canvas-diagram-corner-resize.edge-sw { cursor:nesw-resize }
+.canvas-diagram-corner-dot { opacity:0; fill:var(--surface,#fff); stroke:var(--accent,#43806d); stroke-width:1 }
+.canvas-waveform-diagram:is(:hover,:focus-within,.is-selected) .canvas-diagram-corner-dot { opacity:1 }
+.canvas-diagram-edge-resize:focus rect { stroke:var(--accent,#43806d); stroke-width:1; vector-effect:non-scaling-stroke }

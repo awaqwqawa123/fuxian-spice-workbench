@@ -1,0 +1,17 @@
+.free-app .drawing-tools .schematic-symbol-tools { display:flex; align-items:center; gap:4px; flex-shrink:0; padding:0 5px; border-left:1px solid var(--ui-border,#dde7e5); border-right:1px solid var(--ui-border,#dde7e5); }
+.schematic-symbol-group { display:flex; align-items:stretch; border:1px solid transparent; border-radius:5px; }
+.free-app .drawing-tools .schematic-symbol-group button { border:0; border-radius:3px; min-height:30px; padding:3px 5px; }
+.free-app .drawing-tools .schematic-symbol-group .schematic-symbol-dropdown { padding:3px 2px; border-left:1px solid var(--ui-border,#e2eae8); }
+.schematic-symbol-primary > svg { width:24px; height:24px; flex:none; }
+.free-app .drawing-tools .schematic-symbol-primary > span { font-size:11px; white-space:nowrap; }
+.schematic-symbol-group.active { border-color:var(--ui-border-strong,#afd5c9); background:var(--ui-accent-soft,#e5f3ee); }
+.schematic-symbol-group.active button { color:var(--ui-accent-ink,#14695b); }
+.schematic-symbol-menu { position:fixed; z-index:1600; width:min(238px,calc(100vw - 16px)); overflow:auto; padding:6px; border:1px solid var(--ui-border,#d4e1de); border-radius:9px; background:var(--ui-raised,#fff); color:var(--ui-ink,#29483f); box-shadow:0 8px 28px #213e302b; }
+.schematic-symbol-menu-heading { display:flex; justify-content:space-between; gap:8px; padding:7px 6px 9px; font-size:12px; font-weight:600; border-bottom:1px solid var(--ui-border,#e5edeb); margin-bottom:3px; }
+.schematic-symbol-menu-heading small { font-size:10px; font-weight:400; color:var(--ui-muted,#6e8580); }
+.schematic-symbol-menu > button { display:flex; align-items:center; gap:12px; width:100%; padding:6px 9px; min-height:40px; border:1px solid transparent; border-radius:5px; background:transparent; text-align:left; color:inherit; font-size:12px; }
+.schematic-symbol-menu > button > svg { width:40px; height:31px; flex:none; }
+.schematic-symbol-menu > button.selected { background:var(--ui-soft,#f1f7f5); }
+.schematic-symbol-menu > button:hover,.schematic-symbol-menu > button:focus-visible { outline:none; background:var(--ui-accent-soft,#e5f3ee); border-color:var(--ui-border-strong,#aacfc2); }
+.schematic-symbol-tools button:focus-visible { outline:2px solid var(--ui-accent,#188776); outline-offset:2px; }
+@media(max-width:1400px) { .free-app .drawing-tools .schematic-symbol-primary > span { display:none; } }

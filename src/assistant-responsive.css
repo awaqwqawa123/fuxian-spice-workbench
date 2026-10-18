@@ -1,0 +1,73 @@
+/* Shared sidebar scale and shrink rules for drawing, explanation and models. */
+.workspace-shell .workspace-body > .assistant-sidebar {
+  font-size:13px;
+  line-height:1.55;
+}
+.workspace-shell .workspace-body > .assistant-sidebar .ai-assistant { font-size:13px; }
+.workspace-shell .workspace-body > .assistant-sidebar :is(
+  .assistant-sidebar-content,.assistant-tab-panel,.ai-assistant,.desktop-control-panel,
+  .desktop-control-assistant,.desktop-control-scroll,.circuit-explanation,
+  .assistant-models-panel,.model-agent,.model-task-workspace
+) { min-width:0; }
+.workspace-shell .assistant-sidebar :is(.assistant-sidebar-hint,.desktop-control-details,.desktop-control-compose > label,.circuit-explanation-compose label) {
+  font-size:12px;
+  line-height:1.5;
+}
+.workspace-shell .assistant-sidebar :is(
+  .desktop-control-status,.desktop-control-intro,.desktop-control-canvas,
+  .desktop-control-reconnect-result,.desktop-control-retry,.desktop-control-handoff-feedback,
+  .desktop-control-setup,.desktop-control-run-status,.desktop-control-approval,
+  .desktop-control-task,.desktop-control-conflict-choice,.desktop-control-redraw,
+  .desktop-control-empty,.desktop-control-pending,.desktop-control-compose,
+  .circuit-explanation,.assistant-model-downloads
+) { font-size:12px; line-height:1.55; }
+.workspace-shell .assistant-sidebar :is(.ai-error,.ai-notice,.desktop-control-run-status p span,.desktop-control-task > ol p) {
+  font-size:12px;
+  line-height:1.55;
+  overflow-wrap:anywhere;
+}
+.workspace-shell .assistant-sidebar :is(.desktop-control-task > summary,.desktop-control-compose > label,.desktop-control-redraw label) { font-size:12px; }
+.workspace-shell .assistant-sidebar :is(.desktop-control-task small,.desktop-control-run-status small,.desktop-control-approval-dock > strong,.desktop-control-compose > div > small,.circuit-explanation-compose small) {
+  font-size:11px;
+  line-height:1.5;
+}
+.workspace-shell .assistant-sidebar :is(.desktop-control-compose textarea,.desktop-control-redraw textarea,.circuit-explanation-compose textarea) {
+  font-size:13px;
+  line-height:1.55;
+}
+.workspace-shell .assistant-sidebar :is(.ai-assistant input,.ai-assistant select,.persistent-message > p,.persistent-message .assistant-markdown,.circuit-explanation-messages article) {
+  font-size:13px;
+  line-height:1.6;
+}
+.workspace-shell .assistant-sidebar .persistent-message header { font-size:11px; }
+.workspace-shell .assistant-sidebar .persistent-message header time { font-size:11px; }
+.workspace-shell .assistant-sidebar :is(.ai-assistant,.circuit-explanation,.model-agent) button {
+  min-width:0;
+  max-width:100%;
+  font-size:12px;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+.workspace-shell .assistant-sidebar .ai-actions > button {
+  flex:1 1 130px;
+  justify-content:center;
+  min-height:36px;
+  white-space:normal;
+  text-align:center;
+}
+.workspace-shell .assistant-sidebar :is(.desktop-control-status,.desktop-control-run-status > div,.desktop-control-handoff,.desktop-control-compose > div:last-child,.circuit-explanation-controls) {
+  flex-wrap:wrap;
+}
+.workspace-shell .assistant-sidebar .desktop-control-status > strong { flex:1 1 170px; min-width:0; overflow-wrap:anywhere; }
+.workspace-shell .assistant-sidebar .desktop-control-status > button { flex:none; }
+.workspace-shell .assistant-sidebar .desktop-control-handoff :is(button,a) { flex:1 1 105px; min-width:0; white-space:normal; text-align:center; }
+.workspace-shell .assistant-sidebar .desktop-control-run-status strong { min-width:0; overflow-wrap:anywhere; }
+.workspace-shell .assistant-sidebar .desktop-control-task > ol > li > strong { min-width:0; overflow-wrap:anywhere; }
+.workspace-shell .assistant-sidebar :is(.desktop-control-conflict-confirm,.desktop-control-redraw,.desktop-control-compose) > div { min-width:0; }
+.workspace-shell .assistant-sidebar .desktop-control-conflict-confirm button { white-space:normal; }
+.workspace-shell .assistant-sidebar .circuit-explanation-controls > span { min-width:0; overflow-wrap:anywhere; }
+@container assistant-sidebar (max-width:330px) {
+  .model-task-connection { grid-template-columns:minmax(0,1fr) auto; }
+  .model-task-connection > strong { grid-column:1/-1; }
+  .model-agent-provider label { min-width:0; }
+}

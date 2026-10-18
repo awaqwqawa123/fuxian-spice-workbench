@@ -1,0 +1,336 @@
+/* Unified engineering workbench colors. This final stylesheet bridges the older
+   component styles onto shared tokens without changing their layout or signals. */
+:root[data-workbench-theme] {
+  --ui-background:#eef1f6; --ui-panel:#f0f3f8; --ui-raised:#ffffff; --ui-soft:#f0f3f8;
+  --ui-hover:#e9eef7; --ui-border:#e1e6ee; --ui-border-strong:#bbc6d6;
+  --ui-ink:#243247; --ui-muted:#526177; --ui-faint:#526177;
+  --ui-accent:#3264d8; --ui-accent-soft:#eaf0ff; --ui-accent-ink:#2854b7; --ui-on-accent:#ffffff;
+  --ui-rail:#172338; --ui-rail-ink:#9daec7; --ui-rail-active:#ffffff; --ui-rail-hover:#ffffff0d;
+  --ui-success:#1c6e55; --ui-elevation:0 2px 8px #17233808;
+  --ui-warning:#886329; --ui-warning-bg:#fbf3df; --ui-danger:#a4443c; --ui-danger-bg:#fbedeb;
+  --ui-info:#386b99; --ui-info-bg:#eaf1f8; --ui-shadow:#1b2e4224; --ui-scrim:#13233266;
+  --muted:var(--ui-muted); --line:var(--ui-border); --border:var(--ui-border); --accent:var(--ui-accent);
+  --panel:var(--ui-raised); --panel-soft:var(--ui-soft); --ink:var(--ui-ink);
+  --surface:var(--ui-panel); --surface-raised:var(--ui-raised); --surface-soft:var(--ui-soft);
+  --text:var(--ui-ink); --text-muted:var(--ui-muted); --accent-soft:var(--ui-accent-soft);
+  color-scheme:light;
+}
+:root[data-workbench-theme=dark] {
+  --ui-background:#111827; --ui-panel:#182235; --ui-raised:#202d43; --ui-soft:#141e30;
+  --ui-hover:#293b57; --ui-border:#2f3d54; --ui-border-strong:#526782;
+  --ui-ink:#e1e8f4; --ui-muted:#a1b0c7; --ui-faint:#a1b0c7;
+  --ui-accent:#80aaff; --ui-accent-soft:#263c60; --ui-accent-ink:#b5ceff; --ui-on-accent:#12243f;
+  --ui-rail:#0e1727; --ui-rail-ink:#98abc7; --ui-rail-active:#ffffff; --ui-rail-hover:#ffffff0d;
+  --ui-success:#73c7ac; --ui-elevation:0 2px 8px #00000018;
+  --ui-warning:#e2bf79; --ui-warning-bg:#423923; --ui-danger:#f5aaa1; --ui-danger-bg:#482d2c;
+  --ui-info:#99c7ed; --ui-info-bg:#273e51; --ui-shadow:#00000055; --ui-scrim:#090f17a8;
+  color-scheme:dark;
+}
+:root[data-workbench-theme=warm] {
+  --ui-background:#e9e2d5; --ui-panel:#f0eadf; --ui-raised:#fffaf1; --ui-soft:#eee8dc;
+  --ui-hover:#e8e0d1; --ui-border:#d9cebc; --ui-border-strong:#b9a98e;
+  --ui-ink:#493f33; --ui-muted:#685b4a; --ui-faint:#685b4a;
+  --ui-accent:#79603d; --ui-accent-soft:#e9deca; --ui-accent-ink:#6d5330; --ui-on-accent:#fffaf1;
+  --ui-rail:#302a24; --ui-rail-ink:#b6a794; --ui-rail-active:#fffaf1; --ui-rail-hover:#ffffff0d;
+  --ui-success:#48632f; --ui-elevation:0 2px 8px #4e382508;
+  --ui-warning:#886228; --ui-warning-bg:#f4e8cc; --ui-danger:#a44836; --ui-danger-bg:#f8e7dd;
+  --ui-info:#426f83; --ui-info-bg:#e6eef0; --ui-shadow:#4e382524; --ui-scrim:#30241477;
+}
+:root[data-workbench-theme=classic] {
+  --ui-background:#e7edf1; --ui-panel:#eef2f5; --ui-raised:#ffffff; --ui-soft:#eef2f5;
+  --ui-hover:#e5edf1; --ui-border:#d1dce3; --ui-border-strong:#aebec9;
+  --ui-ink:#243746; --ui-muted:#50616f; --ui-faint:#50616f;
+  --ui-accent:#1c715e; --ui-accent-soft:#e1f0e9; --ui-accent-ink:#195d4e; --ui-on-accent:#ffffff;
+  --ui-rail:#193632; --ui-rail-ink:#abc5b7; --ui-rail-active:#ffffff; --ui-rail-hover:#ffffff0d;
+  --ui-success:#1c6e55; --ui-elevation:0 2px 8px #17233808;
+}
+:root[data-workbench-theme=graphite] {
+  --ui-background:#15181d; --ui-panel:#23272e; --ui-raised:#2b3038; --ui-soft:#1c2026;
+  --ui-hover:#343c48; --ui-border:#3b434e; --ui-border-strong:#596777;
+  --ui-ink:#e5e9ef; --ui-muted:#a8b3c2; --ui-faint:#a8b3c2;
+  --ui-accent:#a3c0e4; --ui-accent-soft:#334258; --ui-accent-ink:#c6dcf8; --ui-on-accent:#1b293a;
+  --ui-rail:#13161b; --ui-rail-ink:#a6b3c6; --ui-rail-active:#ffffff; --ui-rail-hover:#ffffff0d;
+  --ui-success:#8bc8b5; --ui-elevation:0 2px 8px #00000018;
+  --ui-warning:#e2bf79; --ui-warning-bg:#423923; --ui-danger:#f5aaa1; --ui-danger-bg:#482d2c;
+  --ui-info:#a3c0e4; --ui-info-bg:#293b50; --ui-shadow:#00000055; --ui-scrim:#090f17a8;
+  color-scheme:dark;
+}
+:root[data-workbench-theme=minimal] {
+  --ui-background:#f0f1f3; --ui-panel:#f3f4f6; --ui-raised:#ffffff; --ui-soft:#f3f4f6;
+  --ui-hover:#e8ecf0; --ui-border:#dfe3e8; --ui-border-strong:#b8c1cd;
+  --ui-ink:#293344; --ui-muted:#566173; --ui-faint:#566173;
+  --ui-accent:#52657a; --ui-accent-soft:#e8edf3; --ui-accent-ink:#3d5066; --ui-on-accent:#ffffff;
+  --ui-rail:#f3f4f6; --ui-rail-ink:#566173; --ui-rail-active:#243247; --ui-rail-hover:#e5e9ee;
+  --ui-success:#337b65; --ui-elevation:0 2px 8px #17233805;
+}
+
+:root[data-workbench-theme=ocean] {
+  --ui-background:#e5f0f3; --ui-panel:#e9f5f7; --ui-raised:#ffffff; --ui-soft:#e9f5f7;
+  --ui-hover:#dceef2; --ui-border:#cedfe4; --ui-border-strong:#a0bcc7;
+  --ui-ink:#244755; --ui-muted:#42616f; --ui-faint:#42616f;
+  --ui-accent:#08798b; --ui-accent-soft:#dff2f4; --ui-accent-ink:#096676; --ui-on-accent:#ffffff;
+  --ui-rail:#124655; --ui-rail-ink:#a7c8d2; --ui-rail-active:#ffffff; --ui-rail-hover:#ffffff0d;
+  --ui-success:#1c6e55; --ui-elevation:0 2px 8px #12465508;
+}
+:root[data-workbench-theme=forest] {
+  --ui-background:#0f211b; --ui-panel:#1c352b; --ui-raised:#244236; --ui-soft:#172d24;
+  --ui-hover:#2b4b3d; --ui-border:#365648; --ui-border-strong:#577969;
+  --ui-ink:#dfede4; --ui-muted:#a5beae; --ui-faint:#a5beae;
+  --ui-accent:#7dd7a5; --ui-accent-soft:#2a503c; --ui-accent-ink:#a5eac3; --ui-on-accent:#102b20;
+  --ui-rail:#0b1914; --ui-rail-ink:#9fbbaa; --ui-rail-active:#f2fff6; --ui-rail-hover:#ffffff0d;
+  --ui-success:#7dd7a5; --ui-elevation:0 2px 8px #00000018;
+  --ui-warning:#e2c183; --ui-warning-bg:#3e3724; --ui-danger:#f1aaa4; --ui-danger-bg:#462d2a;
+  --ui-info:#a0cee0; --ui-info-bg:#1e3b40; --ui-shadow:#00000055; --ui-scrim:#06120da8;
+  color-scheme:dark;
+}
+:root[data-workbench-theme=violet] {
+  --ui-background:#1b162a; --ui-panel:#2b243f; --ui-raised:#352d4b; --ui-soft:#251e37;
+  --ui-hover:#423655; --ui-border:#4b3e61; --ui-border-strong:#77678f;
+  --ui-ink:#eee7fa; --ui-muted:#bcb0d3; --ui-faint:#bcb0d3;
+  --ui-accent:#b8a1f2; --ui-accent-soft:#44345e; --ui-accent-ink:#ddc8ff; --ui-on-accent:#251637;
+  --ui-rail:#151024; --ui-rail-ink:#b4a3cd; --ui-rail-active:#faf5ff; --ui-rail-hover:#ffffff0d;
+  --ui-success:#9dd9b6; --ui-elevation:0 2px 8px #00000018;
+  --ui-warning:#e9c48b; --ui-warning-bg:#423327; --ui-danger:#f3aaa9; --ui-danger-bg:#4a2b36;
+  --ui-info:#adc9f2; --ui-info-bg:#30304b; --ui-shadow:#00000055; --ui-scrim:#100a1ca8;
+  color-scheme:dark;
+}
+:root[data-workbench-theme=rose] {
+  --ui-background:#f2e8ed; --ui-panel:#f9eef2; --ui-raised:#fffdfd; --ui-soft:#f9eef2;
+  --ui-hover:#f1e1e8; --ui-border:#e5d4dd; --ui-border-strong:#c6aab9;
+  --ui-ink:#493242; --ui-muted:#705367; --ui-faint:#705367;
+  --ui-accent:#ae456e; --ui-accent-soft:#f7e3ec; --ui-accent-ink:#96345d; --ui-on-accent:#ffffff;
+  --ui-rail:#47303e; --ui-rail-ink:#d3b4c5; --ui-rail-active:#fff7fb; --ui-rail-hover:#ffffff0d;
+  --ui-success:#327862; --ui-elevation:0 2px 8px #47303e08;
+}
+:root[data-workbench-theme=blueprint] {
+  --ui-background:#102944; --ui-panel:#173a5c; --ui-raised:#204769; --ui-soft:#12314f;
+  --ui-hover:#2b5475; --ui-border:#396383; --ui-border-strong:#6795b4;
+  --ui-ink:#e1f0fb; --ui-muted:#b1cadd; --ui-faint:#b1cadd;
+  --ui-accent:#75c6f4; --ui-accent-soft:#215375; --ui-accent-ink:#b1e4ff; --ui-on-accent:#072942;
+  --ui-rail:#071b31; --ui-rail-ink:#9dbad0; --ui-rail-active:#ffffff; --ui-rail-hover:#ffffff0d;
+  --ui-success:#99ddbd; --ui-elevation:0 2px 8px #00000018;
+  --ui-warning:#f0cb83; --ui-warning-bg:#433b28; --ui-danger:#f3b1aa; --ui-danger-bg:#482f37;
+  --ui-info:#b1e4ff; --ui-info-bg:#204b6e; --ui-shadow:#00000055; --ui-scrim:#051426a8;
+  color-scheme:dark;
+}
+:root[data-workbench-theme=amber] {
+  --ui-background:#16120c; --ui-panel:#2b241a; --ui-raised:#352d22; --ui-soft:#241e15;
+  --ui-hover:#443827; --ui-border:#51432e; --ui-border-strong:#806c4c;
+  --ui-ink:#f3e8d4; --ui-muted:#c0ad8c; --ui-faint:#c0ad8c;
+  --ui-accent:#f4bb52; --ui-accent-soft:#4d3820; --ui-accent-ink:#f8d394; --ui-on-accent:#2d200b;
+  --ui-rail:#15100a; --ui-rail-ink:#b9a080; --ui-rail-active:#fff3da; --ui-rail-hover:#ffffff0d;
+  --ui-success:#b5d59b; --ui-elevation:0 2px 8px #00000018;
+  --ui-warning:#f4c675; --ui-warning-bg:#47331a; --ui-danger:#f2aaa0; --ui-danger-bg:#482921;
+  --ui-info:#b2d0e2; --ui-info-bg:#29373b; --ui-shadow:#00000055; --ui-scrim:#0f0a04a8;
+  color-scheme:dark;
+}
+
+:root[data-workbench-theme] body { color:var(--ui-ink); background:var(--ui-background); }
+:root[data-workbench-theme] :is(.workspace-shell,.free-app) { --workspace-border:var(--ui-border); --desk-ink:var(--ui-ink); --desk-green:var(--ui-accent); --desk-line:var(--ui-border); }
+:root[data-workbench-theme] :is(.project-shell,.project-main,.free-app,.free-body,.workbench-with-assistant,.drawing-workspace) { color:var(--ui-ink)!important; background:var(--ui-background)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.workspace-navigation-rail,.workspace-topbar,.drawing-toolbar,.workspace-commandbar,.device-library,.project-sidebar,.project-sidebar-panel,.editor-inspector,.assistant-sidebar,.assistant-sidebar-heading,.assistant-sidebar-content,.assistant-models-panel,.assistant-chat-panel,.assistant-tab-panel,.inspector-tab-panel,.ai-assistant,.model-agent) { color:var(--ui-ink)!important; background:var(--ui-panel)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.workspace-rail-brand,.workspace-topbar-title,.free-brand,.free-brand strong,.free-header-actions,.library-title>span,.editor-inspector-heading strong,.assistant-sidebar-heading h2) { color:var(--ui-ink)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] .free-brand strong span { color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.drawing-status,.workspace-footer,.connection-status,.free-footer,.project-sidebar-footer,.assistant-workspace-tabs,.inspector-tabs,.inspector-pages,.library-tabs,.user-library-switch,.source-analysis-context,.source-summary) { background:var(--ui-soft)!important; color:var(--ui-muted)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.editor-inspector-heading,.library-foot,.pin-list,.pin-list>div,.assistant-sidebar-hint,.project-sidebar-heading,.library-section-heading,.model-agent-manual,.persistent-message,.ai-conversation-heading) { border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.free-save-state,.free-version,.rail-version,.library-count,.library-count span,.library-title small,.library-foot,.library-foot small,.library-model-note,.library-empty,.library-hint,.library-section>strong,.assistant-sidebar-hint,.assistant-sidebar-kicker,.editor-inspector-heading small,.drawing-status small,.project-sidebar-entry-meta,.project-sidebar-eyebrow,.project-sidebar-section,.project-sidebar-footer>p,.project-sidebar-save,.persistent-status,.persistent-session-details,.persistent-session-details dt,.model-agent header p,.model-agent-intro,.model-agent-provider p,.model-agent-provider small,.model-agent-steps small,.model-agent-message>small,.model-agent-candidates summary>span,.spice-code-note,.model-note,.inspector-intro,.source-summary small,.pin-list span,.field-hint,.model-agent-manual>summary) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.free-version,.project-sidebar-current,.project-sidebar-rail-count,.device-palette kbd,.device-search kbd,.appearance-settings code) { background:var(--ui-soft)!important; color:var(--ui-muted)!important; border-color:var(--ui-border)!important; }
+
+/* Controls use the same states in header, palette, property panels and portals. */
+:root[data-workbench-theme] :is(.workspace-shell,.workbench-window,.model-editor-dialog,.spice-library-dialog,.extension-library-window,.user-library-save-dialog,.example-gallery,.canvas-context-menu,.component-value-editor) :where(button,summary,label,select,input,textarea) { color:var(--ui-ink); }
+:root[data-workbench-theme] :is(.workspace-topbar button,.workspace-topbar .file-exchange-menu summary,.workspace-rail-tabs>button,.workspace-rail-bottom button,.drawing-tools button,.netlist-toggle,.library-tabs button,.library-categories button,.library-section button,.library-extension-toggle,.user-library-switch button,.user-library-tools button,.project-sidebar-icon,.project-sidebar-entry,.assistant-sidebar-controls button,.inspector-tabs button,.inspector-pages button,.assistant-workspace-tabs button) { color:var(--ui-muted)!important; background:transparent!important; border-color:transparent!important; box-shadow:none; }
+:root[data-workbench-theme] :is(.workspace-topbar button,.workspace-topbar .file-exchange-menu summary,.workspace-rail-tabs>button,.workspace-rail-bottom button,.drawing-tools button,.library-tabs button,.library-categories button,.library-section button,.library-extension-toggle,.user-library-switch button,.user-library-tools button,.project-sidebar-icon,.project-sidebar-entry,.assistant-sidebar-controls button,.inspector-tabs button,.inspector-pages button,.assistant-workspace-tabs button):hover:not(:disabled) { background:var(--ui-hover)!important; color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.workspace-topbar button,.workspace-rail-tabs>button,.workspace-rail-bottom button,.drawing-tools button,.library-tabs button,.library-categories button,.user-library-switch button,.inspector-tabs button,.inspector-pages button,.assistant-workspace-tabs button):is(.active,[aria-pressed=true],[aria-selected=true],[aria-expanded=true]),
+:root[data-workbench-theme] :is(.project-sidebar-entry.is-active,.workspace-view-tabs .active) { background:var(--ui-accent-soft)!important; color:var(--ui-accent-ink)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] .workspace-rail-tabs>button[aria-expanded=true]::before,
+:root[data-workbench-theme] .project-sidebar-entry.is-active::before { background:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.device-palette button,.library-sources>button,.user-library-card,.project-sidebar-copy,.catalog-model-select,.project-model-list article,.model-agent-message,.model-agent-candidates details,.assistant-model-definition,.model-preview,.model-symbol-preview,.example-card,.model-candidates>article) { background:var(--ui-raised)!important; color:var(--ui-ink)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.device-palette button>span,.device-palette button small,.user-library-card p,.user-library-card small,.project-sidebar-entry-top>svg,.catalog-model-name,.catalog-model-name strong,.catalog-model-bottom,.project-model-heading,.model-preview-selection,.model-preview-selection small,.library-sources>button span,.example-card>small,.example-card-category,.example-card-select) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.device-palette button>span,.user-library-card strong,.catalog-model-name strong,.project-model-heading strong) { color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.device-palette button.active,.device-palette button:hover,.library-sources>button.active,.library-sources>button:hover,.catalog-model-select:hover,.example-card[aria-pressed=true],.example-card:hover) { background:var(--ui-accent-soft)!important; border-color:var(--ui-accent)!important; color:var(--ui-accent-ink)!important; }
+:root[data-workbench-theme] :is(.device-palette button>svg,.selected-device-preview>svg,.model-symbol-preview>svg,.user-library-card>svg) { background:var(--ui-soft)!important; color:var(--ui-accent)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.selected-device-preview strong,.selected-device-preview small,.selection-summary>strong,.subsection-title,.device-parameters label,.source-parameters label,.field,.pin-list code,.net-inspector,.model-parameter-summary,.model-parameter-editor) { color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.device-parameters small,.source-parameters small,.model-parameter-editor p,.model-parameter-summary dt,.selected-device-preview small) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.workspace-shell,.workbench-window,.model-editor-dialog,.spice-library-dialog,.extension-library-window,.example-gallery,.component-value-editor) :is(input:not([type=checkbox]):not([type=radio]):not([type=color]),select,textarea) { color:var(--ui-ink)!important; background:var(--ui-raised)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.device-search,.extension-library-search,.example-search,.input-wrap,.catalog-filters,.user-library-tools,.model-search-query) { background:var(--ui-raised)!important; color:var(--ui-muted)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(input,textarea)::placeholder { color:var(--ui-faint)!important; opacity:1; }
+:root[data-workbench-theme] :is(button,a,input,select,textarea,summary,[tabindex]):focus-visible { outline-color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(input,textarea,select):focus { border-color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(input[type=checkbox],input[type=radio]) { accent-color:var(--ui-accent); }
+:root[data-workbench-theme] :is(.run-button,.workspace-topbar .run-button,.project-sidebar-new,.workbench-window-footer .primary,.model-agent button.model-search-primary,.model-agent-permission button:first-child,.ai-assistant .primary,.use-example) { background:var(--ui-accent)!important; color:var(--ui-on-accent)!important; border-color:var(--ui-accent)!important; box-shadow:none; }
+:root[data-workbench-theme] :is(.run-button,.project-sidebar-new,.workbench-window-footer .primary,.model-agent button.model-search-primary,.ai-assistant .primary):hover:not(:disabled) { filter:brightness(.94); }
+:root[data-workbench-theme] .drawing-tools>i { background:var(--ui-border)!important; border-color:var(--ui-border)!important; }
+
+/* Keep all dialogs in the selected scheme, including those portaled to body. */
+:root[data-workbench-theme] :is(.workbench-window,.model-editor-dialog,.spice-library-dialog,.extension-library-window,.example-gallery,.component-value-editor,.canvas-context-menu,.modal,.agent-proposal-window) { background:var(--ui-panel)!important; color:var(--ui-ink)!important; border-color:var(--ui-border)!important; box-shadow:0 20px 70px var(--ui-shadow)!important; }
+:root[data-workbench-theme] :is(.workbench-window-backdrop,.model-editor-overlay,.spice-library-overlay,.extension-library-backdrop,.examples-backdrop,.modal-backdrop,.agent-proposal-backdrop,.component-value-backdrop) { background:var(--ui-scrim)!important; }
+:root[data-workbench-theme] :is(.workbench-window-heading,.workbench-window-footer,.model-editor-dialog>header,.model-editor-dialog>footer,.spice-library-dialog>header,.extension-library-window>header,.example-gallery-header,.example-gallery-footer,.example-categories,.example-preview,.waveform-dialog-heading,.diagram-settings-toolbar,.diagram-settings-actions,.agent-proposal-window-heading) { color:var(--ui-ink)!important; background:var(--ui-soft)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.workbench-window-heading h2,.workbench-window-heading h2>svg,.workbench-window-heading button,.model-editor-dialog h2,.spice-library-dialog h2,.extension-library-window h2,.example-gallery h2,.waveform-dialog-heading h2,.agent-proposal-window h2) { color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.workbench-window-kicker,.workbench-window-heading p,.workbench-window-footer>span,.catalog-intro,.model-import-intro,.model-resources-intro,.example-gallery-header p,.example-preview p,.example-gallery-footer,.model-editor-scope,.model-editor-impact,.component-value-hint) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.workbench-window-footer button,.model-editor-dialog button,.spice-library-dialog button,.extension-library-window button,.canvas-context-menu button,.model-search button,.datasheet-builder button,.model-agent button,.ai-assistant button,.source-analysis-context button,.source-summary button,.edit-device-model,.spice-code-actions button,.parameter-reset,.quick-values button,.selection-summary button,.waveform-dialog-heading button) { color:var(--ui-ink); background:var(--ui-raised); border-color:var(--ui-border); }
+:root[data-workbench-theme] :is(.editor-analysis-select,.simulation-profile-manager,.model-parameter-summary,.model-editor-inline,.model-editor-scope,.model-editor-impact,.model-note,.model-limit-note,.source-summary,.spice-code-view,.source-spice-preview,.analysis-command,.netlist-editor-note,.netlist-executed-code,.ai-settings,.dsh-local-settings,.ai-provider-status,.model-agent-config,.model-agent-candidates pre,.model-acquisition-steps,.persistent-candidate,.persistent-simulation,.persistent-progress>details,.agent-run,.agent-task-progress) { background:var(--ui-soft)!important; border-color:var(--ui-border)!important; color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.simulation-profile-manager,.model-parameter-summary,.source-spice-preview) :is(p,small,label,dt) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.simulation-settings-columns section,.model-parameter-editor label,.model-parameter-summary dl>div,.canvas-context-menu-separator,.extension-library-categories) { border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.editor-analysis-select button.active,.extension-library-categories button[aria-pressed=true],.example-categories button[aria-pressed=true],.diagram-settings-actions button[aria-pressed=true]) { color:var(--ui-accent-ink)!important; background:var(--ui-accent-soft)!important; border-color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.spice-code-view code,.spice-code-view pre,.catalog-model-code,.model-preview pre,.model-editor-dialog textarea,.editor-netlist pre,.analysis-command,.source-spice-preview code,.source-spice-preview pre,.assistant-model-definition pre,.model-agent-candidates pre,.netlist-executed-code pre,.netlist-editor-body textarea) { color:var(--ui-ink)!important; background:var(--ui-soft)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.model-search-preview,.model-datasheet-consent,.datasheet-online,.persistent-desktop,.persistent-handoff[data-access=available],.model-agent-message.user,.persistent-message.is-user,.ai-message-user) { color:var(--ui-accent-ink)!important; background:var(--ui-accent-soft)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.model-search-preview p,.model-datasheet-consent p,.persistent-desktop a,.assistant-markdown,.assistant-markdown p,.assistant-markdown li,.persistent-message header,.persistent-simulation dd,.model-agent-message p,.model-agent-candidates li) { color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.assistant-markdown a,.model-agent-candidates a,.assistant-model-source a) { color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.persistent-empty>p,.persistent-message header time,.persistent-progress li>span,.persistent-progress li>p,.persistent-progress>summary,.persistent-session-details dt,.persistent-simulation dt,.persistent-simulation>p,.ai-assistant small,.model-search-help,.model-search-ai-plan small,.agent-run-engine,.agent-step-index) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.model-editor-error,.spice-library-error,.parameter-error,.ai-error,.agent-run-error,.error-banner,.refdes-error,.spice-code-error,.simulation-settings-error,.validation-errors) { color:var(--ui-danger)!important; background:var(--ui-danger-bg)!important; border-color:var(--ui-danger)!important; }
+:root[data-workbench-theme] :is(.connection-status.needs-work,.model-agent-permission,.wave-notice,.exchange-notice,.import-preview,.persistent-handoff,.project-sidebar-warning,.model-symbol-note,.agent-stale,.netlist-editor-note.is-warning) { color:var(--ui-warning)!important; background:var(--ui-warning-bg)!important; border-color:color-mix(in srgb,var(--ui-warning) 35%,var(--ui-border))!important; }
+:root[data-workbench-theme] :is(.persistent-writer-busy,.persistent-not-sent,.persistent-progress li[data-status=error]>span) { color:var(--ui-warning)!important; }
+:root[data-workbench-theme] :is(.model-agent-steps li[data-status=completed]>span,.model-acquisition-steps li[data-status=completed]>span) { color:var(--ui-accent-ink)!important; background:var(--ui-accent-soft)!important; }
+:root[data-workbench-theme] :is(.model-agent-steps li[data-status=error]>span,.model-acquisition-steps li[data-status=failed]>span) { color:var(--ui-danger)!important; background:var(--ui-danger-bg)!important; }
+:root[data-workbench-theme] .model-acquisition-steps li[data-status=running]>span { color:var(--ui-info)!important; background:var(--ui-info-bg)!important; }
+:root[data-workbench-theme] :is(.file-exchange-menu>div,.wave-signal-menu,.probe-tool-popover) { color:var(--ui-ink)!important; background:var(--ui-raised)!important; border-color:var(--ui-border)!important; box-shadow:0 8px 28px var(--ui-shadow)!important; }
+:root[data-workbench-theme] :is(.file-exchange-menu button,.file-exchange-menu p,.canvas-context-menu-title,.canvas-context-menu button,.canvas-context-menu button small) { color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.file-exchange-menu button:hover,.canvas-context-menu button:hover) { background:var(--ui-hover)!important; }
+:root[data-workbench-theme] :is(.catalog-summary,.catalog-packages article,.model-bundles,.model-resource-grid>a,.model-import-intro,.user-library-project-save,.model-editor-validation,.model-parameter-editor,.model-editor-scope label,.catalog-model-grid>article,.model-candidates>label) { background:var(--ui-soft)!important; color:var(--ui-ink)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.catalog-packages article.is-active,.catalog-model-grid>article.is-selected,.model-candidates>label:has(input:checked),.model-editor-scope label:has(input:checked),.spice-library-notice,.user-library [role=status]) { background:var(--ui-accent-soft)!important; color:var(--ui-accent-ink)!important; border-color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.catalog-intro p,.catalog-summary>strong>span,.catalog-summary>div>span,.catalog-actions>span,.catalog-model-select small,.catalog-model-bottom>small,.catalog-model-grid article>p,.catalog-packages p,.catalog-packages small,.catalog-loading,.catalog-pagination>span,.catalog-compatibility,.catalog-compatibility summary,.model-resource-grid p,.model-resource-note,.model-bundles p,.model-bundles button small,.model-provenance,.model-import-intro p,.model-import-actions>small,.spice-library-dialog header p,.spice-library-dialog footer>span,.model-editor-kicker,.model-editor-dialog header p,.model-editor-dialog footer>span,.model-editor-identity p,.model-editor-identity small,.model-editor-scope small,.model-editor-help,.model-editor-original,.model-editor-validation p,.model-editor-validation small,.model-parameter-editor small,.model-parameter-editor code,.user-library-card details,.user-library-note,.user-library-place code,.user-library-place small,.user-library-save-fields label,.user-library-pin-map label,.user-library-pin-map p,.user-library-provenance) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.catalog-summary>strong,.catalog-summary b,.catalog-model-select strong,.project-model-heading h3,.catalog-intro h3,.model-parameter-summary dt span,.model-parameter-summary dd strong,.model-parameter-summary>header strong,.model-parameter-editor>header,.model-editor-validation strong,.model-editor-identity strong,.user-library-place strong,.user-library-pin-map strong,.user-library-provenance strong,.spice-code-view>header>div,.spice-library-empty h3) { color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.catalog-model-code pre,.project-model-list pre,.model-editor-original pre,.model-editor-validation pre,.user-library-card pre,.user-library-provenance pre,.spice-code-view>header,.catalog-model-grid article>p>span,.model-bundles>button) { color:var(--ui-ink)!important; background:var(--ui-soft)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.spice-library-dialog>nav,.spice-library-dialog>footer,.catalog-model-bottom,.catalog-compatibility,.spice-code-view>header,.model-parameter-summary>header,.user-library-card details,.project-model-filters,.catalog-package-details) { border-color:var(--ui-border)!important; background-color:var(--ui-soft)!important; }
+:root[data-workbench-theme] :is(.spice-library-dialog>nav button,.spice-code-view>header button,.save-to-user-library,.user-library-card-actions button,.library-external-button) { background:var(--ui-raised)!important; color:var(--ui-ink)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] .spice-library-dialog>nav button[aria-pressed=true] { color:var(--ui-accent)!important; border-bottom-color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.model-editor-dialog button.primary,.spice-library-dialog button.primary) { background:var(--ui-accent)!important; color:var(--ui-on-accent)!important; border-color:var(--ui-accent)!important; }
+:root[data-workbench-theme] .catalog-model-grid p.catalog-model-scope { background:var(--ui-warning-bg)!important; color:var(--ui-warning)!important; }
+:root[data-workbench-theme] :is(.catalog-packages a,.model-provenance a,.model-bundles>a,.user-library-card a,.user-library-provenance a) { color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.catalog-saved,.catalog-reference-details,.catalog-saved-model,.catalog-reference-grid>article,.catalog-saved-search) { background:var(--ui-soft)!important; color:var(--ui-ink)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.catalog-saved>summary,.catalog-reference-details>summary,.catalog-saved-heading strong,.catalog-reference-grid strong) { color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.catalog-saved>p,.catalog-reference-details>p,.catalog-saved-model>p,.catalog-reference-grid p,.catalog-saved-heading small,.catalog-saved-source small) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.catalog-saved-search input,.catalog-saved-model pre) { background:var(--ui-raised)!important; color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.catalog-saved-source a,.catalog-reference-grid a) { color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.workspace-left,.workspace-right,.workspace-center,.workspace-panel-heading,.workspace-panel-tabs,.extension-library-categories,.extension-library-cards>button,.editor-inspector-heading) { color:var(--ui-ink)!important; background:var(--ui-panel)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.workspace-panel-tabs button,.workspace-layout-actions button,.workspace-commandbar>button,.workspace-file-menu,.workspace-file-menu summary,.workspace-check-status,.workspace-commandbar .zoom-controls>span,.extension-library-cards>button>span,.extension-library-categories>button,.extension-library-result-heading,.extension-library-empty strong) { color:var(--ui-ink)!important; }
+:root[data-workbench-theme] :is(.workspace-panel-tabs button.active,.workspace-panel-tabs button[aria-selected=true],.workspace-layout-actions button[aria-pressed=true],.extension-library-categories>button[aria-pressed=true]) { color:var(--ui-accent-ink)!important; background:var(--ui-accent-soft)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.workspace-panel-heading>button:hover,.workspace-panel-tabs button:hover,.workspace-layout-actions button:hover,.workspace-commandbar>button:hover,.workspace-file-menu[open]>summary,.workspace-file-menu summary:hover,.workspace-check-status:hover,.extension-library-cards>button:hover) { color:var(--ui-ink)!important; background:var(--ui-hover)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] .workspace-file-menu>div { color:var(--ui-ink)!important; background:var(--ui-raised)!important; border-color:var(--ui-border)!important; box-shadow:0 8px 28px var(--ui-shadow)!important; }
+:root[data-workbench-theme] :is(.workspace-file-menu>div>p,.extension-library-cards small,.extension-library-result-heading>span,.extension-library-categories>span,.library-extension-toggle small,.library-search-scope,.source-spice-preview span,.model-parameter-summary>header span,.model-parameter-summary dd small,.model-parameter-summary dt code,.inspector-model-empty,.inspector-draft-note) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] .extension-library-cards>button>svg { background:var(--ui-soft)!important; color:var(--ui-accent)!important; }
+:root[data-workbench-theme] .extension-library-cards [fill="#fcfdfb"] { fill:var(--ui-soft); }
+:root[data-workbench-theme] :is(.workspace-layout-actions,.workspace-file-menu hr) { border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] .sidebar-resize-handle { background:var(--ui-soft)!important; }
+:root[data-workbench-theme] .sidebar-resize-handle>span { background:var(--ui-border-strong)!important; }
+:root[data-workbench-theme] .sidebar-resize-handle:is(:hover,.is-dragging)>span { background:var(--ui-accent)!important; }
+
+/* Plot controls and frame chrome match the surrounding workbench; trace colors
+   retain their own identity. Canvas colors affect only circuit artwork. */
+:root[data-workbench-theme] :is(.waveform-dialog-content,.wave-workspace,.wave-view,.canvas-waveform-content,.canvas-diagram-content,.canvas-waveform-empty,.canvas-op-preview) { background:var(--ui-raised)!important; color:var(--ui-ink)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.wave-view-header,.wave-cursor-readout,.canvas-waveform-controls,.canvas-waveform-result-note) { background:var(--ui-soft)!important; color:var(--ui-muted)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.wave-toolbar button,.wave-view-header select,.wave-signal-menu button,.wave-signal-picker>summary,.wave-trace-chip,.canvas-waveform-controls button,.canvas-waveform-controls select) { background:var(--ui-raised)!important; color:var(--ui-ink)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.wave-toolbar button[aria-pressed=true],.wave-trace-chip.selected,.wave-pane-target[aria-pressed=true],.canvas-waveform-controls button[aria-pressed=true]) { background:var(--ui-accent-soft)!important; color:var(--ui-accent-ink)!important; border-color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.wave-view.is-probe-target,.canvas-waveform-preview-panel.is-probe-target) { outline-color:var(--ui-accent)!important; border-color:var(--ui-accent)!important; }
+:root[data-workbench-theme] :is(.wave-link-note,.wave-view-header>strong>span,.wave-signal-menu>small,.wave-signal-menu em,.wave-trace-chip small,.wave-readout,.wave-reference,.wave-empty,.canvas-waveform-legend small,.canvas-op-preview small) { color:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.wave-view-header>strong,.wave-trace-chip button,.wave-readout strong,.wave-cursor-readout,.canvas-waveform-empty strong) { color:var(--ui-ink)!important; }
+:root[data-workbench-theme] .wave-grid { stroke:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.wave-axis,.wave-axis-unit) { fill:var(--ui-muted)!important; }
+:root[data-workbench-theme] .wave-axis-unit { fill:var(--ui-ink)!important; }
+:root[data-workbench-theme] .canvas-waveform-result-note.is-stale { color:var(--ui-warning)!important; background:var(--ui-warning-bg)!important; }
+:root[data-workbench-theme] .canvas-diagram-frame { fill:var(--ui-raised)!important; stroke:var(--ui-border-strong)!important; }
+:root[data-workbench-theme] :is(.canvas-waveform-diagram.is-selected,.canvas-waveform-diagram:focus-within) .canvas-diagram-frame { stroke:var(--ui-accent)!important; }
+:root[data-workbench-theme] .canvas-diagram-title rect { fill:var(--ui-soft)!important; }
+:root[data-workbench-theme] :is(.canvas-diagram-title text,.canvas-diagram-action text) { fill:var(--ui-ink)!important; }
+:root[data-workbench-theme] .canvas-diagram-title .canvas-diagram-hint { fill:var(--ui-muted)!important; }
+:root[data-workbench-theme] :is(.canvas-diagram-glyph,.canvas-diagram-action path,.canvas-diagram-resize path) { stroke:var(--ui-accent)!important; }
+:root[data-workbench-theme] .canvas-diagram-action rect { fill:var(--ui-raised)!important; stroke:var(--ui-border)!important; }
+:root[data-workbench-theme] .canvas-diagram-footer-line { stroke:var(--ui-border)!important; }
+:root[data-workbench-theme] :is(.editor-canvas,.drawing-surface) { background:var(--canvas-background)!important; }
+:root[data-workbench-theme] .canvas-viewport-background { fill:var(--canvas-background)!important; }
+:root[data-workbench-theme] #editor-dot-grid circle { fill:var(--canvas-grid)!important; }
+:root[data-workbench-theme] .editor-wire .wire-line { stroke:var(--canvas-wire); }
+:root[data-workbench-theme] .editor-wire:is(.selected,.wire-dragging) .wire-line,
+:root[data-workbench-theme] .editor-wire:has(.wire-hit:is(:hover,:focus-visible)) .wire-line { stroke:var(--ui-warning); }
+:root[data-workbench-theme] .editor-device { color:var(--canvas-device); }
+:root[data-workbench-theme] .editor-device [fill="#fcfdfb"] { fill:var(--canvas-background); }
+:root[data-workbench-theme] :is(.device-palette,.model-symbol-preview,.selected-device-preview) [fill="#fcfdfb"] { fill:var(--ui-soft); }
+:root[data-workbench-theme] .editor-device.selected { color:var(--ui-accent); }
+:root[data-workbench-theme] .editor-device.selected .device-hit {
+  fill:color-mix(in srgb,var(--ui-accent) 12%,transparent);
+  stroke:var(--ui-accent);
+}
+:root[data-workbench-theme] .editor-device:is(:hover,.device-hovered,:focus-visible) .device-hit { stroke:var(--ui-accent); }
+:root[data-workbench-theme] .workspace-shell .workspace-commandbar button.active,
+:root[data-workbench-theme] .workspace-shell .workspace-commandbar button[aria-pressed=true] {
+  color:var(--ui-accent-ink)!important; background:var(--ui-accent-soft)!important; border-color:var(--ui-border)!important;
+}
+:root[data-workbench-theme] .workspace-shell .editor-inspector .set-input-button {
+  color:var(--ui-ink); background:var(--ui-raised); border-color:var(--ui-border);
+}
+:root[data-workbench-theme] .workspace-shell .editor-inspector .refdes-input button {
+  color:var(--ui-ink); background:var(--ui-soft); border-color:var(--ui-border);
+}
+:root[data-workbench-theme] .editor-canvas .net-symbol:is(.selected,:hover) { color:var(--ui-accent); }
+:root[data-workbench-theme] .editor-device .device-ref { fill:var(--canvas-device); }
+:root[data-workbench-theme] :is(.device-value,.device-parameters-text) { fill:var(--canvas-muted); }
+:root[data-workbench-theme] :is(.drawing-sheet-label,.canvas-empty,.canvas-empty-note,.editor-node-label) { fill:var(--canvas-muted)!important; }
+:root[data-workbench-theme] .pin-dot { fill:var(--canvas-background); stroke:var(--canvas-wire); }
+:root[data-workbench-theme] .editor-pin.connected .pin-dot,
+:root[data-workbench-theme] .editor-junction[data-junction-kind=branch] .junction-dot { fill:var(--canvas-wire); stroke:var(--canvas-wire); }
+:root[data-workbench-theme] .editor-junction[data-junction-kind=open] .junction-dot { fill:var(--canvas-background); stroke:var(--canvas-wire); }
+:root[data-workbench-theme] .editor-canvas .editor-junction:is(:hover,:focus-visible,.selected,.pending) .junction-dot { fill:var(--canvas-background); stroke:var(--ui-warning); }
+:root[data-workbench-theme] .editor-canvas .canvas-node-annotation rect { fill:var(--canvas-label-background); stroke:var(--canvas-grid); }
+:root[data-workbench-theme] .editor-canvas .net-label rect { fill:var(--canvas-label-background); stroke:var(--canvas-grid); }
+:root[data-workbench-theme] .editor-canvas .net-label text { fill:var(--canvas-ink); }
+:root[data-workbench-theme] .editor-canvas .net-label path { stroke:var(--canvas-ink); }
+:root[data-workbench-theme] .editor-canvas :is(.input-marker,.output-marker) text { stroke:var(--canvas-background); }
+:root[data-workbench-theme] .editor-canvas .measurement-marker :is(circle,path,rect)[fill=white],
+:root[data-workbench-theme] .editor-canvas .measurement-marker :is(circle,path,rect)[fill="#fff"] { fill:var(--canvas-background); }
+:root[data-workbench-theme] .probe-badge:hover>rect { fill:var(--canvas-label-background); }
+:root[data-workbench-theme] :is(.canvas-overlay-tools>label,.zoom-controls) { color:var(--ui-muted)!important; background:var(--ui-panel)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] .canvas-overlay-tools button:hover { background:var(--ui-hover); }
+:root[data-workbench-theme] .probe-chip { background:var(--ui-raised); border-color:var(--ui-border); }
+:root[data-workbench-theme] .probe-chip button { color:var(--ui-ink); }
+:root[data-workbench-theme] .workspace-commandbar .probe-toolbar-inline { border-color:var(--ui-border); }
+:root[data-workbench-theme] .workspace-commandbar :is(.probe-toolbar-modes,.probe-inline-types) { background:var(--ui-soft)!important; border-color:var(--ui-border)!important; }
+:root[data-workbench-theme] .workspace-commandbar .probe-inline-mode { color:var(--ui-muted)!important; background:transparent!important; }
+:root[data-workbench-theme] .workspace-commandbar .probe-inline-mode:hover { color:var(--ui-ink)!important; background:var(--ui-hover)!important; }
+:root[data-workbench-theme] .workspace-commandbar .probe-inline-mode[aria-pressed=true] { color:var(--probe-color)!important; border-color:var(--probe-color)!important; background:color-mix(in srgb,var(--probe-color) 13%,var(--ui-soft))!important; }
+:root[data-workbench-theme] .workspace-commandbar .probe-toolbar-pending { color:var(--ui-warning)!important; }
+:root[data-workbench-tone=dark] .workspace-commandbar .probe-mode-voltage { --probe-color:#9bbfeb; }
+:root[data-workbench-tone=dark] .workspace-commandbar .probe-mode-current { --probe-color:#e0b274; }
+:root[data-workbench-tone=dark] .workspace-commandbar .probe-mode-differential { --probe-color:#cba8ec; }
+
+/* The upper-left simulation group stays compact and does not duplicate controls. */
+.workspace-shell .workspace-simulation-controls { display:flex; align-items:center; flex:0 0 auto; gap:5px; padding-right:10px; border-right:1px solid var(--ui-border); }
+.workspace-shell .workspace-simulation-controls>button { display:inline-flex; align-items:center; gap:5px; min-height:30px; padding:5px 7px; font-size:11px; white-space:nowrap; }
+.workspace-shell .workspace-simulation-controls .simulation-profile-select { margin:0; width:clamp(112px,12vw,182px); max-width:182px; min-height:29px; padding:4px 6px; font-size:10px; }
+.workspace-shell .workspace-simulation-controls .simulation-profile-select select { width:100%; min-height:27px; margin:0; padding:4px 6px; }
+@media(max-width:1050px) { .workspace-shell .workspace-simulation-controls { padding-right:5px; gap:2px; }.workspace-shell .workspace-simulation-controls .simulation-profile-select { width:108px; }.workspace-shell .workspace-simulation-controls>button { padding-inline:4px; } }
+
+/* Appearance chooser: a small, factual palette preview instead of a new panel. */
+.appearance-settings { width:min(760px,calc(100vw - 36px)); max-height:calc(100dvh - 40px); }
+.appearance-settings-body { padding:22px 24px; overflow:auto; }
+.appearance-themes { padding:0; margin:0; border:0; min-width:0; }
+.appearance-themes>legend,.appearance-canvas-options h3 { font-size:12px; font-weight:600; margin:0 0 12px; padding:0; color:var(--ui-ink); }
+.appearance-theme-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.appearance-settings .appearance-theme-card { display:block; width:100%; min-width:0; text-align:left; padding:6px 6px 10px; border:1px solid var(--ui-border)!important; border-radius:8px; background:var(--ui-raised)!important; }
+.appearance-theme-card[aria-pressed=true] { border-color:var(--ui-accent)!important; box-shadow:0 0 0 1px var(--ui-accent); }
+.appearance-theme-card:hover { border-color:var(--ui-accent)!important; }
+.appearance-theme-sample { display:block; position:relative; overflow:hidden; width:100%; height:86px; background:var(--sample-canvas); border:1px solid var(--sample-panel); border-radius:4px; }
+.appearance-sample-top { position:absolute; inset:0 0 auto; height:14px; background:var(--sample-panel); border-bottom:1px solid color-mix(in srgb,var(--sample-ink) 15%,transparent); }
+.appearance-sample-side { position:absolute; inset:14px auto 0 0; width:26px; background:var(--sample-panel); border-right:1px solid color-mix(in srgb,var(--sample-ink) 15%,transparent); }
+.appearance-theme-sample svg { position:absolute; inset:18px 4px 4px 28px; width:calc(100% - 32px); height:calc(100% - 22px); }
+.appearance-theme-sample .sample-wire { fill:none; stroke:var(--sample-wire); stroke-width:2; }
+.appearance-theme-sample .sample-device { fill:none; stroke:var(--sample-device); stroke-width:2; }
+.appearance-theme-name { display:flex; justify-content:space-between; align-items:center; gap:4px; padding:11px 4px 5px; color:var(--ui-ink); font-size:12px; font-weight:600; }
+.appearance-theme-name svg { color:var(--ui-accent); }
+.appearance-theme-card>small { display:block; padding:0 4px; color:var(--ui-muted); font-size:10px; line-height:1.6; }
+.appearance-themes>p { color:var(--ui-muted); font-size:11px; line-height:1.7; margin:12px 0 22px; }
+.appearance-detail-grid { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:24px; border-top:1px solid var(--ui-border); padding-top:20px; }
+.appearance-canvas-options h3 { display:flex; align-items:center; gap:6px; }
+.appearance-grid-field { display:flex; align-items:center; justify-content:space-between; gap:15px; font-size:11px; }
+.appearance-grid-field select { max-width:134px; padding:6px 8px; }
+.appearance-note { color:var(--ui-muted); font-size:10px; line-height:1.7; margin:8px 0 14px; }
+.appearance-color-field { display:flex; align-items:center; gap:9px; min-height:38px; font-size:11px; border-top:1px solid var(--ui-border); }
+.appearance-color-field>span { margin-right:auto; }
+.appearance-color-field code { background:transparent!important; font:10px var(--mono); }
+.appearance-color-field input[type=color] { width:29px; height:25px; flex:0 0 29px; padding:2px; border:1px solid var(--ui-border); border-radius:4px; background:var(--ui-raised); cursor:pointer; }
+.appearance-color-field>button { display:grid; place-items:center; width:24px; height:25px; padding:0; color:var(--ui-muted); }
+.appearance-preview { position:relative; border:1px solid var(--ui-border); border-radius:7px; display:grid; align-items:center; min-height:230px; background-image:radial-gradient(var(--preview-grid-color) .65px,transparent .85px); }
+.appearance-preview svg { width:100%; max-height:230px; }
+.appearance-preview>span { position:absolute; left:12px; top:10px; font-size:9px; opacity:.65; }
+.appearance-settings .workbench-window-footer>button,.appearance-settings .workbench-window-footer>div>button { display:inline-flex; align-items:center; gap:5px; }
+@media(max-width:600px) { .appearance-settings-body { padding:18px; }.appearance-theme-options { gap:7px; }.appearance-theme-card>small { display:none; }.appearance-theme-name { font-size:10px; padding-inline:0; }.appearance-theme-sample { height:65px; }.appearance-detail-grid { grid-template-columns:minmax(0,1fr); gap:15px; }.appearance-preview { min-height:170px; }.appearance-preview svg { max-height:170px; } }
+

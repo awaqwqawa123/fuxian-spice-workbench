@@ -1,0 +1,28 @@
+.netlist-editor-window{width:min(1080px,calc(100vw - 40px));max-height:calc(100dvh - 40px);display:flex;flex-direction:column;overflow:hidden}
+.netlist-editor-window .workbench-window-heading{flex-shrink:0}
+.netlist-editor-toolbar{display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid var(--line,#dce4ed);flex-wrap:wrap}
+.netlist-editor-toolbar button,.netlist-reset-confirm button{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:7px 10px}
+.netlist-editor-toolbar>span{margin-left:auto;font-size:11px;color:var(--muted,#667085)}
+.netlist-editor-body{padding:12px 20px 20px;overflow:auto;min-height:0}
+.netlist-editor-note{font-size:12px;line-height:1.6;color:var(--muted,#667085);margin:4px 0 10px}
+.netlist-source-label{font-size:12px;font-weight:650;display:block}
+.netlist-source-label textarea{display:block;box-sizing:border-box;width:100%;min-height:260px;height:34vh;resize:vertical;margin:7px 0 10px;padding:12px 14px;border:1px solid #cdd8e5;border-radius:8px;background:#f8fafc;color:#23364a;line-height:1.65;font:12px/1.65 Consolas,'SFMono-Regular',monospace;tab-size:2;white-space:pre;overflow:auto}
+.netlist-validation{display:flex;align-items:center;gap:5px;color:#367765;font-size:12px;line-height:1.6;margin:8px 0}
+.netlist-validation[role=alert],.netlist-editor-error{color:#b24739;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.netlist-editor-help,.netlist-executed-code,.netlist-raw-result details{font-size:12px;margin:10px 0;line-height:1.6}
+.netlist-editor-help summary,.netlist-executed-code summary,.netlist-raw-result summary{cursor:pointer;color:#42617f}
+.netlist-executed-code pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;padding:10px;max-height:240px;overflow:auto}
+.netlist-reset-confirm{padding:10px 12px;border-radius:7px;background:#fff8e9;border:1px solid #f0d6a3;font-size:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.netlist-run-status{font-size:12px;color:#367765}
+.netlist-result-heading{border-top:1px solid #dae3ec;padding-top:14px;margin-top:16px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;font-size:13px}
+.netlist-result-heading span{font-size:11px;color:#64758b}
+.netlist-vector-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0;font-size:12px}
+.netlist-vector-controls label{display:flex;gap:6px;align-items:center}
+.netlist-vector-controls select{max-width:280px;padding:5px 7px;border:1px solid #d4deea;border-radius:5px}
+.netlist-vector-controls>span{color:#52667e}
+.netlist-raw-result>svg{display:block;width:100%;height:auto;min-height:180px;max-height:350px;background:#fbfcfe;border:1px solid #e2e8f0;border-radius:7px}
+.netlist-raw-result svg line{stroke:#e2e8f0;stroke-width:1}.netlist-raw-result svg text{fill:#64758b;font:11px system-ui}
+.netlist-op-value{font:18px Consolas,monospace;padding:20px;border-radius:7px;background:#f3f7fb}
+.netlist-data-table{max-height:260px;overflow:auto}.netlist-data-table table{border-collapse:collapse;width:100%;font:11px Consolas,monospace}.netlist-data-table td,.netlist-data-table th{text-align:right;border-bottom:1px solid #e5ebf1;padding:5px 10px}
+.spice-code-actions{display:flex;gap:5px;flex-wrap:wrap}.spice-code-view>header{flex-wrap:wrap;gap:8px}
+@media(max-width:620px){.netlist-editor-window{width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}.netlist-editor-body{padding:10px 12px}.netlist-editor-toolbar{padding:9px 12px}.netlist-editor-toolbar>span{width:100%;margin-left:0}}

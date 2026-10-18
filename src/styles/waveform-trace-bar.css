@@ -1,0 +1,35 @@
+/* Persistent bottom legend with controls shared by page and detailed waveforms. */
+.wave-trace-bar { display:flex; align-items:center; gap:6px; flex:none; min-width:0; padding:4px 6px; border-top:1px solid var(--ui-border); background:var(--ui-panel); }
+.wave-trace-bar .wave-trace-list { display:flex; flex:1; min-width:0; flex-wrap:nowrap; gap:7px; overflow-x:auto; scrollbar-width:thin; padding:0; min-height:32px; }
+.wave-trace-bar .wave-trace-chip { flex:none; border:1px solid transparent; border-radius:4px; background:transparent!important; }
+.wave-trace-bar .wave-trace-chip.selected { border-color:var(--ui-accent); background:var(--ui-accent-soft)!important; }
+.wave-trace-bar .wave-trace-chip button { border:0; background:transparent!important; border-radius:0; min-height:32px; padding:3px 5px; font:12px/1.35 var(--mono); color:var(--ui-ink); white-space:nowrap; }
+.wave-trace-bar .wave-trace-select { max-width:250px; display:flex; gap:5px; align-items:center; }
+.wave-trace-select > span { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.wave-trace-bar .wave-trace-chip small { font:inherit; color:var(--ui-muted); }
+.wave-trace-bar .wave-trace-chip i,.wave-trace-reference i { width:14px; height:3px; flex:none; border-radius:2px; }
+.wave-trace-bar .wave-hide-trace,.wave-trace-bar .wave-trace-edit { width:25px; flex:none; justify-content:center; }
+.wave-trace-bar .wave-hide-trace:hover { color:var(--ui-danger)!important; background:var(--ui-danger-bg)!important; }
+.wave-trace-actions { display:flex; gap:4px; flex:none; }
+.wave-trace-bar > button,.wave-trace-actions button { display:inline-flex; align-items:center; gap:4px; min-height:32px; font-size:12px; padding:3px 6px; border:1px solid var(--ui-border); border-radius:4px; background:var(--ui-panel); color:var(--ui-ink); white-space:nowrap; }
+.wave-formula-icon { font:italic 15px Georgia,serif; }
+.wave-trace-reference { display:flex; align-items:center; gap:5px; flex:none; max-width:220px; font:12px/1.35 var(--mono); color:var(--ui-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.wave-trace-reference i { opacity:.7; }
+.wave-trace-empty { align-self:center; white-space:nowrap; color:var(--ui-muted); font-size:12px; }
+.wave-trace-popover { position:fixed; z-index:1100; padding:10px; box-sizing:border-box; max-height:calc(100vh - 16px); overflow:auto; background:var(--ui-panel); color:var(--ui-ink); border:1px solid var(--ui-border-strong); border-radius:8px; box-shadow:0 8px 30px #0003; font:13px/1.4 var(--ui-font-interface); }
+.wave-trace-popover > header { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+.wave-trace-popover label { display:flex; flex-direction:column; gap:4px; font-size:12px; }
+.wave-trace-popover :is(input,select,button) { font:inherit; min-height:32px; box-sizing:border-box; border:1px solid var(--ui-border-strong); border-radius:4px; background:var(--ui-raised); color:var(--ui-ink); padding:4px 7px; }
+.wave-trace-popover > header button { display:flex; align-items:center; justify-content:center; width:32px; }
+.wave-trace-form-row { display:flex; gap:6px; margin-top:6px; min-width:0; }
+.wave-trace-form-row :is(input,select) { flex:1; min-width:0; }
+.wave-trace-form-row button { flex:none; background:var(--ui-accent-soft); color:var(--ui-accent-ink); }
+.wave-trace-form-help { font-size:12px; color:var(--ui-muted); margin:8px 0 0; }
+.wave-trace-form-error { font-size:12px; color:var(--ui-danger); margin:8px 0 0; overflow-wrap:anywhere; }
+.wave-trace-popover :focus-visible { outline:2px solid var(--ui-accent); outline-offset:2px; }
+.wave-trace-bar :is(button,input,select) { font-size:calc(12px * var(--ui-font-scale,1)); }
+@media(max-width:1000px) { .wave-trace-bar { gap:4px; padding-inline:4px; } .wave-trace-bar .wave-trace-select { max-width:170px; } .wave-trace-actions button { padding-inline:4px; } }
+@media(max-height:600px) {
+  .wave-trace-bar { padding-block:2px; }
+  .page-waveform-host .wave-trace-bar :is(button,.wave-trace-list) { min-height:32px; }
+}

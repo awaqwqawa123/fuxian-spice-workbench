@@ -1,0 +1,44 @@
+.canvas-context-menu {
+  position: fixed;
+  z-index: 300;
+  width: 238px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px solid #c4cec6;
+  border-radius: 7px;
+  background: #fffffd;
+  color: #203d31;
+  box-shadow: 0 5px 16px #1b322629, 0 1px 3px #1b32261a;
+  text-align: left;
+}
+.canvas-context-menu-title {
+  padding: 7px 9px 8px;
+  color: #6c786e;
+  font-size: 11px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.canvas-context-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  min-height: 33px;
+  padding: 6px 9px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+}
+.canvas-context-menu button:hover:not(:disabled),
+.canvas-context-menu button:focus-visible { background: #e8f0e9; outline: 1px solid #7b9985; outline-offset: -1px; }
+.canvas-context-menu button.is-danger { color: #a13d36; }
+.canvas-context-menu button:disabled { color: #9aa19b; opacity: 1; cursor: default; }
+.canvas-context-menu kbd { color: #7a867d; font-size: 10px; font-family: inherit; white-space: nowrap; }
+.canvas-context-menu-separator { height: 1px; margin: 5px 4px; background: #e3e8e1; }

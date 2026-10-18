@@ -1,0 +1,117 @@
+:root { --waveform-dock-height:clamp(260px,42dvh,420px); }
+.waveform-dialog-backdrop { padding:24px; }
+.waveform-dialog-backdrop[hidden] { display:none!important; }
+.waveform-dialog-backdrop.is-dragging::before { content:'松开鼠标，将波形停靠在顶栏'; position:fixed; z-index:2; top:0; left:56px; right:0; height:48px; display:grid; place-items:center; border-bottom:2px solid #9ed7b3; background:#204c3df2; color:#f1fff4; font-size:13px; font-weight:600; pointer-events:none; }
+.waveform-dialog { width:min(1360px,100%); height:min(900px,calc(100dvh - 48px)); max-height:calc(100dvh - 48px); }
+.waveform-dialog-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; flex:none; padding:10px 14px; border-bottom:1px solid var(--ui-border,#dbe5d7); background:var(--ui-soft,#f6f9f1); }
+.waveform-dialog-heading h2 { display:flex; align-items:center; gap:9px; margin:0; font-size:18px; line-height:1.3; }
+.waveform-dialog-heading p { margin:6px 0 0; color:var(--ui-muted,#677d6d); font-size:12px; line-height:1.5; }
+.waveform-dialog-heading > button { flex:none; white-space:nowrap; }
+.waveform-dialog-actions { display:flex; align-items:center; gap:8px; flex:none; }
+.waveform-dialog-heading[draggable=true] { cursor:grab; }
+.waveform-dialog-heading[draggable=true]:active { cursor:grabbing; }
+.waveform-dialog-backdrop.is-docked { position:fixed; inset:48px 0 auto 56px; z-index:110; display:block; height:var(--waveform-dock-height); padding:0; background:none; backdrop-filter:none; }
+:root[data-workbench-theme] .waveform-dialog-backdrop.is-docked { background:transparent!important; backdrop-filter:none!important; }
+.waveform-dialog-backdrop.is-docked .waveform-dialog { width:100%; height:100%; max-height:none; border-radius:0; border-top:0; box-shadow:0 8px 24px #10251e30; }
+.waveform-dialog-backdrop.is-docked .waveform-dialog-heading { padding:8px 18px; }
+.waveform-dialog-backdrop.is-docked .waveform-dialog-heading p { margin:2px 0 0; }
+.waveform-dialog-backdrop.is-docked .diagram-settings-toolbar { padding-top:10px; padding-bottom:10px; gap:8px; }
+.waveform-dialog-backdrop.is-docked .diagram-settings-fields { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.waveform-dialog-backdrop.is-docked .wave-workspace { padding-top:10px; }
+.waveform-dialog-backdrop.is-docked .wave-layout-1 > .wave-view > .wave-plot { height:clamp(180px,26dvh,320px); }
+/* Keep the plot first in the shorter dock without remounting its view state. */
+.waveform-dialog-backdrop.is-docked .waveform-dialog-content > .free-results.panel:not([hidden]) { display:flex; flex-direction:column; }
+.waveform-dialog-backdrop.is-docked .free-results > * { flex:none; }
+.waveform-dialog-backdrop.is-docked .free-results > :is(.wave-workspace,.op-table) { order:-1; }
+.waveform-dialog-backdrop.is-docked .wave-toolbar { flex-wrap:nowrap; overflow-x:auto; padding-bottom:6px; }
+.waveform-dialog-backdrop.is-docked .wave-toolbar > * { flex:none; }
+.waveform-dialog-backdrop.is-docked .wave-inspection-hint { margin-bottom:6px; font-size:10px; }
+.waveform-dialog-backdrop.is-docked .wave-view-header { padding:4px 8px; }
+.waveform-dialog-backdrop.is-docked .wave-trace-list { min-height:24px; padding:4px 8px 0; }
+body:has(.waveform-dialog-backdrop.is-docked:not([hidden])) .workspace-shell .workspace-commandbar { margin-top:var(--waveform-dock-height); }
+@media(max-width:760px) { .waveform-dialog-backdrop.is-docked { left:56px; } .waveform-dialog-backdrop.is-docked :is(.waveform-dialog-heading p,.wave-inspection-hint) { display:none; } .waveform-dialog-backdrop.is-docked .diagram-settings-fields { grid-template-columns:minmax(0,1fr); } }
+.waveform-dialog-content { display:flex; flex:1 1 0; width:100%; min-width:0; min-height:0; overflow:hidden; container:waveform-dialog / inline-size; }
+.waveform-dialog-content > .free-results.panel { display:flex; flex-direction:column; flex:1 1 0; min-width:0; min-height:0; width:100%; height:100%; margin:0; border:0; border-radius:0; box-shadow:none; overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; }
+.waveform-dialog-content > .free-results.panel > :not(.wave-workspace) { flex:none; }
+.waveform-dialog-content > .free-results.panel[hidden] { display:none; }
+.waveform-dialog-content > .free-results.panel[data-empty=true] { display:flex; flex-direction:column; }
+
+/* The controls belong to one compact inspector, with the plot below it. */
+.waveform-dialog .diagram-settings-toolbar { box-sizing:border-box; display:flex; flex-direction:column; gap:8px; margin:0; padding:10px 14px; border-bottom:1px solid var(--ui-border,#dbe5d7); }
+.waveform-dialog .diagram-settings-fields { display:grid; grid-template-columns:minmax(180px,1fr) minmax(300px,1.5fr) minmax(200px,1fr); align-items:end; gap:14px 18px; width:100%; max-width:1120px; }
+.waveform-dialog .diagram-settings-fields > label,.waveform-dialog .diagram-profile-setting label { min-width:0; gap:7px; font-size:12px; line-height:1.35; color:var(--ui-ink,#425d4e); }
+.waveform-dialog .diagram-settings-fields input,.waveform-dialog .diagram-settings-fields select { box-sizing:border-box; width:100%; height:32px; min-height:32px; padding:5px 8px; font-size:12px; color:var(--ui-ink,#283f32); background:var(--ui-raised,#fff); border-color:var(--ui-border,#cad9ce); }
+.waveform-dialog .diagram-profile-setting { display:flex; align-items:end; gap:10px; min-width:0; }
+.waveform-dialog .diagram-profile-setting label { flex:1 1 0; }
+.waveform-dialog .diagram-profile-setting > button { flex:none; min-height:32px; height:32px; padding:5px 8px; white-space:nowrap; }
+.waveform-dialog .diagram-settings-actions { box-sizing:border-box; display:flex; flex-wrap:wrap; gap:8px; align-items:center; max-width:1120px; min-height:32px; }
+.waveform-dialog .diagram-settings-actions button { min-height:32px; padding:6px 10px; font-size:11px; }
+.waveform-dialog .diagram-settings-actions button:last-child { color:#9a5147; }
+
+.waveform-dialog .free-results .results-toolbar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px 10px; flex:none; min-height:38px; height:auto; padding:5px 14px; border-radius:0; background:var(--ui-raised,#fbfcf8); }
+.waveform-dialog .free-results-title { display:flex; align-items:baseline; flex-wrap:wrap; gap:5px 14px; min-width:0; }
+.waveform-dialog .free-results-title strong { font-size:14px; font-weight:650; color:var(--ui-ink,#345443); overflow-wrap:anywhere; }
+.waveform-dialog .free-results-title small { margin:0; font-size:11px; color:var(--ui-muted,#677d6d); }
+.waveform-dialog .free-results .result-actions { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+.waveform-dialog .free-results .result-actions button { min-height:34px; padding:7px 10px; font-size:11px; }
+.waveform-dialog .circuit-test-report { margin:12px clamp(20px,2.4vw,36px) 0; border:1px solid #d6e5d9; border-radius:7px; background:#f8fbf8; color:var(--ui-ink,#344f40); font-size:11px; }
+.waveform-dialog .circuit-test-report.is-stale { border-color:#e6d3ad; background:#fff9ec; }
+.waveform-dialog .circuit-test-report>summary { display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px; padding:10px 14px; cursor:pointer; list-style-position:inside; }
+.waveform-dialog .circuit-test-report>summary span { font-size:12px; font-weight:650; }
+.waveform-dialog .circuit-test-report>summary small { color:var(--ui-muted,#687d6e); font-size:10px; }
+.waveform-dialog .circuit-test-report-content { padding:0 15px 15px; }
+.waveform-dialog .circuit-test-report p { margin:5px 0 10px; line-height:1.6; color:#677e6b; }
+.waveform-dialog .circuit-test-report-meta { display:flex; flex-wrap:wrap; gap:4px 18px; font-size:10px; overflow-wrap:anywhere; color:var(--ui-muted,#687d6e); }
+.waveform-dialog .circuit-test-report table { width:100%; margin:10px 0 0; border-collapse:collapse; text-align:left; }
+.waveform-dialog .circuit-test-report th,.waveform-dialog .circuit-test-report td { padding:7px 8px; border-bottom:1px solid var(--ui-border,#dce7d9); vertical-align:top; }
+.waveform-dialog .circuit-test-report td:nth-child(2) { font-variant-numeric:tabular-nums; white-space:nowrap; }
+.waveform-dialog .free-results .metrics-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); padding:18px clamp(20px,2.4vw,36px); gap:16px; }
+.waveform-dialog .free-results .waveform { max-width:none; width:100%; }
+.waveform-dialog :is(.stale-banner,.error-banner,.running-banner,.editor-comparison) { padding:11px clamp(20px,2.4vw,36px); font-size:12px; line-height:1.5; }
+.waveform-dialog .result-summary { margin:12px clamp(20px,2.4vw,36px) 0; }
+.waveform-dialog .result-summary > summary { padding:8px 0; }
+.waveform-dialog .result-summary .metrics-row { padding:14px 0 18px; }
+.waveform-dialog .wave-workspace { display:flex; flex-direction:column; flex:1 1 0; min-height:220px; padding:8px 14px; overflow:auto; }
+.waveform-dialog .wave-view-grid { flex:1 1 0; min-height:230px; height:auto; grid-auto-rows:minmax(230px,1fr); }
+.waveform-dialog .wave-layout-2.wave-split-rows { min-height:474px; }
+.waveform-dialog .wave-layout-2.wave-split-rows > .wave-view { min-height:230px; }
+.waveform-dialog .wave-view { display:flex; flex-direction:column; min-height:0; }
+.waveform-dialog .op-table { padding:16px clamp(20px,2.4vw,36px) 28px; }
+.waveform-dialog .result-footer { padding:12px clamp(20px,2.4vw,36px); }
+.waveform-dialog .wave-view > .wave-plot { flex:1 1 0; height:0; min-height:100px; }
+.waveform-dialog .wave-view > :not(.wave-plot) { flex:none; }
+.waveform-dialog .wave-toolbar button,.waveform-dialog .wave-signal-menu button { min-height:30px; padding:5px 8px; font-size:11px; }
+.waveform-dialog .wave-trace-chip button { padding:4px 6px; font:10px var(--mono); border:0; border-radius:0; background:none; }
+.waveform-dialog .wave-trace-chip .wave-hide-trace { padding:4px; border-left:1px solid #e5ece1; }
+
+.waveform-dialog .free-empty-results { box-sizing:border-box; display:grid; place-items:center; flex:1 0 auto; min-height:260px; padding:36px clamp(20px,2.4vw,36px); }
+.waveform-dialog .free-empty-results > div { box-sizing:border-box; display:flex; flex-direction:column; align-items:flex-start; width:min(100%,460px); padding:25px 28px; border:1px solid var(--ui-border,#dce7d9); border-radius:10px; background:var(--ui-raised,#fbfdf9); text-align:left; box-shadow:0 6px 24px #25432e0a; }
+.waveform-dialog .free-empty-results svg { margin-bottom:15px; color:var(--ui-accent,#43806d); }
+.waveform-dialog .free-empty-results strong { color:var(--ui-ink,#344f40); font-size:16px; font-weight:650; line-height:1.4; }
+.waveform-dialog .free-empty-results p { margin:8px 0 0; color:var(--ui-muted,#63776b); font-size:12px; line-height:1.7; }
+
+@container waveform-dialog (max-width:920px) {
+  .waveform-dialog .diagram-settings-fields { grid-template-columns:minmax(0,1fr) minmax(0,1.35fr); }
+  .waveform-dialog .diagram-settings-fields > label:last-child { grid-column:1 / -1; max-width:420px; }
+}
+@container waveform-dialog (max-width:620px) {
+  .waveform-dialog .diagram-settings-toolbar { gap:8px; padding:8px 12px; }
+  .waveform-dialog .diagram-settings-fields { grid-template-columns:minmax(0,1fr); gap:12px; }
+  .waveform-dialog .diagram-settings-fields > label:last-child { grid-column:auto; max-width:none; }
+  .waveform-dialog .diagram-settings-fields input,.waveform-dialog .diagram-settings-fields select { height:32px; min-height:32px; }
+  .waveform-dialog .diagram-profile-setting > button { height:32px; min-height:32px; }
+  .waveform-dialog .free-results .results-toolbar,.waveform-dialog :is(.stale-banner,.error-banner,.running-banner,.editor-comparison),.waveform-dialog .result-footer { padding-left:18px; padding-right:18px; }
+  .waveform-dialog .free-results .metrics-row { grid-template-columns:repeat(2,minmax(0,1fr)); padding:16px 18px; }
+  .waveform-dialog .wave-workspace { padding:6px 12px; }
+  .waveform-dialog .op-table { padding:14px 18px 22px; }
+  .waveform-dialog .result-summary { margin-left:18px; margin-right:18px; }
+  .waveform-dialog .free-empty-results { padding:24px 18px; }
+  .waveform-dialog .free-empty-results > div { padding:22px; }
+}
+@media(max-width:760px) {
+  .waveform-dialog-backdrop { padding:10px; }
+  .waveform-dialog { height:calc(100dvh - 20px); max-height:calc(100dvh - 20px); }
+  .waveform-dialog-heading { align-items:flex-start; gap:10px; padding:14px 18px; }
+  .waveform-dialog-heading p { max-width:240px; }
+  .waveform-dialog-heading > button { padding:7px 9px; font-size:11px; }
+}

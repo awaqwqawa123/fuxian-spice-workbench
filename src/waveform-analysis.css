@@ -1,0 +1,18 @@
+.wave-analysis-tools { margin: 10px 0; padding: 10px 12px; border: 1px solid var(--border, #334155); border-radius: 8px; font-size: 12px; }
+.wave-analysis-tools > summary { cursor: pointer; font-weight: 600; }
+.wave-analysis-tools summary small { margin-left: 8px; opacity: .7; font-weight: 400; }
+.wave-analysis-content { padding-top: 12px; }
+.wave-analysis-content p { opacity: .8; line-height: 1.65; margin: 8px 0; }
+.wave-analysis-fields { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+.wave-analysis-fields label { display: flex; flex-direction: column; gap: 4px; min-width: 120px; }
+.wave-analysis-fields input, .wave-analysis-fields select { min-width: 0; max-width: 240px; min-height: 30px; font-size: 12px; }
+.wave-analysis-fields input { width: 150px; }
+.wave-analysis-event-settings, .wave-analysis-fft { margin-top: 12px; border-top: 1px solid var(--border, #334155); padding-top: 10px; }
+.wave-analysis-event-settings > summary, .wave-analysis-fft > summary { margin-bottom: 10px; cursor: pointer; }
+.wave-analysis-tools table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 8px 0; }
+.wave-analysis-tools th, .wave-analysis-tools td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--border, #334155); }
+.wave-analysis-tools td span { opacity: .7; }
+.wave-analysis-spectrum { width: 100%; max-height: 300px; background: var(--plot-bg, #111923); border-radius: 6px; color: var(--text, #d4ddeb); }
+.wave-analysis-spectrum text { fill: currentColor; font-size: 10px; }
+.wave-analysis-thd { margin: 10px 0; }
+@media (max-width: 600px) { .wave-analysis-fields label { flex: 1 1 130px; } .wave-analysis-tools summary small { display: block; margin: 4px 0 0; } }
