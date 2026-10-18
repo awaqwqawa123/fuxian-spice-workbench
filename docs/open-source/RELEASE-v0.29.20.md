@@ -27,3 +27,6 @@ npm start
 从不含私有模型库的源码快照完成 TypeScript / Vite 构建；精选回归 49 项通过、0 项失败、1 项因原厂测试文件未随包提供而跳过，包含真实 ngspice 求解。依赖复用本机已有的锁定版本，未据此声称在所有平台都通过全新安装。浏览器验证默认 RC 电路 AC 仿真完成，显示 401 个求解数据点。
 
 项目持续开发中。LTspice ASC / SPICE 支持受支持子集，暂不支持 Multisim 原生工程；AI、联网搜索和桌面会话集成需要相应环境配置。欢迎提交最小复现工程、交互反馈与贡献。
+
+发布后补充验证：GitHub Actions 在全新的 Ubuntu / Node.js 24 环境执行 `npm ci` 和 `npm test`，安装、构建和回归全部通过。验证记录：
+https://github.com/awaqwqawa123/fuxian-spice-workbench/actions/runs/39101755605

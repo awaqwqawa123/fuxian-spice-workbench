@@ -1,5 +1,7 @@
 # 伏线 · SPICE Workbench
 
+[![Public source checks](https://github.com/awaqwqawa123/fuxian-spice-workbench/actions/workflows/public-source.yml/badge.svg)](https://github.com/awaqwqawa123/fuxian-spice-workbench/actions/workflows/public-source.yml)
+
 **在一张画布上绘制电路、运行 ngspice、摆放波形图，并让可选 AI 助手通过工具参与设计。**
 
 伏线是本地运行的网页电路仿真工作台，使用 React、TypeScript、Vite 和 WebAssembly 版 ngspice。它尝试把桌面原理图工具的交互和网页工作台结合起来：画电路、放探针、看曲线、改模型，尽量在同一个工程里完成。
