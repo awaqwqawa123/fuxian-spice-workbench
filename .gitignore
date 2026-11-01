@@ -69,3 +69,4 @@ model-library/
 .env.*
 *.pem
 *.key
+/Fuxian.exe

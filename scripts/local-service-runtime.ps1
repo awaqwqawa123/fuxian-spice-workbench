@@ -1,5 +1,18 @@
 # Keep the service runtime outside Codex's replaceable application/runtime folders.
 # This file is dot-sourced by the manager after its per-service mutex is acquired.
+function Get-ServiceFileSha256([string]$path) {
+    # A Windows PowerShell child can inherit PowerShell 7's PSModulePath, which
+    # hides the module providing Get-FileHash. Framework crypto needs no module.
+    $stream = [IO.File]::OpenRead($path)
+    $algorithm = $null
+    try {
+        $algorithm = [Security.Cryptography.SHA256]::Create()
+        return ([BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-', '')
+    } finally {
+        if ($algorithm) { $algorithm.Dispose() }
+        $stream.Dispose()
+    }
+}
 function Test-ServiceNode([string]$candidate) {
     if (!$candidate -or !(Test-Path -LiteralPath $candidate -PathType Leaf)) { return $null }
     try {
@@ -39,7 +52,7 @@ function Resolve-ServiceNode([string]$explicitNode) {
     foreach ($candidate in $candidates) {
         $version = Test-ServiceNode $candidate
         if (!$version) { continue }
-        $checksum = (Get-FileHash -LiteralPath $candidate -Algorithm SHA256).Hash
+        $checksum = Get-ServiceFileSha256 $candidate
         $runtimeDirectory = Join-Path $serviceDirectory "runtime\$checksum"
         $stableExecutable = Join-Path $runtimeDirectory 'node.exe'
         [IO.Directory]::CreateDirectory($runtimeDirectory) | Out-Null
@@ -48,7 +61,7 @@ function Resolve-ServiceNode([string]$explicitNode) {
             $temporary = Join-Path $runtimeDirectory ([Guid]::NewGuid().ToString() + '.exe')
             try {
                 Copy-Item -LiteralPath $candidate -Destination $temporary
-                if (!(Test-ServiceNode $temporary) -or (Get-FileHash -LiteralPath $temporary -Algorithm SHA256).Hash -ne $checksum) {
+                if (!(Test-ServiceNode $temporary) -or (Get-ServiceFileSha256 $temporary) -ne $checksum) {
                     throw 'The private Node.js runtime copy did not pass validation.'
                 }
                 Move-Item -LiteralPath $temporary -Destination $stableExecutable -Force

@@ -6,7 +6,7 @@
 
 伏线是本地运行的网页电路仿真工作台，使用 React、TypeScript、Vite 和 WebAssembly 版 ngspice。它尝试把桌面原理图工具的交互和网页工作台结合起来：画电路、放探针、看曲线、改模型，尽量在同一个工程里完成。
 
-当前介绍基于 **v0.30.1**。提供 Windows x64 解压运行包，也保留可自行构建的完整公开源码。项目仍在持续开发，欢迎提交可复现的问题、交互建议和小范围改进。
+当前介绍基于 **v0.30.2**。提供 Windows x64 解压运行包，也保留可自行构建的完整公开源码。项目仍在持续开发，欢迎提交可复现的问题、交互建议和小范围改进。
 
 项目仓库：[awaqwqawa123/fuxian-spice-workbench](https://github.com/awaqwqawa123/fuxian-spice-workbench)。应用自有代码采用 MIT，既有第三方文件保留各自许可，详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
 
@@ -38,9 +38,11 @@ v0.30.0 统一了顶栏、侧栏、表单和对话框的间距、控件与视觉
 
 ## Windows 下载即用
 
-从 [v0.30.1 发布页](https://github.com/awaqwqawa123/fuxian-spice-workbench/releases/tag/v0.30.1) 下载 **`Fuxian-0.30.1-Windows-x64.zip`**，完整解压到可写目录，然后双击 **`Start-Fuxian.cmd`**。服务准备好后会打开浏览器，默认地址为 `http://localhost:3032/`，只监听本机。
+从 [v0.30.2 发布页](https://github.com/awaqwqawa123/fuxian-spice-workbench/releases/tag/v0.30.2) 下载 **`Fuxian-0.30.2-Windows-x64.zip`**，完整解压到可写目录，然后双击 **`Fuxian.exe`** 或 **`启动伏线.cmd`**（英文入口 **`Launch-Fuxian.cmd`**），在原生启动器窗口点击 **“启动软件”**。服务准备好后会打开浏览器，默认地址为 `http://localhost:3032/`，只监听本机。
 
-运行包自带 Node、依赖、已构建前端、ngspice WebAssembly 引擎及公开模型。基础绘图和仿真不需要安装 Node、执行 npm 或在首次启动时联网下载。`Stop-Fuxian.cmd` 停止本目录对应的服务；`Status-Fuxian.cmd` 查看状态。端口被其他程序占用时会报告错误，不会结束无关进程。
+启动器会显示启动状态；失败时显示原因并可重试，已经运行时直接打开现有软件。关闭启动器窗口会保留后台服务。兼容旧入口 `Start-Fuxian.cmd` 仍可直接启动。
+
+运行包自带已编译启动器、Node、依赖、已构建前端、ngspice WebAssembly 引擎及公开模型。基础绘图和仿真不需要安装 Node、执行 npm 或在首次启动时联网下载。`Stop-Fuxian.cmd` 停止本目录对应的服务；`Status-Fuxian.cmd` 查看状态。端口被其他程序占用时会报告错误，不会结束无关进程。
 
 GitHub 自动提供的 **Source code (zip/tar.gz)** 是源码快照；普通 Windows 用户请下载上面命名的运行包。运行包不含维护者的私人厂商库、项目、账号和聊天；可选 AI 客户端仍需按各自要求安装、登录或配置。运行模式、打包与许可范围见 [Windows 便携包说明](docs/portable-windows.md)。
 
