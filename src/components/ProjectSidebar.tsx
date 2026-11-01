@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { Check, CircuitBoard, Copy, FolderOpen, LoaderCircle, PanelLeftClose, PanelLeftOpen, Plus, TriangleAlert } from 'lucide-react'
+import { Check, CircuitBoard, Copy, FolderOpen, LoaderCircle, PanelLeftClose, PanelLeftOpen, Plus, Save, TriangleAlert } from 'lucide-react'
 
 // CSS consumes .is-compact from this same breakpoint; do not keep a second media rule.
 export const PROJECT_DRAWER_MAX_WIDTH = 760
@@ -20,6 +20,8 @@ export interface ProjectSidebarProps {
   onSelect: (id: string) => void
   onNew: () => void
   onDuplicate: () => void
+  onOpenFile?: () => void
+  onSaveFile?: () => void
   saveState: 'saved' | 'saving' | 'error'
   error?: string
   onRetry?: () => void
@@ -39,7 +41,7 @@ function editedAt(value: number | string) {
   }
 }
 
-export default function ProjectSidebar({ entries, activeId, embedded = false, collapsed = false, onToggle = () => {}, onSelect, onNew, onDuplicate, saveState, error, onRetry, onModalChange }: ProjectSidebarProps) {
+export default function ProjectSidebar({ entries, activeId, embedded = false, collapsed = false, onToggle = () => {}, onSelect, onNew, onDuplicate, onOpenFile, onSaveFile, saveState, error, onRetry, onModalChange }: ProjectSidebarProps) {
   const panelId = useId()
   const headingId = useId()
   const [compact, setCompact] = useState(() => !embedded && typeof window !== 'undefined' && window.innerWidth <= PROJECT_DRAWER_MAX_WIDTH)
@@ -140,6 +142,10 @@ export default function ProjectSidebar({ entries, activeId, embedded = false, co
         <button type="button" className="project-sidebar-new" onClick={() => create()}><Plus size={16} />新建项目</button>
         <button type="button" className="project-sidebar-copy" onClick={() => create(true)} disabled={!entries.some(entry => entry.id === activeId)} title="将当前项目另存为独立副本"><Copy size={14} />另存副本</button>
       </div>
+      {(onOpenFile||onSaveFile)&&<div className="project-sidebar-file-actions" role="group" aria-label="独立工程文件">
+        {onOpenFile&&<button type="button" onClick={onOpenFile} title="打开 .fuxian 或 JSON 文件为独立项目"><FolderOpen size={14}/>打开工程文件</button>}
+        {onSaveFile&&<button type="button" onClick={onSaveFile} disabled={!entries.some(entry=>entry.id===activeId)} title="将当前工程保存为可分享、可迁移的 .fuxian 文件"><Save size={14}/>保存工程文件</button>}
+      </div>}
       <div className="project-sidebar-section"><span>本机项目</span><span>{entries.length.toString().padStart(2, '0')}</span></div>
       <nav className="project-sidebar-list" aria-label="本机项目">
         {entries.length ? entries.map(entry => {
@@ -155,7 +161,7 @@ export default function ProjectSidebar({ entries, activeId, embedded = false, co
         <div className={`project-sidebar-save is-${saveState}`} role="status"><SaveIcon size={14} /><span>{saveLabel}</span></div>
         {saveState === 'error' && <div className="project-sidebar-error"><p>{error || '本机存储暂时不可用，请导出项目备份。'}</p>{onRetry && <button type="button" onClick={onRetry}>重试保存</button>}</div>}
         {saveState === 'saved' && error && <p role="status" className="project-sidebar-warning">{error}</p>}
-        <p>修改项目名称可在工作区顶部进行。<br />重要项目可随时导出备份。</p>
+        <p>修改项目名称可在工作区顶部进行。<br />保存为 .fuxian 文件可分享、备份或迁移。</p>
       </footer>
     </div>
   </aside>

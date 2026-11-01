@@ -16,6 +16,10 @@ export default function App() {
   const [error,setError] = useState(loaded.warning??'')
   const [examplesOpen, setExamplesOpen] = useState(() => window.location.hash === '#templates')
   const [initialLeftPanel, setInitialLeftPanel] = useState<'projects'|'library'>('library')
+  const [fileAction, setFileAction] = useState<{sequence:number;kind:'open'|'save'}>()
+  const [openedProjectNotice, setOpenedProjectNotice] = useState<{id:string;message:string}>()
+  const currentCollection = useRef(collection)
+  currentCollection.current = collection
   const lastEnsuredProject = useRef('')
   const active=collection.entries.find(entry=>entry.id===collection.activeId)!
   const projectChanged=useCallback((project:Project)=>{
@@ -70,9 +74,22 @@ export default function App() {
     const url=new URL(window.location.href);url.searchParams.set('project',id);url.searchParams.delete('codexSession');url.hash='editor'
     window.history.replaceState(null,'',url)
   }
-  function choose(id:string){if(id!==collection.activeId){setInitialLeftPanel('projects');changeExamples(false);navigateProject(id);setCollection(previous=>selectProject(previous,id))}}
-  function create(){const project=blankProject();project.title=`新建电路 ${collection.entries.length+1}`;const next=addProject(collection,project);setInitialLeftPanel('projects');changeExamples(false);navigateProject(next.activeId);setCollection(next)}
+  function choose(id:string){if(id!==collection.activeId){setFileAction(undefined);setInitialLeftPanel('projects');changeExamples(false);navigateProject(id);setCollection(previous=>selectProject(previous,id))}}
+  function create(){setFileAction(undefined);const project=blankProject();project.title=`新建电路 ${collection.entries.length+1}`;const next=addProject(collection,project);setInitialLeftPanel('projects');changeExamples(false);navigateProject(next.activeId);setCollection(next)}
+  function openProjectFile(project:Project, notice?:string) {
+    // Imported projects receive a fresh local identity and their own chat binding.
+    // Read the current collection so a completed file read cannot restore an old list.
+    const next=addProject(currentCollection.current,project)
+    currentCollection.current=next
+    setInitialLeftPanel('projects');changeExamples(false);navigateProject(next.activeId)
+    setOpenedProjectNotice({id:next.activeId,message:notice??'工程文件已作为独立项目打开；原工程已保留。'})
+    setFileAction(undefined);setCollection(next)
+  }
+  function requestProjectFile(kind:'open'|'save') {
+    setFileAction(previous=>({sequence:(previous?.sequence??0)+1,kind}))
+  }
   function duplicate(){
+    setFileAction(undefined)
     const project=structuredClone(active.project);project.title=`${project.title.slice(0,70)} 副本`
     try{const next=addProject(collection,project);setInitialLeftPanel('projects');changeExamples(false);navigateProject(next.activeId);setCollection(next)}
     catch(cause){setSaveState('error');setError(`无法另存副本：${(cause as Error).message}。当前工程仍在内存，请修正参数后重试。`)}
@@ -82,10 +99,10 @@ export default function App() {
     try{saveProjectCollection(projectStorage,collection);setSaveState('saved');setError('')}
     catch(cause){setSaveState('error');setError((cause as Error).message)}
   }
-  const projectPanel=<ProjectSidebar embedded entries={collection.entries.map(entry=>({id:entry.id,title:entry.project.title,updatedAt:entry.updatedAt,deviceCount:entry.project.drawing?.devices.filter(part=>part.kind!=='GND').length??0}))} activeId={collection.activeId} onSelect={choose} onNew={create} onDuplicate={duplicate} saveState={saveState} error={error} onRetry={loaded.canPersist?retry:undefined}/>
+  const projectPanel=<ProjectSidebar embedded entries={collection.entries.map(entry=>({id:entry.id,title:entry.project.title,updatedAt:entry.updatedAt,deviceCount:entry.project.drawing?.devices.filter(part=>part.kind!=='GND').length??0}))} activeId={collection.activeId} onSelect={choose} onNew={create} onDuplicate={duplicate} onOpenFile={()=>requestProjectFile('open')} onSaveFile={()=>requestProjectFile('save')} saveState={saveState} error={error} onRetry={loaded.canPersist?retry:undefined}/>
   return <div className="project-shell">
     <div className="project-main">
-      <EditorWorkbench key={active.id} initialLeftPanel={initialLeftPanel} projectId={active.id} initialCodexSessionId={active.id===loaded.collection.activeId?loaded.sessionId:undefined} seed={active.project} onProjectChange={projectChanged} saveState={saveState} saveError={error} onRetrySave={loaded.canPersist?retry:undefined} examplesOpen={examplesOpen} onExamplesOpenChange={changeExamples} projectPanel={projectPanel}/>
+      <EditorWorkbench key={active.id} initialLeftPanel={initialLeftPanel} projectId={active.id} initialCodexSessionId={active.id===loaded.collection.activeId?loaded.sessionId:undefined} seed={active.project} onProjectChange={projectChanged} onOpenProject={openProjectFile} fileAction={fileAction} initialProjectNotice={openedProjectNotice?.id===active.id?openedProjectNotice.message:undefined} saveState={saveState} saveError={error} onRetrySave={loaded.canPersist?retry:undefined} examplesOpen={examplesOpen} onExamplesOpenChange={changeExamples} projectPanel={projectPanel}/>
     </div>
   </div>
 }

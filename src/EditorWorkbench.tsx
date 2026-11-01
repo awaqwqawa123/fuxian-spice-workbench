@@ -72,6 +72,7 @@ import type { WireCurrentTarget } from './core/wire-currents'
 import { stableLayoutMeasurements } from './core/layout-probes'
 import { parseProjectProbes, projectWithCandidateProbes, reconcileProjectProbes } from './core/project-probes'
 import { importCircuit, exportLtspice } from './core/exchange'
+import { createProjectArchive, projectFileName, readProjectFile, projectFileWarnings, MAX_PROJECT_FILE_BYTES } from './core/project-file'
 import type { ProbeTarget, WireAnchor } from './core/probe-placement'
 import { createWireCurrentTarget } from './core/wire-currents'
 import { normalizeWireOverlaps, remapOverlapAnchor, remapOverlapMeasurements, remapOverlapTerminal, type WireOverlapResult } from './core/wire-overlap'
@@ -160,15 +161,16 @@ function initialProject(seed:Project) {
   try { const raw = localStorage.getItem(STORAGE); if (raw) { const p = parseProject(JSON.parse(raw),{allowDraft:true}); if(p.template === 'custom') return p } } catch { /* Keep the template available when browser storage is unavailable. */ }
   return editableProject(seed)
 }
-function download(name:string,text:string,type = 'text/plain') {
-  const url = URL.createObjectURL(new Blob([text],{type})), a = document.createElement('a')
+function download(name:string,text:string|Uint8Array,type = 'text/plain') {
+  const content=typeof text==='string'?text:new Uint8Array(text).buffer
+  const url = URL.createObjectURL(new Blob([content],{type})), a = document.createElement('a')
   a.href = url; a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(url),1000)
 }
 function Field({label,value,onChange,hint,type = 'text'}:{label:string;value:string | number;onChange:(value:string)=>void;hint?:string;type?:string}) {
   return <label className="field"><span>{label}</span><div className="input-wrap"><input type={type} value={value} onChange={e => onChange(e.target.value)} spellCheck={false}/></div>{hint && <small className="field-hint">{hint}</small>}</label>
 }
 
-export default function EditorWorkbench({seed,projectId,initialCodexSessionId,initialLeftPanel,examplesOpen,onExamplesOpenChange,onProjectChange,saveState,saveError,onRetrySave,shortcutsBlocked=false,projectPanel}:{seed:Project;projectId?:string;initialCodexSessionId?:string;initialLeftPanel?:'projects'|'library';onBack?:()=>void;examplesOpen?:boolean;onExamplesOpenChange?:(open:boolean)=>void;onProjectChange?:(project:Project)=>void;saveState?:'saved'|'saving'|'error';saveError?:string;onRetrySave?:()=>void;shortcutsBlocked?:boolean;projectPanel?:ReactNode}) {
+export default function EditorWorkbench({seed,projectId,initialCodexSessionId,initialLeftPanel,examplesOpen,onExamplesOpenChange,onProjectChange,saveState,saveError,onRetrySave,shortcutsBlocked=false,projectPanel,onOpenProject,fileAction,initialProjectNotice}:{seed:Project;projectId?:string;initialCodexSessionId?:string;initialLeftPanel?:'projects'|'library';onBack?:()=>void;examplesOpen?:boolean;onExamplesOpenChange?:(open:boolean)=>void;onProjectChange?:(project:Project)=>void;saveState?:'saved'|'saving'|'error';saveError?:string;onRetrySave?:()=>void;shortcutsBlocked?:boolean;projectPanel?:ReactNode;onOpenProject?:(project:Project,notice?:string)=>void;fileAction?:{sequence:number;kind:'open'|'save'};initialProjectNotice?:string}) {
   const [localExamplesOpen,setLocalExamplesOpen]=useState(false)
   const galleryOpen=examplesOpen??localExamplesOpen
   function changeExamples(open:boolean){setLocalExamplesOpen(open);onExamplesOpenChange?.(open)}
@@ -245,7 +247,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   const [probeMode,setProbeMode]=useState<ProbeMode>('voltage'),[probePositive,setProbePositive]=useState<Terminal|null>(null),probeSequence=useRef(0)
   probeSequence.current=Math.max(probeSequence.current,...measurements.map(measurement=>Number(measurement.id.slice(1))))
   const probePositiveAnchor=useRef<WireAnchor|undefined>(undefined)
-  const [exchangeNotice,setExchangeNotice]=useState<string[]>([]),[pendingImport,setPendingImport]=useState<{project:Project;warnings:string[];format:string}|null>(null)
+  const [exchangeNotice,setExchangeNotice]=useState<string[]>(initialProjectNotice?[initialProjectNotice]:[]),[pendingImport,setPendingImport]=useState<{project:Project;warnings:string[];format:string}|null>(null)
   const [search,setSearch]=useState(''), searchInput=useRef<HTMLInputElement>(null)
   const [highlightedNet,setHighlightedNet]=useState<Terminal|null>(null)
   const [labelTarget,setLabelTarget]=useState<Terminal|null>(null), [labelName,setLabelName]=useState('')
@@ -271,7 +273,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   const [tool,setTool] = useState<EditorTool>('select'), [rotation,setRotation] = useState<Rotation>(0)
   useEffect(()=>{if(tool!=='label')setNetworkSymbol(null)},[tool])
   const [zoom,setZoom] = useState(1), [resetView,setResetView] = useState(0), [showNodes,setShowNodes] = useState(false)
-  const [status,setStatus] = useState('选中器件可拖动；点击空心引脚开始接线。'), [storageError,setStorageError] = useState(false)
+  const [status,setStatus] = useState(initialProjectNotice??'选中器件可拖动；点击空心引脚开始接线。'), [storageError,setStorageError] = useState(false)
   const [localSaveIssues,setLocalSaveIssues]=useState<Record<string,string>>({})
   const updateLocalSaveIssue=useCallback((key:string,message:string)=>setLocalSaveIssues(old=>{
     if(old[key]===message||!old[key]&&!message)return old
@@ -419,6 +421,9 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
     if(activeProbeDiagramId&&!diagrams.some(d=>d.id===activeProbeDiagramId))setActiveProbeDiagramId(null)
   },[diagrams,activeProbeDiagramId])
   const worker = useRef<Worker | null>(null), deadline = useRef<ReturnType<typeof setTimeout> | null>(null), started = useRef(false)
+  const importLifecycle=useRef({mounted:true,request:0,projectId})
+  importLifecycle.current.projectId=projectId
+  useEffect(()=>{importLifecycle.current.mounted=true;return()=>{importLifecycle.current.mounted=false;importLifecycle.current.request++}},[])
   const fileInput = useRef<HTMLInputElement>(null),fileMenu=useRef<HTMLDetailsElement>(null),secondaryMenu=useRef<HTMLDetailsElement>(null),editMenu=useRef<HTMLDetailsElement>(null)
   useEffect(()=>{
     const closeOutside=(event:PointerEvent)=>{for(const menu of [fileMenu.current,secondaryMenu.current,editMenu.current])if(menu?.open&&!menu.contains(event.target as Node))menu.open=false}
@@ -835,12 +840,13 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   useEffect(() => {
     const isCanvasTarget=(target:EventTarget|null)=>view==='canvas'&&(target===document.body||!!(target as Element|null)?.closest?.('.drawing-surface,.drawing-toolbar,.page-schematic-toolbar'))
     const key=(e:KeyboardEvent) => {
-      if(e.defaultPrevented||editingModel||showAppearance||showSimulation||(e.target as Element|null)?.closest?.('[role="dialog"]')||contextMenu||showIssues||showModels||showNetlistEditor||galleryOpen||shortcutsBlocked||(e.target as Element|null)?.closest?.('.assistant-sidebar,.model-search,.sidebar-resize-handle,.page-waveform-host,.simulation-settings-embedded,.page-workspace-controls,.page-collapsed-waveform')||modelTarget&&!!(e.target as HTMLElement|null)?.closest?.('.model-editor-inline'))return
+      const saveRequested=(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'
+      if(e.defaultPrevented||editingModel||showAppearance||showSimulation||(e.target as Element|null)?.closest?.('[role="dialog"]')||contextMenu||showIssues||showModels||showNetlistEditor||galleryOpen||shortcutsBlocked||!saveRequested&&(e.target as Element|null)?.closest?.('.assistant-sidebar,.model-search,.sidebar-resize-handle,.page-waveform-host,.simulation-settings-embedded,.page-workspace-controls,.page-collapsed-waveform')||modelTarget&&!!(e.target as HTMLElement|null)?.closest?.('.model-editor-inline'))return
       if((e.target as Element|null)?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"])'))return
       if((e.ctrlKey||e.metaKey)&&['c','v'].includes(e.key.toLowerCase())&&window.getSelection()?.isCollapsed===false&&!(e.target as Element|null)?.closest?.('.editor-canvas,.drawing-toolbar,.page-schematic-toolbar'))return
       if(!isCanvasTarget(e.target)&&(e.ctrlKey||e.metaKey)&&['c','v','z','y'].includes(e.key.toLowerCase()))return
       if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runCurrentSimulation();return}
-      if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();download('fuxian-schematic.json',JSON.stringify(project,null,2),'application/json');return}
+      if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveProjectFile();return}
       if(e.target instanceof HTMLElement && (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)||e.target.isContentEditable))return
       const k=e.key.toLowerCase()
       if((e.ctrlKey||e.metaKey)&&k==='a'){e.preventDefault();selectItems(allItems(drawing));chooseTool('select');return}
@@ -869,17 +875,48 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
     window.addEventListener('keydown',key)
     return()=>{window.removeEventListener('keydown',key)}
   })
+  function portableProject():Project {
+    return {...project,waveformSetup:persistentWaveformSetup(waveformSetup)}
+  }
+  function saveProjectFile() {
+    try {
+      const complete=portableProject(),warnings=projectFileWarnings(complete)
+      download(projectFileName(complete),createProjectArchive(complete),'application/zip')
+      setExchangeNotice(warnings);setStatus(`已保存独立工程文件，包含电路、已嵌入模型与符号、仿真及波形配置；打开后请重新仿真。${warnings.length?'请查看依赖与完整性提示。':''}`)
+    } catch(reason) {
+      const message=`保存工程失败：${(reason as Error).message}`;setExchangeNotice([message]);setStatus(message)
+    }
+  }
+  const handledFileAction=useRef(fileAction?.sequence??0)
+  useEffect(()=>{
+    if(!fileAction||handledFileAction.current===fileAction.sequence)return
+    handledFileAction.current=fileAction.sequence
+    if(fileAction.kind==='open')fileInput.current?.click()
+    else saveProjectFile()
+  },[fileAction])
   async function importFile(file?:File) {
     if(!file)return
+    const request=++importLifecycle.current.request,openingProject=projectId
+    const current=()=>importLifecycle.current.mounted&&importLifecycle.current.request===request&&importLifecycle.current.projectId===openingProject
     try {
-      if(file.size>2*1024*1024)throw new Error('电路文件最多支持 2 MB')
-      const extension=file.name.split('.').pop()?.toLowerCase(),text=await file.text()
-      if(extension==='json'){replaceProject(editableProject(parseProject(JSON.parse(text),{allowDraft:true})));setExchangeNotice([]);setStatus('工程已导入，可用 Ctrl+Z 恢复。')}
-      else if(extension==='asc'||['cir','net','sp','spice'].includes(extension??'')){
+      const extension=file.name.split('.').pop()?.toLowerCase()
+      if(extension==='fuxian'||extension==='json'){
+        if(file.size>MAX_PROJECT_FILE_BYTES)throw new Error(`工程文件最多支持 ${Math.round(MAX_PROJECT_FILE_BYTES/1024/1024)} MB`)
+        const imported=await readProjectFile(file)
+        if(!current())return
+        const next=editableProject(imported.project),models=next.models?.length??0
+        const notice=[`${imported.format}已打开：${next.title}，包含 ${models} 个工程模型。电路、探针与波形配置已恢复，仿真结果请重新运行。`,...imported.warnings].join(' ')
+        setPendingImport(null)
+        if(onOpenProject)onOpenProject(next,notice)
+        else {replaceProject(next,false,true);setExchangeNotice([notice]);setStatus(`${notice} Ctrl+Z 可恢复原工程。`)}
+      } else if(extension==='asc'||['cir','net','sp','spice'].includes(extension??'')){
+        if(file.size>2*1024*1024)throw new Error('电路文件最多支持 2 MB')
+        const text=await file.text()
+        if(!current())return
         const imported=importCircuit(text,extension==='asc'?'asc':'spice');setPendingImport({...imported,format:extension==='asc'?'LTspice ASC':'SPICE 网表'});setExchangeNotice([])
-      }else throw new Error('请选择 JSON、LTspice .asc 或 SPICE .cir/.net/.sp 文件。Multisim 原生工程请先在 Multisim 中导出 SPICE 网表。')
-    }catch(reason){const message=`导入失败：${(reason as Error).message}`;setExchangeNotice([message]);setStatus(message)}
-    if(fileInput.current)fileInput.current.value=''
+      }else throw new Error('请选择伏线 .fuxian、JSON 工程、LTspice .asc 或 SPICE .cir/.net/.sp 文件。Multisim 原生工程请先导出 SPICE 网表。')
+    }catch(reason){if(current()){const message=`导入失败：${(reason as Error).message}`;setExchangeNotice([message]);setStatus(message)}}
+    finally {if(current()&&fileInput.current)fileInput.current.value=''}
   }
   function exportAsc() {
     try {const output=exportLtspice(project);download('fuxian-schematic.asc',output.text);setExchangeNotice(output.warnings);setStatus('LTspice ASC 已导出。')}
@@ -945,7 +982,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
       <nav className="workspace-navigation workspace-view-tabs" aria-label="工作区导航"><button aria-current={view==='canvas'?'page':undefined} onClick={()=>setView('canvas')}><Activity size={15}/>原理图</button><button title="查看网表" aria-label="查看网表" aria-current={view==='netlist'?'page':undefined} onClick={()=>setView('netlist')}><Code2 size={15}/>网表</button></nav>
       <div className="free-file-actions workspace-topbar-actions">
         <details ref={fileMenu} className="workspace-file-menu" onKeyDown={event=>{if(event.key==='Escape'){event.stopPropagation();fileMenu.current?.removeAttribute('open');fileMenu.current?.querySelector('summary')?.focus()}}}><summary>文件<ChevronDown size={13}/></summary><div onClick={event=>{const button=(event.target as Element).closest('button');if(button&&!button.disabled)fileMenu.current?.removeAttribute('open')}}>
-          <p className="workspace-menu-heading">工程文件</p><button title="空白画布" aria-label="空白画布" onClick={()=>loadTemplate('blank')}><FilePlus2 size={15}/>空白画布</button><button title="导入项目" aria-label="导入项目" onClick={()=>fileInput.current?.click()}><Upload size={15}/>导入项目</button><button title="导出项目" aria-label="导出项目" onClick={()=>download('fuxian-schematic.json',JSON.stringify(project,null,2),'application/json')}><Save size={15}/>导出项目</button><p className="workspace-menu-heading">图纸与仿真文件</p><button title="导出原理图 SVG" aria-label="导出原理图 SVG" onClick={exportSvg}><ImageDown size={15}/>导出原理图 SVG</button><button onClick={exportAsc}>导出 LTspice .asc</button><button disabled={!netlist} onClick={()=>download('fuxian-schematic.cir',netlist)}>导出 SPICE .cir</button><p>导入支持基础 ASC 和 SPICE 网表。Multisim 请先导出文本 SPICE。</p>
+          <p className="workspace-menu-heading">工程文件</p><button title="空白画布" aria-label="空白画布" onClick={()=>loadTemplate('blank')}><FilePlus2 size={15}/>空白画布</button><button title="打开独立 .fuxian 工程或旧 JSON，保留当前项目" aria-label="打开工程文件" onClick={()=>fileInput.current?.click()}><FolderOpen size={15}/>打开工程文件</button><button title="保存 .fuxian 独立工程文件 · Ctrl+S" aria-label="保存工程文件" onClick={saveProjectFile}><Save size={15}/>保存工程文件</button><button aria-label="导出旧版 JSON" onClick={()=>download(projectFileName(project).replace(/\.fuxian$/,'.json'),JSON.stringify(portableProject(),null,2),'application/json')}><ArrowDownToLine size={15}/>导出旧版 JSON</button><p className="workspace-menu-heading">图纸与仿真文件</p><button title="导出原理图 SVG" aria-label="导出原理图 SVG" onClick={exportSvg}><ImageDown size={15}/>导出原理图 SVG</button><button onClick={exportAsc}>导出 LTspice .asc</button><button disabled={!netlist} onClick={()=>download('fuxian-schematic.cir',netlist)}>导出 SPICE .cir</button><p>导入支持基础 ASC 和 SPICE 网表。Multisim 请先导出文本 SPICE。</p>
         </div></details>
         <button title="模型助手 · 查找、导入与检查器件模型" aria-label="打开模型工作区" aria-haspopup="dialog" aria-expanded={showModelSearch} aria-controls="model-search-window" onClick={()=>{setModelAssistantMounted(true);setModelSearchVisibleFor(modelSearchScope)}}><Boxes size={15}/><span>模型助手</span></button>
         <button title="电路助手 · 解释电路与审阅修改候选" className="ai-open-button" aria-label="打开 AI 助手" aria-pressed={showAi} aria-controls="workspace-ai" onClick={()=>showAi&&assistantTab==='chat'?dispatchLayout({type:'close-ai'}):openAi()}><BotMessageSquare size={15}/><span>电路助手</span></button>
@@ -959,11 +996,11 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
         <span className="free-save-state" data-save-state={persistenceMessages.length?'error':saveState==='saving'?'saving':'saved'} role="status" title={persistenceMessages.length?persistenceMessages.join('；'):saveState==='saving'?'正在保存到本机':'工程已保存到本机'}><span className={`state-dot ${persistenceMessages.length?'amber':''}`}/><span className="workspace-save-label">{persistenceMessages.length?'未完全保存':saveState==='saving'?'保存中':'已保存'}</span></span>
         <div className="workspace-simulation-controls" role="group" aria-label="仿真配置"><label className="workspace-simulation-profile"><span>仿真设置</span><select className="simulation-profile-select" aria-label="当前仿真配置" title="选择要运行或修改的仿真配置" value={simulationProfiles.activeId} onChange={event=>selectSimulationProfile(event.target.value)}>{simulationProfiles.profiles.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></label><button type="button" className="simulation-profile-edit" aria-label="打开仿真设置" title="修改当前仿真配置" aria-haspopup="dialog" aria-expanded={showSimulation} onClick={()=>openSimulation()}><Settings2 size={15}/><span>修改仿真</span></button><button type="button" className="simulation-profile-add" aria-label="添加仿真配置" title="添加新的仿真配置" aria-haspopup="dialog" disabled={simulationProfiles.profiles.length>=24} onClick={()=>openSimulation(true)}><Plus size={15}/><span>添加仿真</span></button></div>
         <button title={running?`停止 ${simulationProfiles.profiles.find(item=>item.id===runningProfileId)?.name??'当前配置'} 的仿真`:'运行当前配置 · Ctrl+Enter / F9'} className={`run-button ${running?'is-running':''}`} onClick={()=>running?(stop(true),setStatus('仿真已停止，保留上次运行结果。')):runCurrentSimulation()}>{running?<Square size={14} fill="currentColor"/>:<Play size={14} fill="currentColor"/>}{running?'停止仿真':'运行仿真'}</button>
-      </div><input ref={fileInput} className="hidden" type="file" accept=".json,.asc,.cir,.net,.sp,.spice" onChange={e=>importFile(e.target.files?.[0])}/>
+      </div><input ref={fileInput} className="hidden" type="file" aria-label="打开工程文件" accept=".fuxian,.json,.asc,.cir,.net,.sp,.spice" onChange={e=>importFile(e.target.files?.[0])}/>
     </header>
 <div className="drawing-toolbar workspace-commandbar"><div className="drawing-tools">{([{id:'select',icon:MousePointer2,label:'选择 / 移动 (V)'},{id:'wire',icon:Activity,label:'导线 (W)'},{id:'probe',icon:Pin,label:'测量探针 (P)'},{id:'pan',icon:Hand,label:'平移画布 (H)'},{id:'label',icon:Tag,label:'节点标签 (F4)'},{id:'net',icon:Network,label:'网络高亮 (N)'}] as const).map(({id,icon:Icon,label})=>id==='probe'?<ProbeToolbar key={id} toolbarRef={probeTools} onFocusMode={openProbeTools} markersVisible={showProbeMarkers} onMarkersVisibleChange={changeProbeMarkerVisibility} onViewResults={()=>{expandDiagram();showWaveformSidebar()}} mode={probeMode} onMode={changeProbeMode} active={tool==='probe'} onActivate={()=>chooseTool('probe')} measurements={displayMeasurements} selected={selectedMeasurement} onSelect={selectProbe} onRemove={removeProbe} onClear={clearMeasurements} pending={probePositive} onCancelPending={()=>{setProbePositive(null);probePositiveAnchor.current=undefined}} result={pageProbeResult} stale={pageProbeStale}/>:<Fragment key={id}><button className={tool===id?'active':''} title={label} aria-label={label} onClick={()=>chooseTool(id)}><Icon size={17}/>{id==='select'&&<span>选择</span>}{id==='wire'&&<span>接线</span>}{id==='label'&&<span>标签</span>}{id==='net'&&<span>网络</span>}</button>{id==='wire'&&<SchematicSymbolsToolbar activePart={placement?.id??(isDeviceTool(tool)?`base-${tool}`:undefined)} activeNetworkSymbol={networkSymbol?.id} onPlacePart={chooseLibraryPart} onPlaceNetworkSymbol={chooseNetworkSymbol}/>}</Fragment>)}<i/><button title="撤销 Ctrl+Z" aria-label="撤销" disabled={!timeline.past.length} onClick={()=>undoEdit()}><Undo2 size={17}/></button><button title="重做 Ctrl+Shift+Z" aria-label="重做" disabled={!timeline.future.length} onClick={()=>redoEdit()}><Redo2 size={17}/></button><details ref={editMenu} className="drawing-edit-menu" onKeyDown={event=>{if(event.key==='Escape'){event.stopPropagation();editMenu.current?.removeAttribute('open');editMenu.current?.querySelector('summary')?.focus()}}} onClick={event=>{const button=(event.target as Element).closest('button');if(button&&!button.disabled)editMenu.current?.removeAttribute('open')}}><summary title="旋转、镜像、复制、粘贴与删除"><MoreHorizontal size={16}/><span>编辑</span></summary><div role="group" aria-label="选区编辑操作"><button title="旋转 R" aria-label="旋转选中器件" disabled={!hasMovable&&!isDeviceTool(tool)} onClick={rotate}><RotateCw size={17}/>旋转</button><button title="镜像 Ctrl+E" aria-label="镜像选中器件" disabled={!hasMovable} onClick={mirror}><FlipHorizontal2 size={16}/>镜像</button><button title="复制选区 Ctrl+C" aria-label="复制选区" disabled={!selection.length} onClick={()=>copy()}><Copy size={16}/>复制</button><button title="粘贴 Ctrl+V · 点击画布放置" aria-label="粘贴选区" disabled={!clipboard} onClick={beginPaste}><ClipboardPaste size={16}/>粘贴</button><button title="删除 Delete" aria-label="删除选中项" disabled={!selection.length&&!selectedMeasurement} onClick={remove}><Trash2 size={16}/>删除</button></div></details></div>{tool==='wire'&&<button className="wire-mode-button" aria-label="切换接线方向" title="Space 切换方向" onClick={toggleWireBend}>{wireBend==='hv'?'先横后竖':'先竖后横'}</button>}<div className="canvas-overlay-tools"><DcVoltageToggle state={dcVoltages}/><label><input type="checkbox" checked={showNodes} onChange={e=>setShowNodes(e.target.checked)}/>节点名</label><div className="zoom-controls"><button aria-label="缩小画布" disabled={zoom<=MIN_CANVAS_ZOOM} onClick={()=>setZoom(z=>stepCanvasZoom(z,-1))}><Minus size={14}/></button><span>{Math.round(zoom*100)}%</span><button aria-label="放大画布" disabled={zoom>=MAX_CANVAS_ZOOM} onClick={()=>setZoom(z=>stepCanvasZoom(z,1))}><Plus size={14}/></button><button aria-label="缩放到选区" title="缩放到选区" disabled={!selection.length} onClick={()=>setFitSelection(v=>v+1)}><MousePointer2 size={14}/></button><button aria-label="适应整个原理图" onClick={()=>{setZoom(1);setResetView(v=>v+1)}}><ScanLine size={15}/></button></div></div><div className="workspace-layout-actions"><button aria-label={rightVisible&&inspectorTab==='device'?'收起器件属性':'打开器件属性'} title={rightVisible&&inspectorTab==='device'?'收起器件属性':'打开器件属性'} aria-expanded={rightVisible&&inspectorTab==='device'} aria-controls="workspace-right" className={rightVisible&&inspectorTab==='device'?'active':''} onClick={()=>rightVisible&&inspectorTab==='device'?showWaveformSidebar():changeInspectorTab('device')}><SlidersHorizontal size={16}/><span>属性</span></button><button aria-label={pageMode!=='schematic'&&!layout.maximized?'收起右侧栏':'展开右侧栏'} title={pageMode!=='schematic'&&!layout.maximized?'收起右侧栏':'展开右侧栏'} aria-expanded={pageMode!=='schematic'&&!layout.maximized} aria-controls="page-waveform-host" onClick={()=>pageMode!=='schematic'&&!layout.maximized?setPageMode('schematic'):sidebarTab==='properties'?setInspectorTab(inspectorTab):showWaveformSidebar()}><PanelRightClose size={16}/></button><button aria-label={layout.maximized?'恢复侧栏布局':'最大化画布'} title={layout.maximized?'恢复侧栏布局':'最大化画布'} aria-pressed={layout.maximized} onClick={()=>{if(!layout.maximized){setView('canvas')}dispatchLayout({type:'toggle-maximize'})}}>{layout.maximized?<Minimize2 size={17}/>:<Maximize2 size={17}/>}<span>{layout.maximized?'恢复':'最大化'}</span></button></div></div>
     {(!!exchangeNotice.length||visibleFailure||pendingImport||help||!!persistenceMessages.length)&&<div className="workspace-notices">
-    <PersistenceNotice messages={persistenceMessages} onRetry={saveState==='error'&&!onRetrySave&&!storageError&&!Object.keys(localSaveIssues).length&&appearancePersistence.persisted?undefined:retrySave} onBackup={()=>download('fuxian-backup.json',JSON.stringify(project,null,2),'application/json')}/>
+    <PersistenceNotice messages={persistenceMessages} onRetry={saveState==='error'&&!onRetrySave&&!storageError&&!Object.keys(localSaveIssues).length&&appearancePersistence.persisted?undefined:retrySave} onBackup={saveProjectFile}/>
     {visibleFailure&&<div className="error-banner simulation-failure-notice" role="alert" aria-label="仿真失败提示"><strong>仿真未完成</strong><span>{activeFailure}</span><button type="button" onClick={()=>openSimulation()}>仿真设置</button><button type="button" aria-label="关闭仿真失败提示" onClick={()=>setDismissedFailures(old=>({...old,[simulationProfiles.activeId]:activeFailure}))}><X size={15}/></button></div>}
     {!!exchangeNotice.length&&<div className="exchange-notice" role="status"><div>{exchangeNotice.map((notice,i)=><p key={i}>{notice}</p>)}</div><button aria-label="关闭格式提示" onClick={()=>setExchangeNotice([])}><X size={15}/></button></div>}
     {pendingImport&&<div className="import-preview" role="region" aria-label="电路导入预览"><div><strong>{pendingImport.format} · {pendingImport.project.title}</strong><p>{pendingImport.project.drawing?.devices.length} 个器件 · {pendingImport.project.drawing?.wires.length} 段导线 · {analysisNames[pendingImport.project.analysis]}</p>{pendingImport.warnings.map((warning,i)=><p key={i}>{warning}</p>)}</div><button onClick={()=>{replaceProject(pendingImport.project);setExchangeNotice(pendingImport.warnings);setPendingImport(null);setStatus('导入已应用，Ctrl+Z 可恢复原工程。')}}>应用导入</button><button onClick={()=>setPendingImport(null)}>取消</button></div>}

@@ -6,7 +6,7 @@
 
 伏线是本地运行的网页电路仿真工作台，使用 React、TypeScript、Vite 和 WebAssembly 版 ngspice。它尝试把桌面原理图工具的交互和网页工作台结合起来：画电路、放探针、看曲线、改模型，尽量在同一个工程里完成。
 
-当前介绍基于 **v0.30.0**。提供 Windows x64 解压运行包，也保留可自行构建的完整公开源码。项目仍在持续开发，欢迎提交可复现的问题、交互建议和小范围改进。
+当前介绍基于 **v0.30.1**。提供 Windows x64 解压运行包，也保留可自行构建的完整公开源码。项目仍在持续开发，欢迎提交可复现的问题、交互建议和小范围改进。
 
 项目仓库：[awaqwqawa123/fuxian-spice-workbench](https://github.com/awaqwqawa123/fuxian-spice-workbench)。应用自有代码采用 MIT，既有第三方文件保留各自许可，详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。
 
@@ -20,7 +20,7 @@
 | SPICE 模型 | 查看和编辑模型源码、导入模型、管理自建库；模型与符号需要核对电气端序和兼容性 |
 | 模型助手（可选） | 按型号搜索模型与规格书，保留来源和兼容诊断；条件允许时形成可审阅的近似模型候选 |
 | 外部 AI 工具（可选） | 标准 stdio MCP 入口可读取项目、修改候选、校验电路并运行仿真；候选在网页中审阅、应用或撤销 |
-| 文件与报告 | LTspice ASC / SPICE 文本网表的受支持子集交换；SVG 导出，以及包含电路、实际数据和运行条件的测试报告 |
+| 文件与报告 | 独立 `.fuxian` 工程分享与迁移；LTspice ASC / SPICE 文本网表的受支持子集交换；SVG 导出，以及包含电路、实际数据和运行条件的测试报告 |
 
 ### 把绘图体验放在前面
 
@@ -38,11 +38,17 @@ v0.30.0 统一了顶栏、侧栏、表单和对话框的间距、控件与视觉
 
 ## Windows 下载即用
 
-从 [v0.30.0 发布页](https://github.com/awaqwqawa123/fuxian-spice-workbench/releases/tag/v0.30.0) 下载 **`Fuxian-0.30.0-Windows-x64.zip`**，完整解压到可写目录，然后双击 **`Start-Fuxian.cmd`**。服务准备好后会打开浏览器，默认地址为 `http://localhost:3032/`，只监听本机。
+从 [v0.30.1 发布页](https://github.com/awaqwqawa123/fuxian-spice-workbench/releases/tag/v0.30.1) 下载 **`Fuxian-0.30.1-Windows-x64.zip`**，完整解压到可写目录，然后双击 **`Start-Fuxian.cmd`**。服务准备好后会打开浏览器，默认地址为 `http://localhost:3032/`，只监听本机。
 
 运行包自带 Node、依赖、已构建前端、ngspice WebAssembly 引擎及公开模型。基础绘图和仿真不需要安装 Node、执行 npm 或在首次启动时联网下载。`Stop-Fuxian.cmd` 停止本目录对应的服务；`Status-Fuxian.cmd` 查看状态。端口被其他程序占用时会报告错误，不会结束无关进程。
 
 GitHub 自动提供的 **Source code (zip/tar.gz)** 是源码快照；普通 Windows 用户请下载上面命名的运行包。运行包不含维护者的私人厂商库、项目、账号和聊天；可选 AI 客户端仍需按各自要求安装、登录或配置。运行模式、打包与许可范围见 [Windows 便携包说明](docs/portable-windows.md)。
+
+## 分享和迁移工程
+
+v0.30.1 新增独立 `.fuxian` 工程文件。通过“文件 → 保存工程文件”、项目栏中的同名按钮或 Ctrl+S 保存；接收方通过“打开工程文件”打开为新项目，原有工程继续保留。旧版 JSON 工程仍可打开。
+
+文件包含电路、工程内嵌 SPICE 模型及原始符号、探针、多套仿真配置、波形图配置和报告设置。打开后重新仿真生成波形；账号、密钥、聊天、历史求解结果和整份本机模型库不随文件迁移。外部模型依赖需要先完整导入工程，第三方模型保留各自来源和许可。详见 [独立工程文件说明](docs/project-file-format.md)。
 
 ## 从源码启动
 
