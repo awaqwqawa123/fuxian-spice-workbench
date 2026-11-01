@@ -83,6 +83,7 @@ import './styles/waveform-trace-bar.css'
 import './styles/workspace-view-controls.css'
 import './styles/workspace-canvas-controls.css'
 import './waveform-compact-tools.css'
+import './workbench-refinement.css'
 
 const sessionLab = new URLSearchParams(window.location.search).get('codexSessionLab') === '1'
 createRoot(document.getElementById('root')!).render(sessionLab ? <CodexSessionLab /> : <App />)

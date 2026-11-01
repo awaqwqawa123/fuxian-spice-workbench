@@ -48,13 +48,10 @@ export default function CanvasWaveformDiagram({diagram,active,selected=false,toW
       if(!selected&&frame.getAttribute('data-diagram-selected')!=='true')return
       const bounds=frame.getBoundingClientRect()
       if(bounds.width<=0||bounds.height<=0||event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom)return
-      // The embedded preview owns plot wheel events and resizes this frame.
-      // Leave them to its capture listener so one wheel tick resizes once.
-      const plot=[...frame.querySelectorAll('.wave-plot')].some(candidate=>{
-        const plotBounds=candidate.getBoundingClientRect()
-        return plotBounds.width>0&&plotBounds.height>0&&event.clientX>=plotBounds.left&&event.clientX<=plotBounds.right&&event.clientY>=plotBounds.top&&event.clientY<=plotBounds.bottom
-      })
-      if(plot)return
+      // A frame owns every part of its footprint, including empty/error/OP
+      // states and plot HTML retargeted to the SVG. Never delegate selected
+      // plot events to a result-dependent child listener.
+      if((event.target as Element|null)?.closest?.('input,textarea,select,[contenteditable="true"]')){event.stopPropagation();return}
       event.preventDefault();event.stopPropagation()
       const anchor={x:Math.max(0,Math.min(1,(event.clientX-bounds.left)/bounds.width)),y:Math.max(0,Math.min(1,(event.clientY-bounds.top)/bounds.height))}
       const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?bounds.height:1)
@@ -117,7 +114,7 @@ export default function CanvasWaveformDiagram({diagram,active,selected=false,toW
       onChange?.(diagram.id,kind==='move'&&constrainMove?constrainMove(changed):changed,kind)
     }
   }
-  return <g ref={group} className={`canvas-waveform-diagram${preview?' is-manipulating':''}${selected?' is-selected':''}`} data-canvas-diagram={diagram.id} data-diagram-selected={selected?'true':undefined} transform={`translate(${box.x} ${box.y})`} role="group" aria-label={diagram.title??'画布波形图'} tabIndex={0}
+  return <g ref={group} className={`canvas-waveform-diagram${preview?' is-manipulating':''}${selected?' is-selected':''}`} data-canvas-diagram={diagram.id} data-diagram-selected={selected?'true':undefined} data-waveform-wheel-owner={(onWheelResize??diagram.onWheelResize)?'frame':undefined} transform={`translate(${box.x} ${box.y})`} role="group" aria-label={diagram.title??'画布波形图'} tabIndex={0}
     onFocus={event=>{if(active&&!pointerFocus.current&&!selected&&!embeddedControl(event.target))onActivate?.()}}
     onPointerDown={event=>{event.stopPropagation();suppressClick.current=false;if(!embeddedControl(event.target))begin(event,'move')}}
     onPointerMove={move} onPointerUp={finish} onPointerCancel={event=>{event.stopPropagation();cancel()}} onLostPointerCapture={event=>{event.stopPropagation();cancel()}}

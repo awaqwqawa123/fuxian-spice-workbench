@@ -52,6 +52,7 @@ function Write-Status($state, [bool]$running) {
         $result.hostPid = $state.hostPid; $result.childPid = $state.childPid
         $result.stdoutPath = $state.stdoutPath; $result.stderrPath = $state.stderrPath
         $result.nodeExecutable = $state.nodeExecutable
+        $result.runtimeMode = $state.runtimeMode
         $result.lastExitCode = $state.lastExitCode; $result.updatedAt = $state.updatedAt
         if ($running -and $state.status -eq 'ready') {
             $readyListener = Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue | Where-Object OwningProcess -eq $state.childPid

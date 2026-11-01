@@ -30,6 +30,8 @@ export interface WaveformInspectionState {
 interface Props {
   /** Fixed main-page workspace; settings stay inside the region. */
   embedded?: boolean
+  /** The surrounding dock owns wheel events; axis controls remain explicit. */
+  resizeFrameOnWheel?: boolean
   result: Result; comparison: Result | null; measurements?: Measurement[]
   sweepComparisons?:readonly Result[]
   probeRequest?:ProbeWaveformRequest|null; probeRequests?:readonly ProbeWaveformRequest[]
@@ -52,6 +54,7 @@ export interface WaveformSnapshot {
   splitDirection?:'rows'|'columns';splitRatio?:number
 }
 interface SharedView {
+  wheelHint?: string
   domain: WaveformDomain; bounds: WaveformDomain; hover: number | null
   cursors: { a: number | null; b: number | null }; active: 'a' | 'b' | null
   onHover: (x: number | null) => void; onPin: (x: number) => void
@@ -265,7 +268,7 @@ function SignalPlot({ index, result, traces, primaryId, shared, interactive=true
       </g>
     </svg>
     {interactive&&(!suppressIdleReadout || shared.hover!==null || selecting || detail)&&<div className="wave-readout" aria-live="off">
-      {shared.hover === null ? <span>{selecting?'拖出矩形，同时放大横轴和纵轴':'滚轮缩放双轴 · Shift 仅横轴 / Alt 仅纵轴 · 中键拖动平移'}</span> : <><strong>{formatSI(shared.hover, xUnit, 5)}</strong>{(compact?primary?[primary]:[]:traces).map(trace => {
+      {shared.hover === null ? <span>{selecting?'拖出矩形，同时放大横轴和纵轴':shared.wheelHint??'滚轮缩放双轴 · Shift 仅横轴 / Alt 仅纵轴 · 中键拖动平移'}</span> : <><strong>{formatSI(shared.hover, xUnit, 5)}</strong>{(compact?primary?[primary]:[]:traces).map(trace => {
         const point = sample(trace, shared.hover)
         return <span key={trace.id} style={{ color: trace.color }}>{trace.name} {point ? formatValue(point.y, trace.unit) : '此处无样本'}</span>
       })}</>}
@@ -309,7 +312,7 @@ function WaveformTools({ children, active=false }: {children:import('react').Rea
   </details>
 }
 
-function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, measurements = noMeasurements, selectedMeasurement, probeRequest, probeRequests, onSelectMeasurement, onSnapshot, initialView, onViewChange, inspectRequest, embedded=false, active:workspaceActive=true, fitRequest, showRequest, onInspectionChange, onSignalSelect, onExportReady, exportContext }: Props) {
+function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, measurements = noMeasurements, selectedMeasurement, probeRequest, probeRequests, onSelectMeasurement, onSnapshot, initialView, onViewChange, inspectRequest, embedded=false, resizeFrameOnWheel=false, active:workspaceActive=true, fitRequest, showRequest, onInspectionChange, onSignalSelect, onExportReady, exportContext }: Props) {
   const embeddedRegion=useRef<HTMLElement>(null)
   const fullRegion=useRef<HTMLElement>(null)
   const [embeddedSize,setEmbeddedSize]=useState({width:600,height:500})
@@ -479,7 +482,7 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
     }))
   }
   const pan = (fraction: number) => setDomain(old => panWaveformDomain(old, fraction))
-  const shared: SharedView = { domain, bounds, hover, cursors, active, onHover: setHover, onZoom: zoom, onPan: pan,
+  const shared: SharedView = { domain, bounds, hover, cursors, active, wheelHint:resizeFrameOnWheel?'滚轮调整波形区大小 · 放大镜缩放坐标 · 中键拖动平移':undefined, onHover: setHover, onZoom: zoom, onPan: pan,
     onPanAxes:(index,ranges)=>{setAutoFitExplicit(true);setAutoFit(false);patch(index,{axisRanges:ranges})},
     onMoveCursor:(name,x)=>{setCursors(old=>({...old,[name]:sampleAt(x)}));setActive(null)},
     onPin: x => {
@@ -562,7 +565,7 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
         </WaveformTools>
       </div>
       <div id={`wave-embedded-page-${result.id}`} className="wave-embedded-body" role="tabpanel" aria-label={`${{plot:'绘图',curves:'曲线',expression:'数学',axes:'坐标',cursor:'游标',info:'信息',navigation:'视图操作'}[embeddedTab]} · 视图 ${index+1}`}>
-        {embeddedTab==='navigation'&&<section className="wave-embedded-navigation-page" aria-label="共享波形横轴操作"><p hidden={tight}>滚轮缩放双轴；Shift 仅横轴，Alt 仅纵轴；中键拖动平移。横轴同步，纵轴只调整当前视图。</p>{tight&&<select aria-label="视图操作页面" value={navigationPage} onChange={event=>setNavigationPage(Number(event.target.value))}><option value="0">布局与测量</option><option value="1">平移与缩放</option></select>}{tight&&<div className="wave-embedded-zoom" hidden={navigationPage!==0}><select aria-label="波形视图布局" value={layout} onChange={event=>{const value=Number(event.target.value) as 1|2|4;setLayout(value);setActivePanel(old=>Math.min(old,value-1))}}><option value="1">单图</option><option value="2">双图</option><option value="4">四图</option></select>{ac&&<button type="button" aria-label="设置 Bode 增益相位双图" onClick={()=>{setLayout(2);setActivePanel(0);setEmbeddedTab('plot');setPanels(old=>old.map((item,i)=>i<2?{...item,source:'transfer',display:i===0?'magnitude':'phase'}:item))}}>Bode</button>}<button type="button" aria-pressed={inspectMode==='zoom'} onClick={()=>{inspectMode==='zoom'?setInspectMode(null):startInspect('zoom');setEmbeddedTab('plot')}}><ScanSearch size={12}/>局部放大</button><button type="button" onClick={()=>{startInspect('measure');setEmbeddedTab('plot')}}><Ruler size={12}/>A/B 测量</button></div>}<div className="wave-embedded-zoom" hidden={tight&&navigationPage!==1} role="group" aria-label="共享波形横轴"><button type="button" className="wave-icon-button" title="波形向左平移" aria-label="波形向左平移" disabled={domain[0]<=0} onClick={()=>pan(-.5)}><ArrowLeft size={16}/></button><button type="button" className="wave-icon-button" title="放大横轴和各视图纵轴" aria-label="放大所有波形" onClick={()=>zoomAll(2)} disabled={domain[1]-domain[0]<=1e-6}><Plus size={16}/></button><button type="button" className="wave-icon-button" title="缩小横轴和各视图纵轴" aria-label="缩小所有波形" onClick={()=>zoomAll(.5)} ><Minus size={16}/></button><button type="button" className="wave-icon-button" title="波形向右平移" aria-label="波形向右平移" disabled={domain[1]>=1} onClick={()=>pan(.5)}><ArrowRight size={16}/></button><button type="button" className="wave-icon-button" title="适配所有波形" aria-label="适配所有波形" onClick={()=>{fitCoordinates();setEmbeddedTab('plot')}}><Expand size={16}/></button></div><button type="button" hidden={tight} onClick={()=>setEmbeddedTab('plot')}>返回绘图</button></section>}
+        {embeddedTab==='navigation'&&<section className="wave-embedded-navigation-page" aria-label="共享波形横轴操作"><p hidden={tight}>{resizeFrameOnWheel?'滚轮调整波形区大小；用放大镜或缩放按钮调整坐标，中键拖动平移。':'滚轮缩放双轴；Shift 仅横轴，Alt 仅纵轴；中键拖动平移。横轴同步，纵轴只调整当前视图。'}</p>{tight&&<select aria-label="视图操作页面" value={navigationPage} onChange={event=>setNavigationPage(Number(event.target.value))}><option value="0">布局与测量</option><option value="1">平移与缩放</option></select>}{tight&&<div className="wave-embedded-zoom" hidden={navigationPage!==0}><select aria-label="波形视图布局" value={layout} onChange={event=>{const value=Number(event.target.value) as 1|2|4;setLayout(value);setActivePanel(old=>Math.min(old,value-1))}}><option value="1">单图</option><option value="2">双图</option><option value="4">四图</option></select>{ac&&<button type="button" aria-label="设置 Bode 增益相位双图" onClick={()=>{setLayout(2);setActivePanel(0);setEmbeddedTab('plot');setPanels(old=>old.map((item,i)=>i<2?{...item,source:'transfer',display:i===0?'magnitude':'phase'}:item))}}>Bode</button>}<button type="button" aria-pressed={inspectMode==='zoom'} onClick={()=>{inspectMode==='zoom'?setInspectMode(null):startInspect('zoom');setEmbeddedTab('plot')}}><ScanSearch size={12}/>局部放大</button><button type="button" onClick={()=>{startInspect('measure');setEmbeddedTab('plot')}}><Ruler size={12}/>A/B 测量</button></div>}<div className="wave-embedded-zoom" hidden={tight&&navigationPage!==1} role="group" aria-label="共享波形横轴"><button type="button" className="wave-icon-button" title="波形向左平移" aria-label="波形向左平移" disabled={domain[0]<=0} onClick={()=>pan(-.5)}><ArrowLeft size={16}/></button><button type="button" className="wave-icon-button" title="放大横轴和各视图纵轴" aria-label="放大所有波形" onClick={()=>zoomAll(2)} disabled={domain[1]-domain[0]<=1e-6}><Plus size={16}/></button><button type="button" className="wave-icon-button" title="缩小横轴和各视图纵轴" aria-label="缩小所有波形" onClick={()=>zoomAll(.5)} ><Minus size={16}/></button><button type="button" className="wave-icon-button" title="波形向右平移" aria-label="波形向右平移" disabled={domain[1]>=1} onClick={()=>pan(.5)}><ArrowRight size={16}/></button><button type="button" className="wave-icon-button" title="适配所有波形" aria-label="适配所有波形" onClick={()=>{fitCoordinates();setEmbeddedTab('plot')}}><Expand size={16}/></button></div><button type="button" hidden={tight} onClick={()=>setEmbeddedTab('plot')}>返回绘图</button></section>}
         {embeddedTab!=='plot'&&<div className="wave-embedded-return"><button type="button" onClick={()=>setEmbeddedTab('plot')}>返回波形</button>{Object.keys(panel.axisRanges??{}).length>0&&<span data-wave-y-locked="true">纵轴已固定</span>}</div>}
         {embeddedTab==='plot'&&<>
           {(inspectMode==='zoom' || active || visible.length<layout || Object.keys(panel.axisRanges??{}).length>0)&&<div className="wave-embedded-state"><span title={resolution?`当前曲线有 ${resolution.count} 个真实保留样本，最大间距 ${formatSI(resolution.maximumStep,xUnit,4)}。放大后小圆点标记真实采样；若尖峰或边沿细节不足，请缩短仿真最大步长后重新运行，图形不会补造采样。`:undefined}>{lens?'局部细节':inspectMode==='zoom'?'横纵框选区间':active?`放置游标 ${active.toUpperCase()}`:resolution?`真实 ${resolution.count} 点 · 最大间距 ${formatSI(resolution.maximumStep,xUnit,3)}`:'X 轴 / 游标同步'}</span>{Object.keys(panel.axisRanges??{}).length>0&&<small data-wave-y-locked="true" title="适配所有波形可恢复横纵轴；坐标页可重置">纵轴已固定</small>}{visible.length<layout&&<small>显示 {visible.map(i=>i+1).join('、')} / {layout} 图</small>}</div>}
@@ -710,6 +713,9 @@ export function CanvasWaveformPreview({result,snapshot,activePanel=0,onSelectPan
       if(event.defaultPrevented)return
       if((event.target as Element|null)?.closest?.('dialog,[role="dialog"],[aria-modal="true"],.canvas-waveform-legend-details'))return
       const frame=selectedFrame()
+      // The parent frame handles title, controls and all result states in one
+      // place. Retain this listener only for standalone/legacy preview hosts.
+      if(frame?.getAttribute('data-waveform-wheel-owner')==='frame')return
       // An unselected frame deliberately leaves the event for EditorCanvas,
       // whose wheel handler zooms/pans the schematic as usual.
       if(frame?.getAttribute('data-diagram-selected')!=='true'||!event.deltaY||!insideFrame(event,frame))return

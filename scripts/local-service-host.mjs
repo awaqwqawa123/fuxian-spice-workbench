@@ -22,10 +22,11 @@ const startedAt = new Date().toISOString()
 appendFileSync(stderrPath, `Local service host started ${startedAt}; runtime ${process.execPath}\n`)
 let child, status = 'starting', stopping = false, writeQueue = Promise.resolve(), timer, restartTimer
 let hasBeenReady = false
+let runtimeMode
 let lastExitCode
 const restarts = []
 const state = () => ({ serviceId, projectDirectory, port, hostPid: process.pid, childPid: child?.pid, configPath, status, stdoutPath, stderrPath,
-  nodeExecutable: process.execPath, startedAt, updatedAt: new Date().toISOString(), lastExitCode })
+  nodeExecutable: process.execPath, runtimeMode, startedAt, updatedAt: new Date().toISOString(), lastExitCode })
 function publish() {
   writeQueue = writeQueue.then(async () => {
     const temporary = `${statePath}.${serviceId}.tmp`
@@ -62,7 +63,7 @@ function startChild() {
   child = running; status = 'starting'; void publish()
   running.on('message', (message) => {
     if (message?.type === 'fuxian-service-ready' && !stopping) {
-      hasBeenReady = true; status = 'ready'; void publish()
+      runtimeMode = message.mode; hasBeenReady = true; status = 'ready'; void publish()
     }
   })
   running.on('error', error => appendFileSync(stderrPath, `Local service launch failed: ${error.message}\n`))

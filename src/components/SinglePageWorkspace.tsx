@@ -17,6 +17,7 @@ export interface SinglePageWorkspaceProps {
   onModeChange?: (mode: SinglePageWorkspaceMode) => void
   onFitBoth?: () => void
   onRestoreLayout?: () => void
+  sidebarScaleRequest?: { sequence: number; logScale: number }
 }
 const defaultRatio = .45
 const storageKey = (key?: string) => `fuxian.single-page-layout:${key ?? 'default'}`
@@ -32,7 +33,7 @@ export function readSinglePageLayout(key?: string): { ratio: number; mode: Singl
   } catch { return { ratio: defaultRatio, mode: 'split' } }
 }
 
-export default function SinglePageWorkspace({ schematic, waveform, properties, sidebarTab = 'waveform', onSidebarTabChange, selectionKey, layoutKey, mode: controlledMode, onModeChange, onFitBoth, onRestoreLayout }: SinglePageWorkspaceProps) {
+export default function SinglePageWorkspace({ schematic, waveform, properties, sidebarTab = 'waveform', onSidebarTabChange, selectionKey, layoutKey, mode: controlledMode, onModeChange, onFitBoth, onRestoreLayout, sidebarScaleRequest }: SinglePageWorkspaceProps) {
   const host = useRef<HTMLDivElement>(null)
   const schematicHost = useRef<HTMLDivElement>(null)
   const waveformHost = useRef<HTMLElement>(null)
@@ -79,6 +80,20 @@ export default function SinglePageWorkspace({ schematic, waveform, properties, s
   const narrow = width < (sharedSidebar ? 560 : 768)
   const min = Math.max(sharedSidebar ? 240 : 320, width * .3), max = Math.min(width - (sharedSidebar ? 320 : 448), width * .65)
   const left = Math.max(min, Math.min(max, width * ratio))
+  const handledScale = useRef({ sequence: sidebarScaleRequest?.sequence ?? 0, logScale: sidebarScaleRequest?.logScale ?? 0 })
+  useEffect(() => {
+    if (!sidebarScaleRequest || handledScale.current.sequence === sidebarScaleRequest.sequence) return
+    const factor = Math.exp(sidebarScaleRequest.logScale - handledScale.current.logScale)
+    handledScale.current = sidebarScaleRequest
+    if (mode !== 'split' || narrow || !Number.isFinite(factor) || factor <= 0) return
+    // Resize the dock itself; plotting coordinates and schematic camera are independent.
+    setSavedLayout(current => {
+      const base = current.key === layoutKey ? current : { key: layoutKey, ...readSinglePageLayout(layoutKey) }
+      const actualLeft = Math.max(min, Math.min(max, width * base.ratio))
+      const nextLeft = Math.max(min, Math.min(max, width - (width - actualLeft) * factor))
+      return nextLeft === actualLeft ? base : { ...base, ratio: nextLeft / width }
+    })
+  }, [sidebarScaleRequest, mode, narrow, layoutKey, width, min, max])
   const schematicHidden = mode === 'waveform' || mode === 'split' && narrow && tab !== 'schematic'
   const waveformHidden = mode === 'schematic' || mode === 'split' && narrow && tab !== 'waveform'
   const sidebarLabel = sidebarTab === 'properties' ? '专注属性' : '专注波形'

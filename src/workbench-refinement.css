@@ -1,0 +1,176 @@
+/* Compact instrument-style chrome. This layer deliberately excludes schematic
+   SVGs, plots, exported documents and stored sidebar widths. Theme and larger
+   typography preferences remain the source of truth for colors and text size. */
+:root[data-workbench-theme] {
+  --ui-radius-control: 5px;
+  --ui-radius-card: 7px;
+  --ui-radius-dialog: 10px;
+  --studio-control-height: 32px;
+  --studio-chrome-height: 46px;
+  --studio-panel-gap: 10px;
+}
+:root[data-workbench-density=compact] {
+  --studio-control-height: 30px;
+  --studio-chrome-height: 44px;
+  --studio-panel-gap: 8px;
+}
+:root[data-workbench-typography=larger] {
+  --studio-control-height: 36px;
+  --studio-chrome-height: 50px;
+}
+
+/* A restrained document bar and a single command strip give space back to
+   the sheet. No new toolbar, overlay or persistent panel is introduced. */
+.workspace-shell .free-header.workspace-topbar {
+  height: var(--studio-chrome-height);
+  min-height: var(--studio-chrome-height);
+  flex-basis: var(--studio-chrome-height);
+  gap: 10px;
+  padding-inline: 12px;
+  box-shadow: none;
+}
+.workspace-shell .workspace-topbar .free-brand { padding-right: 10px; }
+.workspace-shell .workspace-topbar .free-brand strong { font-size: 18px; letter-spacing: -.4px; }
+.workspace-shell .workspace-topbar-title { gap: 4px; }
+.workspace-shell .workspace-topbar .project-title-input { padding: 4px 6px; font-weight: 600; }
+.workspace-shell .workspace-topbar .workspace-view-tabs { gap: 2px; padding: 2px; border-radius: 6px; }
+.workspace-shell .workspace-topbar .workspace-view-tabs > button { min-height: 28px; padding: 4px 8px; }
+.workspace-shell .workspace-topbar :is(.workspace-topbar-actions > button, .workspace-simulation-controls > button, .project-ai-name, .workspace-file-menu > summary, .workspace-secondary-menu > summary) {
+  min-height: var(--studio-control-height);
+  padding-block: 4px;
+  gap: 5px;
+}
+.workspace-shell .workspace-topbar .workspace-topbar-actions > .run-button { min-width: 88px; padding-inline: 11px; box-shadow: none; }
+.workspace-shell .workspace-simulation-controls { margin-left: 2px; padding-left: 8px; gap: 3px; }
+.workspace-shell .workspace-simulation-controls .simulation-profile-select { height: 26px; min-height: 26px; padding-block: 2px; }
+.workspace-shell .workspace-simulation-profile > span { line-height: 1; }
+.workspace-shell .drawing-toolbar.workspace-commandbar {
+  height: 38px;
+  min-height: 38px;
+  flex-basis: 38px;
+  padding: 3px 8px;
+  gap: 7px;
+}
+.workspace-shell .workspace-commandbar .drawing-tools { height: 30px; gap: 2px; }
+.workspace-shell .workspace-commandbar :is(.drawing-tools > button, .canvas-diagram-add, .workspace-layout-actions > button, .drawing-edit-menu > summary) {
+  min-height: 30px;
+  min-width: 30px;
+  padding: 5px;
+}
+.workspace-shell .workspace-commandbar .drawing-tools > i { margin-inline: 4px; height: 16px; }
+.workspace-shell .workspace-layout-actions { gap: 2px; padding-left: 6px; }
+.workspace-shell .workspace-center .drawing-status { min-height: 25px; max-height: 25px; flex-basis: 25px; padding: 3px 10px; }
+.workbench-with-assistant.workspace-shell > .workspace-navigation-rail { width: 52px; flex-basis: 52px; }
+.workspace-navigation-rail .workspace-rail-brand { height: var(--studio-chrome-height); flex-basis: var(--studio-chrome-height); }
+.workspace-navigation-rail .workspace-rail-brand > svg { width: 29px; height: 29px; padding: 6px; border-radius: 7px; }
+.workspace-navigation-rail .workspace-rail-tabs { gap: 6px; padding: 10px 4px; }
+.workspace-navigation-rail :is(.workspace-rail-tabs > button, .workspace-rail-bottom > button) { width: 44px; min-height: 48px; gap: 4px; border-radius: 6px; }
+.workspace-navigation-rail .workspace-rail-bottom { padding: 8px 4px; gap: 3px; }
+.workspace-navigation-rail .workspace-rail-tabs > button[aria-expanded=true]::before { left: -4px; top: 11px; bottom: 11px; }
+
+/* Explicit, discoverable panel boundaries. Hit areas remain at their existing
+   layout width, and highlighting changes neither width nor sheet geometry. */
+.workspace-shell .sidebar-resize-handle { position: relative; touch-action: none; }
+.workspace-shell .sidebar-resize-handle > span { opacity: .65; }
+.workspace-shell .sidebar-resize-handle:is(:hover, :focus-visible)::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: color-mix(in srgb, var(--ui-accent) 16%, transparent);
+}
+.workspace-shell :is(.editor-inspector, .assistant-sidebar, .project-sidebar-panel) { box-shadow: none; }
+.workspace-shell .inspector-panel-controls { min-height: 38px; padding: 5px 10px; gap: 6px; }
+.workspace-shell .inspector-panel-controls button { min-height: 28px; padding: 4px 6px; }
+.workspace-shell .workspace-right .editor-inspector-scroll { padding: var(--studio-panel-gap) 10px; }
+.workspace-shell .workspace-right .inspector-tabs { padding: 3px 5px; gap: 2px; }
+.workspace-shell .workspace-right .inspector-tabs > [role=tab] { min-height: 30px; padding: 5px 6px; }
+.workspace-shell .editor-inspector .selected-device-preview { gap: 9px; margin-bottom: 10px; padding-bottom: 10px; }
+.workspace-shell .editor-inspector :is(.field, .device-parameters label, .source-parameters label) { margin-block: 0 8px; gap: 4px; }
+.workspace-shell .editor-inspector :is(.field > span, .device-parameters label > span) { margin-bottom: 3px; }
+.workspace-shell .editor-inspector :is(input:not([type=checkbox]):not([type=radio]):not([type=color]), select) {
+  min-height: var(--studio-control-height);
+  padding: 4px 7px;
+}
+.workspace-shell .editor-inspector :is(.subsection-title, .selection-summary > strong) { margin-block: 10px 7px; }
+.workspace-shell .editor-inspector :is(.field-pair, .source-field-pair) { gap: 7px; }
+.workspace-shell .editor-inspector :is(.source-summary, .source-spice-preview, .model-parameter-summary, .model-editor-inline) { padding: 7px; }
+.workspace-shell .editor-inspector .pin-list { padding-top: 8px; margin-top: 8px; }
+.workspace-shell .editor-inspector .pin-list > div { padding-block: 5px; }
+
+/* Dense lists and section headers, retaining full original symbol previews. */
+.workspace-shell .workspace-left .project-sidebar-heading { padding: 12px 10px 10px; }
+.workspace-shell .workspace-left .project-sidebar-heading h2 { margin-top: 5px; }
+.workspace-shell .workspace-left .project-sidebar-actions { padding: 0 10px 10px; gap: 5px; }
+.workspace-shell .workspace-left .project-sidebar-actions > button { min-height: var(--studio-control-height); padding: 5px 7px; }
+.workspace-shell .workspace-left .project-sidebar-section { padding: 0 10px 7px; }
+.workspace-shell .workspace-left .project-sidebar-list { padding: 0 6px 8px; }
+.workspace-shell .workspace-left .project-sidebar-entry { padding: 8px; margin-bottom: 3px; }
+.workspace-shell .workspace-left .project-sidebar-entry-meta { margin-top: 3px; }
+.workspace-shell .workspace-left .project-sidebar-footer { padding: 9px 10px; }
+.workspace-shell .workspace-left .device-library:has(> .common-device-library) { padding: 8px; }
+.workspace-shell .common-device-library { gap: 5px; }
+.workspace-shell .common-device-library.common-device-library > .device-search { min-height: 30px; height: 30px; }
+.workspace-shell .common-device-library.common-device-library > .user-library-switch { padding: 2px; }
+.workspace-shell .common-device-library.common-device-library > .user-library-switch button { min-height: 28px; padding-block: 4px; }
+.workspace-shell .assistant-sidebar .assistant-sidebar-heading { padding: 10px 12px 6px; gap: 8px; }
+.workspace-shell .assistant-sidebar .assistant-sidebar-heading h2 { margin-top: 3px; }
+.workspace-shell .assistant-sidebar .assistant-sidebar-hint { padding: 0 12px 8px; }
+.workspace-shell .assistant-sidebar .assistant-workspace-tabs { margin: 6px 10px; padding: 3px; gap: 3px; }
+.workspace-shell .assistant-sidebar .assistant-workspace-tabs > button { min-height: 30px; padding-block: 4px; }
+.workspace-shell .assistant-sidebar .assistant-sidebar-controls { gap: 2px; }
+.workspace-shell .assistant-sidebar .assistant-sidebar-controls button { min-height: 28px; width: 28px; height: 28px; }
+.workspace-shell .assistant-sidebar :is(.persistent-message, .circuit-explanation-messages article) { margin-block: 8px; }
+.workspace-shell .assistant-sidebar .persistent-message.is-user { padding: 8px 10px; }
+
+/* Dialog chrome uses the same scale as properties. Reading panes remain
+   independently scrollable; switching settings categories cannot resize them. */
+:is(.appearance-settings, .settings-dialog, .model-search-window, .extension-library-window, .model-editor-dialog, .spice-library-dialog, .example-gallery) { --dialog-padding: 16px; }
+:is(.appearance-settings, .settings-dialog, .model-search-window, .extension-library-window) > .workbench-window-heading,
+:is(.model-editor-dialog, .spice-library-dialog) > header,
+.example-gallery > .example-gallery-header { padding: 12px var(--dialog-padding); gap: 10px; }
+:is(.appearance-settings, .settings-dialog, .model-search-window, .extension-library-window) > .workbench-window-heading h2,
+:is(.model-editor-dialog, .spice-library-dialog) > header h2,
+.example-gallery .example-gallery-header h2 { margin: 0 0 4px; font-size: 17px; line-height: 1.4; }
+:is(.appearance-settings, .settings-dialog, .model-search-window, .extension-library-window) > .workbench-window-heading p,
+:is(.model-editor-dialog, .spice-library-dialog) > header p { font-size: var(--ui-font-tool); line-height: 1.5; }
+:is(.appearance-settings, .settings-dialog, .extension-library-window) > .workbench-window-footer,
+:is(.model-editor-dialog, .spice-library-dialog) > footer,
+.example-gallery > .example-gallery-footer { padding: 9px var(--dialog-padding); gap: 8px; }
+:is(.appearance-settings, .settings-dialog, .model-search-window, .extension-library-window, .model-editor-dialog, .spice-library-dialog, .example-gallery) :is(button, select, input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file])) { min-height: var(--studio-control-height); }
+.workbench-window.settings-dialog { width: min(960px, calc(100vw - 32px)); height: min(760px, calc(100dvh - 32px)); max-height: calc(100dvh - 32px); }
+.settings-dialog .settings-layout { grid-template-columns: 160px minmax(0, 1fr); }
+.settings-dialog .settings-navigation { padding: 10px 8px; gap: 4px; }
+.settings-dialog .settings-navigation > button { min-height: 34px; padding: 7px 9px; gap: 8px; }
+.settings-dialog .settings-content { padding: 16px; gap: 14px; }
+.settings-dialog .settings-content :is(input, select) { height: var(--studio-control-height); padding: 5px 8px; }
+.settings-dialog .settings-content label { gap: 5px; }
+.settings-dialog :is(.settings-connection-card, .desktop-connection-guide, .dsh-local-settings) { padding: 12px; gap: 9px; }
+.settings-dialog .settings-content h3 { font-size: 14px; }
+.settings-dialog .settings-content button { padding: 5px 9px; }
+.model-search-window .model-search-window-body { padding: 8px 16px 16px; }
+:root[data-workbench-theme] :is(.local-device-card, .catalog-model-grid > article, .catalog-saved-model, .project-model-list > article) { padding: 10px; }
+.extension-library-window :is(.local-device-filters, .catalog-filters) { gap: 7px; }
+.extension-library-window :is(.local-device-source, .local-device-terminals) { margin-block: 5px; }
+
+/* Pointer users get compact controls; touch users keep comfortable targets.
+   Larger interface text can increase row height without clipping its baseline. */
+:root[data-workbench-typography=larger] .workspace-shell .drawing-toolbar.workspace-commandbar { height: 44px; min-height: 44px; flex-basis: 44px; }
+:root[data-workbench-typography=larger] .workspace-shell .workspace-commandbar .drawing-tools { height: 36px; }
+:root[data-workbench-typography=larger] .workspace-shell .workspace-commandbar :is(.drawing-tools > button, .drawing-edit-menu > summary, .workspace-layout-actions > button) { min-height: 34px; min-width: 34px; }
+@media (pointer: coarse) {
+  :root[data-workbench-theme] { --studio-control-height: 40px; --studio-chrome-height: 54px; }
+  .workspace-shell .drawing-toolbar.workspace-commandbar { height: 48px; min-height: 48px; flex-basis: 48px; }
+  .workspace-shell .workspace-commandbar .drawing-tools { height: 40px; }
+  .workspace-shell .workspace-commandbar :is(.drawing-tools > button, .drawing-edit-menu > summary, .workspace-layout-actions > button) { min-width: 40px; min-height: 40px; }
+}
+@media (max-width: 1100px) {
+  .workspace-shell .free-header.workspace-topbar { padding-inline: 8px; gap: 5px; }
+  .workspace-shell .workspace-topbar .workspace-topbar-actions > .run-button { min-width: 78px; padding-inline: 8px; }
+  .workspace-shell .workspace-topbar .workspace-view-tabs > button { padding-inline: 6px; }
+}
+@media (max-width: 620px) {
+  .workbench-window.settings-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 16px); height: calc(100dvh - 16px); }
+  .settings-dialog .settings-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .settings-dialog .settings-navigation { flex-direction: row; flex-wrap: nowrap; overflow-x: auto; padding: 6px 8px; gap: 3px; border-right: 0; border-bottom: 1px solid var(--ui-border); }
+  .settings-dialog .settings-navigation > button { flex: none; white-space: nowrap; }
+  .settings-dialog .settings-navigation > small { display: none; }
+  .settings-dialog .settings-content { padding: 12px; }
+}

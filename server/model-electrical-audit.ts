@@ -15,7 +15,7 @@ export interface ElectricalAuditRow {
 export async function readCompiledAuditModels(libraryRoot:string) {
   const root=join(libraryRoot,'.cache','device-library-v1')
   const manifest=JSON.parse(await readFile(join(root,'manifest.json'),'utf8'))
-  if(![1,2,3].includes(manifest.schema)||!/^\d{13}-[a-f0-9-]{36}$/.test(manifest.generation)||!Array.isArray(manifest.chunks)||manifest.chunks.length>1000||!Number.isSafeInteger(manifest.versions))throw new Error('编译库清单格式错误，未继续审查')
+  if(![1,2,3,4].includes(manifest.schema)||!/^\d{13}-[a-f0-9-]{36}$/.test(manifest.generation)||!Array.isArray(manifest.chunks)||manifest.chunks.length>1000||!Number.isSafeInteger(manifest.versions))throw new Error('编译库清单格式错误，未继续审查')
   const indexBytes=await readFile(join(root,manifest.generation,'index.json'))
   if(hash(indexBytes)!==manifest.indexHash)throw new Error('编译库索引校验失败，未继续审查')
   const index=JSON.parse(indexBytes.toString('utf8'))

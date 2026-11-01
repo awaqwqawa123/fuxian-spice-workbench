@@ -5,6 +5,12 @@
 .page-workspace-controls .page-collapse-waveform,.page-workspace-controls .page-expand-waveform{border-color:var(--ui-accent);color:var(--ui-accent)}
 .page-workspace-body{display:flex;flex:1;min-width:0;min-height:0;overflow:hidden}
 .page-workspace-body>[hidden]{display:none!important}
+.workspace-shell .workspace-body>.sidebar-resize-handle,
+.workspace-shell .page-workspace-body>.sidebar-resize-handle,
+.single-page-workspace .page-workspace-body>.sidebar-resize-handle{position:relative;display:block;align-self:stretch;z-index:5;flex:0 0 12px;width:12px;min-width:12px;max-width:12px;height:auto;min-height:0;padding:0;border:0;background:var(--ui-border,#e6eee8);pointer-events:auto;cursor:col-resize;touch-action:none;user-select:none;outline:none}
+.workspace-shell .sidebar-resize-handle[hidden],
+.single-page-workspace .sidebar-resize-handle[hidden]{display:none!important}
+.single-page-workspace .page-workspace-body>.sidebar-resize-handle>span{position:absolute;display:flex;align-items:center;justify-content:center;left:0;top:calc(50% - 24px);width:12px;height:48px;border-radius:4px;background:var(--ui-accent-soft,#d4e1d7);color:var(--ui-muted,#53705c);pointer-events:none;cursor:col-resize}
 .v2-workspace .page-schematic-host,.v2-workspace .page-waveform-host{height:100%;min-width:0;min-height:0}
 .v2-workspace.is-schematic .page-schematic-host,.v2-workspace.is-waveform .page-waveform-host{flex:1}
 .page-collapsed-waveform,.page-collapsed-schematic{display:flex;flex-direction:column;align-items:center;gap:14px;flex:0 0 44px;border-left:1px solid var(--ui-border);padding:8px 3px;font-size:11px;color:var(--ui-muted);background:var(--ui-panel)}

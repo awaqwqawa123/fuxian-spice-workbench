@@ -1,6 +1,10 @@
 import type { ImportedSpiceModel } from './spice-models'
 import { classifyModelFunctionalSymbol } from './model-functional-symbol'
 import { functionalPinEvidenceForModel } from './model-pin-evidence'
+import { modelCategoryEvidence } from './model-category-evidence'
+
+/** Display/index caches must reclassify saved definitions when evidence changes. */
+export const MODEL_TAXONOMY_REVISION = '2026-10-18-reviewed-source-and-property-evidence-v3'
 
 /** Categories describe the model declaration or an explicit source annotation.
  * Electrical parameters alone do not establish a part's intended application. */
@@ -11,6 +15,7 @@ export const modelCategoryGroups = [
   { id: 'bjt', label: '双极晶体管' },
   { id: 'mos', label: 'MOSFET' },
   { id: 'jfet', label: 'JFET' },
+  { id: 'semiconductor', label: '晶闸管与 IGBT' },
   { id: 'analog', label: '放大器与基准' },
   { id: 'power', label: '电源管理' },
   { id: 'control', label: '开关与控制' },
@@ -25,6 +30,13 @@ export const modelCategories = [
   { id: 'passive:ferrite', group: 'passive', label: '铁氧体磁珠模型' },
   { id: 'passive:choke', group: 'passive', label: '共模扼流圈模型' },
   { id: 'passive:transformer', group: 'passive', label: '变压器宏模型' },
+  { id: 'passive:coupled-inductor', group: 'passive', label: '耦合电感 / 双绕组电感' },
+  { id: 'passive:power-choke', group: 'passive', label: '功率扼流圈 / PFC 电感' },
+  { id: 'passive:thermistor', group: 'passive', label: '热敏电阻' },
+  { id: 'passive:rtd', group: 'passive', label: '电阻式温度传感器 / RTD' },
+  { id: 'passive:varistor', group: 'passive', label: '压敏电阻 / MOV' },
+  { id: 'passive:connector', group: 'passive', label: '连接器 / 插座模型' },
+  { id: 'passive:transmission-line', group: 'passive', label: '传输线模型' },
   { id: 'diode:schottky', group: 'diode', label: '肖特基二极管' },
   { id: 'diode:zener', group: 'diode', label: '稳压二极管' },
   { id: 'diode:tvs', group: 'diode', label: '瞬态抑制二极管' },
@@ -35,19 +47,30 @@ export const modelCategories = [
   { id: 'diode:silicon', group: 'diode', label: '硅二极管' },
   { id: 'diode:forward-fit', group: 'diode', label: '仅正向 DC 拟合' },
   { id: 'diode:other', group: 'diode', label: '其他二极管' },
+  { id: 'diode:bridge', group: 'diode', label: '整流桥模型' },
+  { id: 'diode:current-regulator', group: 'diode', label: '恒流二极管' },
   { id: 'opto:led', group: 'opto', label: '发光二极管 / LED 模型' },
   { id: 'opto:laser', group: 'opto', label: '垂直腔激光器模型' },
   { id: 'opto:photodiode', group: 'opto', label: '光电二极管模型' },
   { id: 'opto:optocoupler', group: 'opto', label: '光耦' },
+  { id: 'opto:unverified', group: 'opto', label: '光电器件（细类待核实）' },
   { id: 'bjt:npn', group: 'bjt', label: 'NPN 晶体管' },
   { id: 'bjt:pnp', group: 'bjt', label: 'PNP 晶体管' },
+  { id: 'bjt:array', group: 'bjt', label: '双管 / 晶体管阵列' },
+  { id: 'bjt:darlington-npn', group: 'bjt', label: 'NPN 达林顿晶体管' },
+  { id: 'bjt:darlington-pnp', group: 'bjt', label: 'PNP 达林顿晶体管' },
   { id: 'mos:n-vdmos', group: 'mos', label: 'N 沟道功率 VDMOS' },
   { id: 'mos:p-vdmos', group: 'mos', label: 'P 沟道功率 VDMOS' },
   { id: 'mos:n', group: 'mos', label: 'N 沟道 MOS' },
   { id: 'mos:p', group: 'mos', label: 'P 沟道 MOS' },
+  { id: 'mos:array', group: 'mos', label: '双 MOS / MOS 阵列' },
   { id: 'jfet:n', group: 'jfet', label: 'N 沟道 JFET' },
   { id: 'jfet:p', group: 'jfet', label: 'P 沟道 JFET' },
+  { id: 'semiconductor:thyristor', group: 'semiconductor', label: '晶闸管 / 可控硅（单向或双向待核实）' },
+  { id: 'semiconductor:triac', group: 'semiconductor', label: '双向晶闸管 / TRIAC' },
+  { id: 'semiconductor:igbt', group: 'semiconductor', label: '绝缘栅双极晶体管 / IGBT' },
   { id: 'analog:opamp', group: 'analog', label: '运算放大器' },
+  { id: 'analog:amplifier-unverified', group: 'analog', label: '放大器 / 比较器（细类待核实）' },
   { id: 'analog:opamp-dual', group: 'analog', label: '双通道运放宏模型' },
   { id: 'analog:opamp-quad', group: 'analog', label: '四通道运放宏模型' },
   { id: 'analog:opamp-multi', group: 'analog', label: '多通道运放宏模型' },
@@ -66,12 +89,15 @@ export const modelCategories = [
   { id: 'power:switching-regulator', group: 'power', label: '开关稳压器' },
   { id: 'power:gate-driver', group: 'power', label: '栅极驱动器' },
   { id: 'power:pwm-controller', group: 'power', label: 'PWM 与电源控制器' },
+  { id: 'power:voltage-supervisor', group: 'power', label: '电压监控 / 欠压检测' },
   { id: 'control:switch', group: 'control', label: '压控开关' },
+  { id: 'control:analog-switch', group: 'control', label: '模拟开关 / 多路复用器' },
   { id: 'control:timer', group: 'control', label: '定时器与振荡器宏模型' },
   { id: 'control:logic', group: 'control', label: '逻辑与时序宏模型' },
   { id: 'interface:adc', group: 'interface', label: '模数转换器' },
   { id: 'interface:dac', group: 'interface', label: '数模转换器' },
   { id: 'subcircuit:other', group: 'subcircuit', label: '未分类子电路' },
+  { id: 'subcircuit:helper', group: 'subcircuit', label: '模型依赖 / 内部辅助子电路' },
 ] as const
 
 /** The wider component vocabulary includes catalog categories and built-in
@@ -116,9 +142,15 @@ const wurthTransformerFiles = new Set('WE-GDT WE-GDTI'.split(' '))
 const wurthLedFiles = new Set('WL-SBCC WL-SBCD WL-SBCW WL-SBRW WL-SBSW WL-SBTW WL-SFCC WL-SFCD WL-SFRW WL-SFSW WL-SFTD WL-SFTW WL-SICW WL-SIMW WL-SIQW WL-SIRW WL-SISW WL-SITW WL-SMCC WL-SMCD WL-SMCW WL-SMDC WL-SMRD WL-SMRW WL-SMSW WL-SMTD WL-SMTW WL-SUMW WL-SUTW WL-SWTC WL-SWTP WL-TIRC WL-TIRW WL-TMRC WL-TMRW'.split(' '))
 
 function subcircuitCategory(model: ImportedSpiceModel): ModelCategoryId {
+  const reviewed = modelCategoryEvidence(model)
+  if (reviewed && !['analog:opamp', 'analog:comparator', 'analog:amplifier-unverified'].includes(reviewed.category)) return reviewed.category
   const sourceFunction=model.deviceInfo?.function??''
   if(model.pins.length===2&&/\b(?:bidirectional\s+(?:suppressor|supressor)|transient\s+(?:voltage\s+)?suppressor|TVS)\b/i.test(sourceFunction))return 'diode:tvs'
-  const classification=classifyModelFunctionalSymbol(model),family=classification.family??model.symbol?.family
+  // Generic mixed-library captions are not this root's function. Strip them
+  // only from the inference input; the saved definition and symbol stay intact.
+  const libraryCaption=/^\s*\*[^\r\n]*\b(?:library of|sections|copyright|disclaimer)\b[^\r\n]*$/gim
+  const classificationModel=libraryCaption.test(model.spice)?{...model,spice:model.spice.replace(libraryCaption,'')}:model
+  const classification=classifyModelFunctionalSymbol(classificationModel),family=classification.family??model.symbol?.family
   const channels=new Set((classification.roles??[]).filter(role=>/^input-plus(?::[A-H1-8])?$/.test(role)).map(role=>role.split(':')[1]??'')).size
   if(family==='operational-amplifier'||family==='comparator'){
     const base=family==='operational-amplifier'?'analog:opamp':'analog:comparator'
@@ -138,10 +170,11 @@ function subcircuitCategory(model: ImportedSpiceModel): ModelCategoryId {
     capacitor:'passive:capacitor', inductor:'passive:inductor', 'diode-subcircuit':'diode:other',
     diode:'diode:other','zener-diode':'diode:zener','schottky-diode':'diode:schottky',led:'opto:led',photodiode:'opto:photodiode',varactor:'diode:varactor',
   }
-  const functionText=`${model.metadata.type??''}\n${sourceFunction}\n${functionalPinEvidenceForModel(model)?.text??''}`
+  const functionText=`${model.metadata.type??''}\n${sourceFunction}\n${functionalPinEvidenceForModel(classificationModel)?.text??''}`
   if(family==='voltage-regulator'&&/\b(?:LDO|low[- ]dropout)\b/i.test(functionText))return 'power:ldo'
   const functionalCategory=family&&familyCategories[family]
   if(functionalCategory)return functionalCategory
+  if (reviewed) return reviewed.category
   // These explicit source descriptions classify a macro's purpose without
   // claiming that its still-unmapped ports have a verified functional drawing.
   if(/\b(?:gate driver|MOSFET driver|IGBT driver)\b/i.test(functionText))return 'power:gate-driver'
@@ -168,7 +201,8 @@ export function modelCategory(model: ImportedSpiceModel): ModelCategoryId {
   switch (model.type) {
     case 'D': {
       const annotation = (model.metadata.type ?? '').toLowerCase().replace(/[^a-z]/g, '')
-      return explicitDiodeTypes[annotation] ?? 'diode:other'
+      const evidence = modelCategoryEvidence(model)
+      return explicitDiodeTypes[annotation] ?? (evidence && /^(?:diode|opto):/.test(evidence.category) ? evidence.category : 'diode:other')
     }
     case 'NPN': return 'bjt:npn'
     case 'PNP': return 'bjt:pnp'

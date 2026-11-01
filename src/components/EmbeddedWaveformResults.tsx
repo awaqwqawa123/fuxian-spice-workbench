@@ -14,6 +14,8 @@ import type { WaveformAnalysisSettings } from '../core/waveform-analysis-setting
 type Props = ComponentProps<typeof CanvasWaveformResults> & {
   deviceSummary?: ReactNode
   onSettings: () => void
+  /** Resize the docked graph footprint; display domains and solver data stay intact. */
+  onFrameResize?: (factor: number) => void
   interrupted?: boolean
   active?: boolean
   fitRequest?: WaveformFitRequest
@@ -30,7 +32,7 @@ function download(result: Result, title: string) {
 /** A mounted result view belongs to the page; changing groups keeps each saved view intact. */
 export default function EmbeddedWaveformResults({ diagram, visible, profiles, result, history, running, busy, progress, failure, stale, interrupted,
   measurements, selectedMeasurement, probeRequests, inspectRequest, onSelectMeasurement, onPatch, onSnapshot, onRun,
-  onCopy, onRemove, canAdd, deviceSummary, onSettings, active = visible, fitRequest, showRequest, onSignalSelect }: Props) {
+  onCopy, onRemove, canAdd, deviceSummary, onSettings, onFrameResize, active = visible, fitRequest, showRequest, onSignalSelect }: Props) {
   const [comparison, setComparison] = useState<Result | null>(null)
   const region=useRef<HTMLElement>(null)
   const [tightHeight,setTightHeight]=useState(false),[showParameters,setShowParameters]=useState(false)
@@ -43,6 +45,24 @@ export default function EmbeddedWaveformResults({ diagram, visible, profiles, re
   const [overlaySweep, setOverlaySweep] = useState(false)
   const [page, setPage] = useState(0)
   const [toolPage, setToolPage] = useState<'view' | 'setup' | 'log' | 'analysis'>('view')
+  const frameResize=useRef(onFrameResize)
+  frameResize.current=onFrameResize
+  useEffect(()=>{
+    const element=region.current
+    if(!element||!active||toolPage!=='view'||!onFrameResize)return
+    const wheel=(event:WheelEvent)=>{
+      const target=event.target as Element|null
+      if(event.defaultPrevented||!event.deltaY||!target?.closest?.('.page-result-content .wave-plot'))return
+      if(target.closest('input,textarea,select,button,dialog,[role="dialog"],[contenteditable="true"]'))return
+      event.preventDefault();event.stopPropagation()
+      const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?element.clientHeight||480:1)
+      frameResize.current?.(Math.exp(-Math.max(-160,Math.min(160,delta))*.0025))
+    }
+    // Capture on the HTML parent before the plot's native SVG wheel handler.
+    // Docked results resize their actual pane, never their data axis or canvas.
+    element.addEventListener('wheel',wheel,{capture:true,passive:false})
+    return()=>element.removeEventListener('wheel',wheel,true)
+  },[active,toolPage,!!onFrameResize])
   const [inspection, setInspection] = useState<WaveformInspectionState | null>(null)
   const [analysisRequest, setAnalysisRequest] = useState<{ sequence: number; kind: 'measure' | 'fft'; range: WaveformDomain; signalId?: string }>()
   const requestSequence = useRef(0)
@@ -84,9 +104,9 @@ export default function EmbeddedWaveformResults({ diagram, visible, profiles, re
     if (!active || !result || !primary || !range || !['tran', 'dc'].includes(result.analysis)) return null
     try { return analyzeWaveform(result, primary, { start: range[0], end: range[1] }) } catch { return null }
   }, [active, result, primary, range?.[0], range?.[1]])
-  const records = result?.analysis === 'op' ? Object.entries(result.voltages ?? {}) : []
+  const records = useMemo(() => result?.analysis === 'op' ? Object.entries(result.voltages ?? {}) : [], [result])
   const pages = Math.max(1, Math.ceil(records.length / 6))
-  const logLines = result ? [...result.warnings, ...result.log.split(/\r?\n/)].filter(Boolean).flatMap(line => line.match(/.{1,60}/gu) ?? []) : []
+  const logLines = useMemo(() => result ? [...result.warnings, ...result.log.split(/\r?\n/)].filter(Boolean).flatMap(line => line.match(/.{1,60}/gu) ?? []) : [], [result])
   const logPages = Math.max(1, Math.ceil(logLines.length / 8))
   useEffect(() => setPage(0), [result?.id, toolPage])
   useEffect(() => { if (inspectRequest) setToolPage('view') }, [inspectRequest?.sequence])
@@ -98,14 +118,12 @@ export default function EmbeddedWaveformResults({ diagram, visible, profiles, re
     <header className="page-result-toolbar">
       <div className="page-result-caption"><strong title={diagram.title}>{diagram.title || '波形'}</strong><span title={`${profile?.name??'配置已删除'}${source?' · '+source:''}`}>{profile?.name ?? '配置已删除'}{result&&<span className="page-result-source"> · {source}</span>}</span></div>
       <button type="button" className="wave-icon-button" title="修改当前图组的仿真配置" aria-label="设置当前波形仿真配置" aria-haspopup="dialog" onClick={onSettings}><Settings2 size={16} /></button>
-      {deviceSummary&&tightHeight&&<button type="button" className="wave-icon-button" title="当前器件参数" aria-label="当前器件参数" aria-expanded={showParameters} aria-controls={`page-device-${diagram.id}`} onClick={()=>setShowParameters(value=>!value)}><SlidersHorizontal size={16}/></button>}
+      {deviceSummary&&<button type="button" className="wave-icon-button" title="当前器件参数" aria-label="当前器件参数" aria-expanded={showParameters} aria-controls={`page-device-${diagram.id}`} onClick={()=>setShowParameters(value=>!value)}><SlidersHorizontal size={16}/></button>}
       <button type="button" className="wave-icon-button" title={running ? '运行中' : '运行当前图组配置'} aria-label={running ? '运行中' : '运行'} disabled={busy || !profile} onClick={onRun}>{running ? <LoaderCircle size={16} className="wave-icon-loading"/> : <Play size={16} />}</button>
       <label className="wave-icon-select" data-disabled={!result || exportBusy || undefined} title={exportAvailable?"导出当前图与所选曲线":"返回波形页可导出图片与所选曲线"}>
         {exportBusy ? <LoaderCircle size={16} className="wave-icon-loading" aria-hidden="true"/> : <Download size={16} aria-hidden="true"/>}
         <select aria-label="导出当前波形" disabled={!result || exportBusy} value="" onChange={event => { const value = event.target.value; if (value === 'raw') result && download(result, diagram.title); else if (value) void exportView(value as 'svg' | 'png' | 'csv') }}><option value="">{exportBusy ? '正在导出' : '导出'}</option><option value="svg" disabled={!exportAvailable}>当前图 SVG</option><option value="png" disabled={!exportAvailable}>当前图 PNG</option><option value="csv" disabled={!exportAvailable}>可见曲线 CSV</option><option value="raw">基础结果 CSV</option></select>
       </label>
-    </header>
-    {deviceSummary&&<div className="page-device-summary" id={`page-device-${diagram.id}`} hidden={tightHeight&&!showParameters}>{deviceSummary}</div>}
     <nav className="page-result-tabs" aria-label="结果工具">
       <button type="button" className="wave-icon-button" title="波形" aria-label="波形" aria-pressed={toolPage === 'view'} onClick={() => setToolPage('view')}><Activity size={16}/></button>
       <button type="button" className="wave-icon-button" title="图组与对比" aria-label="图组与对比" aria-pressed={toolPage === 'setup'} onClick={() => setToolPage('setup')}><ChartNoAxesCombined size={16}/></button>
@@ -113,11 +131,14 @@ export default function EmbeddedWaveformResults({ diagram, visible, profiles, re
       <button type="button" className="wave-icon-button" title="运行日志" aria-label="运行日志" aria-pressed={toolPage === 'log'} onClick={() => setToolPage('log')}><FileText size={16}/></button>
       <span className={`page-result-state${['failed','stale','interrupted','recovered','warning'].includes(feedback.state)?' is-warning':''}`} title={feedback.detail} role="status">{feedback.label}{result&&` · ${result.points.toLocaleString()} 点`}</span>
     </nav>
+    </header>
+    {deviceSummary&&<div className="page-device-summary" id={`page-device-${diagram.id}`} hidden={!showParameters}>{deviceSummary}</div>}
+
     {toolPage !== 'view' && <div className="page-return-toolbar"><button className="wave-icon-button" aria-label="返回波形" title="返回波形" onClick={() => setToolPage('view')}><ArrowLeft size={16}/></button><span>{toolPage === 'setup' ? '图组管理与对比' : toolPage === 'analysis' ? '自动测量与频谱' : '运行日志'}</span></div>}
     {exportError && <p className="page-export-error" role="alert">{exportError}</p>}
     <div className="page-result-content" hidden={toolPage !== 'view'}>
       {result ? result.analysis === 'op' ? <div className="page-op-results"><h3>直流工作点</h3><table><thead><tr><th>对象</th><th>电压</th></tr></thead><tbody>{records.slice(Math.min(page, pages - 1) * 6, (Math.min(page, pages - 1) + 1) * 6).map(([name, values]) => <tr key={name}><td>{name}</td><td>{formatSI(values[0], 'V', 6)}</td></tr>)}</tbody></table><div className="page-list-navigation"><button disabled={page <= 0} onClick={() => setPage(value => value - 1)} aria-label="上一页工作点"><ChevronLeft size={14} /></button><span>{Math.min(page + 1, pages)} / {pages} · {records.length} 个节点</span><button disabled={page + 1 >= pages} onClick={() => setPage(value => value + 1)} aria-label="下一页工作点"><ChevronRight size={14} /></button></div></div>
-        : <WaveformWorkspace embedded active={active && toolPage === 'view'} fitRequest={fitRequest} showRequest={showRequest} onInspectionChange={inspect} onSignalSelect={onSignalSelect} onExportReady={exportReady} exportContext={{ groupName: diagram.title, profileName: profile?.name, stale, status: failure ? '运行失败，保留旧结果' : stale ? '结果已过期' : '当前结果' }} result={result} comparison={matchedComparison} sweepComparisons={overlaySweep ? result.sweepResults : undefined}
+        : <WaveformWorkspace embedded resizeFrameOnWheel={!!onFrameResize} active={active && toolPage === 'view'} fitRequest={fitRequest} showRequest={showRequest} onInspectionChange={inspect} onSignalSelect={onSignalSelect} onExportReady={exportReady} exportContext={{ groupName: diagram.title, profileName: profile?.name, stale, status: failure ? '运行失败，保留旧结果' : stale ? '结果已过期' : '当前结果' }} result={result} comparison={matchedComparison} sweepComparisons={overlaySweep ? result.sweepResults : undefined}
           measurements={measurements} selectedMeasurement={visible ? selectedMeasurement : undefined} onSelectMeasurement={onSelectMeasurement}
           probeRequests={probeRequests} inspectRequest={inspectRequest} initialView={diagram.view} onViewChange={view} onSnapshot={snapshot} />
         : <div className="page-waveform-empty"><strong>{running ? '正在仿真' : failure ? '仿真未完成' : '波形区域已就绪'}</strong><p>{failure || (running ? progress : '运行当前配置，曲线会直接显示在这里。')}</p><button disabled={busy || !profile} onClick={onRun}>运行此配置</button></div>}

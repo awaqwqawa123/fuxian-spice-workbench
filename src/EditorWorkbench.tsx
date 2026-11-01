@@ -62,6 +62,7 @@ import { MAX_MEASUREMENT_PROBES, type Measurement } from './core/probes'
 import { measurementProbeMarkers } from './core/probe-layout'
 import { useProbeMarkerVisibility } from './core/probe-marker-visibility'
 import { layoutElectricallyEquivalent } from './core/layout-electrical-equivalence'
+import { createElectricalViewSnapshot } from './core/electrical-view-snapshot'
 import { useDcVoltages } from './core/use-dc-voltages'
 import { DcVoltageToggle, DcVoltageNotice } from './components/DcVoltageControls'
 import BiasInspectionPanel from './components/BiasInspectionPanel'
@@ -173,6 +174,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   function changeExamples(open:boolean){setLocalExamplesOpen(open);onExamplesOpenChange?.(open)}
   const [timeline,setTimeline] = useState<UndoState<EditorSnapshot>>(() => ({past:[],present:initialSnapshot(seed,projectId??'standalone'),future:[]}))
   const project = timeline.present.project, drawing = project.drawing!
+  const electricalSnapshot=useRef(createElectricalViewSnapshot()).current(project)
   const namingProject=useRef(project);namingProject.current=project
   const waveformApplications=useRef<EditorCandidateUndo[]>(readCandidateUndo(projectId))
   const desktopCircuit = useDesktopCircuit(projectId, project)
@@ -239,7 +241,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   const measurements=project.probes??NO_MEASUREMENTS,[selectedMeasurement,setSelectedMeasurement]=useState<string>()
   const [showProbeMarkers,setShowProbeMarkers]=useProbeMarkerVisibility()
   const pendingProbeNotices=useRef<string[]>([])
-  const displayMeasurements=useMemo(()=>stableLayoutMeasurements(project,measurements),[project,measurements])
+  const displayMeasurements=useMemo(()=>stableLayoutMeasurements(electricalSnapshot,measurements),[electricalSnapshot,measurements])
   const [probeMode,setProbeMode]=useState<ProbeMode>('voltage'),[probePositive,setProbePositive]=useState<Terminal|null>(null),probeSequence=useRef(0)
   probeSequence.current=Math.max(probeSequence.current,...measurements.map(measurement=>Number(measurement.id.slice(1))))
   const probePositiveAnchor=useRef<WireAnchor|undefined>(undefined)
@@ -303,14 +305,27 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   const [diagramProbeRequests,setDiagramProbeRequests]=useState<Record<string,{id:string;sequence:number;panel?:number}[]>>({})
   const pageDiagram=diagrams.find(item=>item.id===(expandedDiagramId??activeProbeDiagramId))??diagrams.find(item=>item.profileId===simulationProfiles.activeId)??diagrams[0]
   const inlineProfile=profileTarget?simulationProfiles.profiles.find(item=>item.id===diagrams.find(diagram=>diagram.id===profileTarget)?.profileId):undefined
-  const inlineProject=inlineProfile?applySimulationProfile(project,inlineProfile):project
-  const inlineProfiles=inlineProfile?{...simulationProfiles,activeId:inlineProfile.id}:simulationProfiles
+  const inlineProject=useMemo(()=>inlineProfile?applySimulationProfile(project,inlineProfile):project,[project,inlineProfile])
+  const inlineProfiles=useMemo(()=>inlineProfile?{...simulationProfiles,activeId:inlineProfile.id}:simulationProfiles,[simulationProfiles,inlineProfile])
   const [waveformStorageWarning,setWaveformStorageWarning]=useState(()=>readCanvasWaveformWarning(localStorage,diagramStorageId))
   const diagramProbeSequence=useRef(0)
   const [profileResults,setProfileResults]=useState<Record<string,Result>>({})
-  const dcVoltages=useDcVoltages(project,profileResults,projectId??'standalone')
+  const dcVoltages=useDcVoltages(electricalSnapshot,profileResults,projectId??'standalone')
   const result=profileResults[simulationProfiles.activeId]??null
   const [profileHistory,setProfileHistory]=useState<Record<string,Result[]>>({})
+  const profileDisplays=useMemo(()=>new Map(simulationProfiles.profiles.map(profile=>{
+    const configured=applySimulationProfile(electricalSnapshot,profile)
+    const history=profileHistory[profile.id]??[],current=profileResults[profile.id]
+    const results=new Map([...history,...(current?[current]:[])].filter(result=>result.analysis===profile.settings.analysis).map(result=>[result.id,{result,stale:!layoutElectricallyEquivalent(result.experiment??result.project,configured)}]))
+    return [profile.id,{configured,history,current,results}] as const
+  })),[electricalSnapshot,simulationProfiles.profiles,profileHistory,profileResults])
+  const diagramData=useMemo(()=>new Map(diagrams.map(diagram=>{
+    const data=profileDisplays.get(diagram.profileId)
+    const found=data?.results.get(diagram.resultId??data.current?.id??'')
+    return [diagram.id,{configured:data?.configured??electricalSnapshot,history:data?.history??[],result:found?.result??null,stale:found?.stale??false}] as const
+  })),[electricalSnapshot,profileDisplays,diagrams])
+  const [sidebarScaleRequest,setSidebarScaleRequest]=useState<{sequence:number;logScale:number}>()
+  const resizeWaveformFrame=useCallback((factor:number)=>{if(Number.isFinite(factor)&&factor>0)setSidebarScaleRequest(previous=>({sequence:(previous?.sequence??0)+1,logScale:(previous?.logScale??0)+Math.log(factor)}))},[])
   const [runningProfileId,setRunningProfileId]=useState<string|null>(null)
   const [profileFailures,setProfileFailures]=useState<Record<string,string>>({})
   const [dismissedFailures,setDismissedFailures]=useState<Record<string,string>>({})
@@ -320,7 +335,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   const [running,setRunning] = useState(false), [progress,setProgress] = useState('')
   const pageProfile=simulationProfiles.profiles.find(item=>item.id===pageDiagram?.profileId)
   const pageProbeResult=pageDiagram?.resultId?(profileHistory[pageDiagram.profileId]??[]).find(item=>item.id===pageDiagram.resultId)??null:profileResults[pageDiagram?.profileId??'']??null
-  const pageProbeStale=useMemo(()=>!!pageProbeResult&&!!pageProfile&&!layoutElectricallyEquivalent(pageProbeResult.experiment??pageProbeResult.project,applySimulationProfile(project,pageProfile)),[pageProbeResult,pageProfile,project])
+  const pageProbeStale=useMemo(()=>!!pageProbeResult&&!!pageProfile&&!layoutElectricallyEquivalent(pageProbeResult.experiment??pageProbeResult.project,applySimulationProfile(electricalSnapshot,pageProfile)),[pageProbeResult,pageProfile,electricalSnapshot])
   useEffect(()=>{if(pageDiagram){try{localStorage.setItem(`fuxian.active-waveform-group:${projectId??'standalone'}`,pageDiagram.id)}catch{/* Keep active selection in this session. */}}},[pageDiagram?.id,projectId])
   function fitBoth(){setCircuitFitMode('auto');setResetView(value=>value+1);if(pageDiagram)setWaveFitRequests(old=>({...old,[pageDiagram.id]:{sequence:++fitSequence.current,kind:'fit'}}))}
   function locateWaveformSignal(signal:WaveformSignal){
@@ -410,15 +425,15 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
     document.addEventListener('pointerdown',closeOutside)
     return()=>document.removeEventListener('pointerdown',closeOutside)
   },[])
-  const errors = useMemo(()=>validateProject(project),[project]), topology = useMemo(()=>compileDrawing(drawing),[drawing])
+  const errors = useMemo(()=>validateProject(electricalSnapshot),[electricalSnapshot]), topology = useMemo(()=>compileDrawing(drawing),[drawing])
   const device = drawing.devices.find(p => p.id === selected), selectedWire = drawing.wires.find(w => w.id === selected)
   const netInfo=useMemo(()=>highlightedNet&&topology.nodes.has(terminalKey(highlightedNet))?inspectNet(drawing,highlightedNet,topology.nodes):null,[drawing,highlightedNet,topology])
   const selectedDevices=drawing.devices.filter(p=>selection.includes(p.id))
-  const stale = useMemo(()=>!!result && !layoutElectricallyEquivalent(result.experiment??result.project,project),[result,project])
+  const stale = useMemo(()=>!!result && !layoutElectricallyEquivalent(result.experiment??result.project,electricalSnapshot),[result,electricalSnapshot])
   const runFeedback=simulationFeedback({result,running:running&&runningProfileId===simulationProfiles.activeId,progress,failure:activeFailure,stale,interrupted:interruptedProfiles[simulationProfiles.activeId]})
   const persistenceMessages=[...(storageError?['工程草稿未保存，修改仍在内存']:[]),...(saveState==='error'?[saveError||'工程自动保存失败，修改仍在内存']:[]),...Object.values(localSaveIssues),...(!appearancePersistence.persisted?[appearancePersistence.message||'外观偏好未保存']:[])]
   function retrySave(){persistWorkspace();if(onProjectChange){try{if(onRetrySave)onRetrySave();else onProjectChange(project);setStorageError(false)}catch{setStorageError(true)}}else{try{localStorage.setItem(STORAGE,JSON.stringify(project));setStorageError(false)}catch{setStorageError(true)}}if(!appearancePersistence.persisted)setAppearance(appearance)}
-  const netlist=useMemo(()=>errors.length?'':generateNetlist(project),[project,errors])
+  const netlist=useMemo(()=>errors.length?'':generateNetlist({...electricalSnapshot,title:project.title}),[electricalSnapshot,project.title,errors])
   function commit(next:Project | ((p:Project)=>Project),application=false,replaceWaveforms=false,capture=false):Project|undefined {
     let committed:Project|undefined
     const update=()=>setTimeline(previous => {
@@ -621,6 +636,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
     setSelectedMeasurement(undefined)
     selectionRef.current=ids;setSelection(ids); setLabelTarget(null)
     const nextDevice=ids.length===1?drawing.devices.find(part=>part.id===ids[0]):undefined
+    if(nextDevice){setInspectorTab('device');if(layout.maximized)dispatchLayout({type:'toggle-maximize'})}
     setModelTarget(current=>current?.deviceId===nextDevice?.id&&current?.deviceId?current:inspectorTab==='model'&&nextDevice&&['D','Q','M','J'].includes(nextDevice.kind)?{deviceId:nextDevice.id}:null)
   }
   function selectItem(id:string|null) { selectItems(id?[id]:[]) }
@@ -959,7 +975,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
         <div className="library-foot"><span className="online-dot"/>ngspice 本地计算<small>绘制电路 → 自动生成网表</small></div>
       </aside></div></div>
       </aside>
-      {resizeHandle('left','调整左侧栏宽度')}<main className="workspace-center"><SinglePageWorkspace layoutKey={projectId??'standalone'} mode={layout.maximized?'schematic':pageMode} onModeChange={setPageMode} sidebarTab={sidebarTab} onSidebarTabChange={changeSidebarTab} onFitBoth={fitBoth} onRestoreLayout={()=>setPageMode('split')} selectionKey={expandedDiagramId??undefined} schematic={<> <div className="page-schematic-toolbar"><strong><Network size={15} strokeWidth={1.75} aria-hidden="true"/>原理图</strong><div><small className="schematic-view-status"><span/>{circuitFitMode==='auto'?'自动适配':'手动视图'}</small><div className="schematic-view-actions" role="group" aria-label="电路视图操作"><button className="canvas-view-action" aria-label="适配电路" title="适配电路 · 显示完整原理图" onClick={()=>{setCircuitFitMode('auto');setResetView(v=>v+1)}}><ScanLine size={17} strokeWidth={1.75} aria-hidden="true"/></button><button className="canvas-view-action" disabled={!selection.length} aria-label="查看电路选区" title={selection.length?'查看选区 · 适配选中的器件':'查看选区 · 请先选择器件'} onClick={()=>setFitSelection(v=>v+1)}><MousePointer2 size={17} strokeWidth={1.75} aria-hidden="true"/></button></div></div></div>
+      {resizeHandle('left','调整左侧栏宽度')}<main className="workspace-center"><SinglePageWorkspace sidebarScaleRequest={sidebarScaleRequest} layoutKey={projectId??'standalone'} mode={layout.maximized?'schematic':pageMode} onModeChange={setPageMode} sidebarTab={sidebarTab} onSidebarTabChange={changeSidebarTab} onFitBoth={fitBoth} onRestoreLayout={()=>setPageMode('split')} selectionKey={expandedDiagramId??undefined} schematic={<> <div className="page-schematic-toolbar"><strong><Network size={15} strokeWidth={1.75} aria-hidden="true"/>原理图</strong><div><small className="schematic-view-status"><span/>{circuitFitMode==='auto'?'自动适配':'手动视图'}</small><div className="schematic-view-actions" role="group" aria-label="电路视图操作"><button className="canvas-view-action" aria-label="适配电路" title="适配电路 · 显示完整原理图" onClick={()=>{setCircuitFitMode('auto');setResetView(v=>v+1)}}><ScanLine size={17} strokeWidth={1.75} aria-hidden="true"/></button><button className="canvas-view-action" disabled={!selection.length} aria-label="查看电路选区" title={selection.length?'查看选区 · 适配选中的器件':'查看选区 · 请先选择器件'} onClick={()=>setFitSelection(v=>v+1)}><MousePointer2 size={17} strokeWidth={1.75} aria-hidden="true"/></button></div></div></div>
         <section className="drawing-workspace">
           <ConnectionWarnings shorts={topology.shorts} onLocate={short=>{setView('canvas');chooseTool('select');selectItems(short.wireIds.length?short.wireIds:[short.deviceId]);setFitSelection(v=>v+1)}}/>
           <div className="drawing-surface"><div className="workspace-canvas-host" hidden={view!=='canvas'}><DcVoltageNotice state={dcVoltages}/>{dcVoltages.tableOpen&&<BiasInspectionPanel state={dcVoltages} project={project} selection={selection} onLocate={locateBiasMeasurement} onExportSvg={exportBiasSvg}/>}<EditorCanvas viewKey={projectId??'standalone'} fitMode={circuitFitMode} onFitModeChange={setCircuitFitMode} gridSize={(previewAppearance??appearance).gridSize} active={view==='canvas'&&!showAppearance&&!editingModel} onContextMenu={setContextMenu} onEditDevice={openDeviceProperties} importedModels={project.models} placementValue={placement?.value} placementParams={placement?.params} placementGroundStyle={placement?.groundStyle} networkSymbol={networkSymbol??undefined} onPlaceNetworkSymbol={placeNetworkSymbol} onProbe={probeAt} onProbeDevice={probeDevice} onProbeWire={probeWire} onReverseProbe={reverseProbe} onProbePair={probePair} onMoveProbeLabel={moveProbeLabel} onRelocateProbe={relocateProbe} onSelectProbe={label=>selectProbe(markerIdentity(label).id)} probeMode={probeMode} showProbeMarkers={showProbeMarkers} probeMarkers={canvasProbeMarkers} pendingProbe={probePositive?{at:probePositive,anchor:probePositiveAnchor.current}:null} highlightedNet={netInfo?highlightedNet:null} onInspectNet={highlightNet} drawing={drawing} selection={selection} onSelect={selectItems} clipboard={clipboard?.drawing??null} clipboardModels={clipboard?.models} onPaste={paste} wireBend={wireBend} onWireBend={toggleWireBend} onWireBendChange={setWireBend} onZoom={setZoom} fitSelection={fitSelection} tool={tool} onTool={chooseTool} rotation={rotation} onChange={updateDrawing} onStatus={setStatus} zoom={zoom} resetView={resetView} showNodes={showNodes} dcVoltages={dcVoltages.voltages} biasMeasurements={dcVoltages.usable?dcVoltages.measurements:NO_BIAS_MEASUREMENTS} biasPrefs={dcVoltages.prefs} biasSelectedId={dcVoltages.selectedId} onBiasMove={dcVoltages.moveLabel} onBiasSelect={dcVoltages.setSelectedId} onBiasPin={dcVoltages.pin} onBiasUndo={dcVoltages.undoDisplay} onBiasRedo={dcVoltages.redoDisplay} placingBiasWire={dcVoltages.placingWire} onBiasWire={addBiasWire} onCancelBiasWire={()=>dcVoltages.setPlacingWire(false)} onLabel={openLabel}/></div><div className="editor-netlist" hidden={view!=='netlist'}><div><strong>由实际引脚连接生成</strong><button onClick={openNetlistEditor}><Code2 size={14}/>编辑 SPICE 网表</button><button disabled={!netlist} onClick={()=>download('fuxian-schematic.cir',netlist)}><ArrowDownToLine size={14}/>导出 .cir</button></div><pre>{netlist||errors.join('\n')}</pre></div></div>
@@ -967,10 +983,8 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
         </section>
         </>} waveform={<>{waveformStorageWarning&&<details className="page-storage-warning"><summary>图组恢复提示</summary><p role="alert">{waveformStorageWarning}</p></details>}<div className="page-group-toolbar"><label title="当前波形图组"><Boxes size={16} aria-hidden="true"/><select aria-label="当前波形图组" value={pageDiagram?.id??''} onChange={event=>expandDiagram(event.target.value)}>{diagrams.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}</select></label><button className="wave-icon-button" aria-label="撤销图组操作" title="撤销图组操作" disabled={!timeline.present.diagramPast.length} onClick={()=>setDiagramHistory(undo)}><Undo2 size={16}/></button><button className="wave-icon-button" aria-label="重做图组操作" title="重做图组操作" disabled={!timeline.present.diagramFuture.length} onClick={()=>setDiagramHistory(redo)}><Redo2 size={16}/></button><span className="page-group-target" title={`探针目标 · 视图 ${(pageDiagram?.view?.activePanel??0)+1}`} aria-label={`探针目标 · 视图 ${(pageDiagram?.view?.activePanel??0)+1}`}><Pin size={14} aria-hidden="true"/><small>{(pageDiagram?.view?.activePanel??0)+1}</small></span><button className="wave-icon-button" aria-label="新图组" title="新图组" disabled={diagrams.length>=MAX_CANVAS_WAVEFORMS} onClick={()=>addDiagram()}><Plus size={16}/></button></div>{!diagrams.length&&<div className="page-waveform-empty"><strong>添加波形图组</strong><button onClick={()=>addDiagram()}>新建图组</button></div>}
     {diagrams.map(diagram=>{
-      const profile=simulationProfiles.profiles.find(p=>p.id===diagram.profileId),configured=profile?applySimulationProfile(project,profile):project
-      const history=profileHistory[diagram.profileId]??[],cachedResult=diagram.resultId?history.find(r=>r.id===diagram.resultId)??null:profileResults[diagram.profileId]??null
-      const diagramResult=cachedResult?.analysis===profile?.settings.analysis?cachedResult:null
-      return <EmbeddedWaveformResults onSettings={()=>openSimulation(false,diagram.id)} deviceSummary={device?<><strong>{device.id} · {deviceNames[device.kind]}</strong>{['R','C','L','OP'].includes(device.kind)?<InlineDeviceValue key={device.id} device={device} onApply={valueChange}/>:<span>{device.kind==='V'||device.kind==='I'?sourceDescription(device):device.value}</span>}<button onClick={()=>openDeviceProperties(device.id)}>详细参数</button></>:undefined} onAddProfile={()=>openSimulation(true,diagram.id)} followProbes={diagram.id===(expandedDiagramId??activeProbeDiagramId)} probeRequests={diagramProbeRequests[diagram.id]??[]} key={diagram.id} diagram={diagram} visible={pageDiagram?.id===diagram.id} profiles={simulationProfiles.profiles} result={diagramResult} history={history} running={running&&runningProfileId===diagram.profileId} busy={running} progress={progress} interrupted={interruptedProfiles[diagram.profileId]} failure={profileFailures[diagram.profileId]??''} stale={!!diagramResult&&!layoutElectricallyEquivalent(diagramResult.experiment??diagramResult.project,configured)} measurements={displayMeasurements} selectedMeasurement={selectedMeasurement} onSelectMeasurement={id=>{setSelectedMeasurement(id);setLabelTarget(null)}} onClose={returnToDiagram} onPatch={patchDiagram} onSnapshot={snapshotDiagram} onRun={()=>{run(configured,true,diagram.profileId,diagram.id)}} onAdd={()=>addDiagram()} onCopy={()=>addDiagram(diagram)} onRemove={()=>removeDiagram(diagram.id)} canAdd={diagrams.length<MAX_CANVAS_WAVEFORMS} active={!layout.maximized&&sidebarTab==='waveform'&&pageMode!=='schematic'&&pageDiagram?.id===diagram.id} fitRequest={waveFitRequests[diagram.id]} showRequest={waveShowRequests[diagram.id]} onSignalSelect={locateWaveformSignal}/>
+      const {configured,history,result:diagramResult,stale:diagramStale}=diagramData.get(diagram.id)!
+      return <EmbeddedWaveformResults onFrameResize={pageMode==='split'&&sizing.center>=560?resizeWaveformFrame:undefined} onSettings={()=>openSimulation(false,diagram.id)} deviceSummary={device?<><strong>{device.id} · {deviceNames[device.kind]}</strong>{['R','C','L','OP'].includes(device.kind)?<InlineDeviceValue key={device.id} device={device} onApply={valueChange}/>:<span>{device.kind==='V'||device.kind==='I'?sourceDescription(device):device.value}</span>}<button onClick={()=>openDeviceProperties(device.id)}>详细参数</button></>:undefined} onAddProfile={()=>openSimulation(true,diagram.id)} followProbes={diagram.id===(expandedDiagramId??activeProbeDiagramId)} probeRequests={diagramProbeRequests[diagram.id]??[]} key={diagram.id} diagram={diagram} visible={pageDiagram?.id===diagram.id} profiles={simulationProfiles.profiles} result={diagramResult} history={history} running={running&&runningProfileId===diagram.profileId} busy={running} progress={progress} interrupted={interruptedProfiles[diagram.profileId]} failure={profileFailures[diagram.profileId]??''} stale={diagramStale} measurements={displayMeasurements} selectedMeasurement={selectedMeasurement} onSelectMeasurement={id=>{setSelectedMeasurement(id);setLabelTarget(null)}} onClose={returnToDiagram} onPatch={patchDiagram} onSnapshot={snapshotDiagram} onRun={()=>{const profile=simulationProfiles.profiles.find(item=>item.id===diagram.profileId);run(profile?applySimulationProfile(project,profile):project,true,diagram.profileId,diagram.id)}} onAdd={()=>addDiagram()} onCopy={()=>addDiagram(diagram)} onRemove={()=>removeDiagram(diagram.id)} canAdd={diagrams.length<MAX_CANVAS_WAVEFORMS} active={!layout.maximized&&sidebarTab==='waveform'&&pageMode!=='schematic'&&pageDiagram?.id===diagram.id} fitRequest={waveFitRequests[diagram.id]} showRequest={waveShowRequests[diagram.id]} onSignalSelect={locateWaveformSignal}/>
     })}</>} properties={<aside className="editor-inspector workspace-right" id="workspace-right" aria-label="器件参数" hidden={!rightVisible}>
         <div className="page-inspector-existing" ><div className="inspector-panel-controls"><strong>器件参数与模型</strong><button type="button" aria-label="返回波形" onClick={showWaveformSidebar}>返回波形</button></div>
         <InspectorTabs value={inspectorTab} onChange={changeInspectorTab}/>

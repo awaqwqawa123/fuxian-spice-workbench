@@ -22,7 +22,7 @@ export default function SidebarResizeHandle({ label, controls, width, min, max, 
   const resize = (value: number) => onResize(Math.round(Math.max(min, Math.min(max, value))))
   return <div ref={handle} className={`sidebar-resize-handle${dragging ? ' is-dragging' : ''}`} role="separator" aria-label={label} aria-orientation="vertical" aria-controls={controls} aria-valuemin={Math.round(min)} aria-valuemax={Math.round(max)} aria-valuenow={Math.round(width)} aria-valuetext={`${Math.round(width)} 像素`} hidden={hidden} tabIndex={0} title={`${label} · 左右拖动中间箭头或按方向键调整 · 双击箭头恢复默认宽度`}
     onPointerDown={event => {
-      if (event.button !== 0 || event.target === event.currentTarget || drag.current) return
+      if (event.button !== 0 || drag.current) return
       event.preventDefault(); event.stopPropagation(); event.currentTarget.focus()
       drag.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, width, horizontal: false }
       event.currentTarget.setPointerCapture(event.pointerId)

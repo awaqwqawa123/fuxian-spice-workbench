@@ -1,6 +1,6 @@
 {
   "name": "spice-workbench",
-  "version": "0.29.20",
+  "version": "0.30.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 3030 --strictPort",
     "test": "npm run build && tsx --test --test-concurrency=4 tests/*.test.ts",
-    "mcp:doctor": "node scripts/workbench-mcp.mjs --doctor"
+    "mcp:doctor": "node scripts/workbench-mcp.mjs --doctor",
+    "start:debug": "node scripts/serve-local.mjs --dev",
+    "package:windows": "node scripts/package-windows.mjs"
   },
   "dependencies": {
     "@deepseek-ai/dsh": "0.1.5-rc.2",

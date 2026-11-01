@@ -15,13 +15,14 @@ import { desktopControlPlugin } from './server/desktop-control-middleware'
 import { hapiGatewayPlugin } from './server/hapi-middleware'
 import { privateLocalFilesPlugin, PRIVATE_LOCAL_DENY } from './server/private-local-files'
 import { userLibraryPlugin } from './server/user-library-middleware'
+import { runtimeCachePlugin } from './server/runtime-cache'
 
 let circuitManager: DesktopCircuitManager | undefined
 export default defineConfig({
   // Test HTML has dedicated servers and may import test-only virtual modules.
   // Scan the application entry on startup; other pages remain available on demand.
   optimizeDeps: { entries: ['index.html'] },
-  plugins: [privateLocalFilesPlugin(), userLibraryPlugin(), desktopCircuitPlugin({ onManager(manager) { circuitManager = manager } }), desktopControlPlugin({ getCircuitManager: () => circuitManager }), hapiGatewayPlugin(), modelAcquisitionPlugin(), aiGatewayPlugin(), modelLibraryPlugin(), ltspiceSymbolPlugin(), modelSearchPlugin(), agentGatewayPlugin(), codexGatewayPlugin(), cursorGatewayPlugin(), dshLocalGatewayPlugin(), codexSessionPlugin()],
+  plugins: [runtimeCachePlugin(), privateLocalFilesPlugin(), userLibraryPlugin(), desktopCircuitPlugin({ onManager(manager) { circuitManager = manager } }), desktopControlPlugin({ getCircuitManager: () => circuitManager }), hapiGatewayPlugin(), modelAcquisitionPlugin(), aiGatewayPlugin(), modelLibraryPlugin(), ltspiceSymbolPlugin(), modelSearchPlugin(), agentGatewayPlugin(), codexGatewayPlugin(), cursorGatewayPlugin(), dshLocalGatewayPlugin(), codexSessionPlugin()],
   server: {
     fs: { deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', ...PRIVATE_LOCAL_DENY] },
     // Local model archives and generated reports are data, not source modules.

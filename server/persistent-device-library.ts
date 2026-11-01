@@ -8,11 +8,11 @@ import { parseImportedModels, parseSpiceLibrary } from '../src/core/spice-models
 import { selectPreferredCatalogModels, preferredModelLibrary } from '../src/core/model-source-policy'
 import { browseDeviceLibraryIndex, indexDeviceLibraryModel, summarizeDeviceLibraryModel, type DeviceLibraryBrowsePage, type DeviceLibraryBrowseRequest, type DeviceLibraryBuildStatus, type DeviceLibraryIndexEntry, type DeviceLibraryModelSummary } from '../src/core/device-library-catalog'
 import { ownedModelLibraryRoot } from './owned-model-library'
-import { modelCategories, modelCategory, modelCategoryGroups } from '../src/core/model-taxonomy'
+import { MODEL_TAXONOMY_REVISION, modelCategories, modelCategory, modelCategoryGroups, modelCategoryLabel } from '../src/core/model-taxonomy'
 import { libraryEngineReviews } from './model-library-engine-review'
 
-// Bump schema when compilation, model classification or symbol evidence changes.
-// This invalidates compiled display data without modifying original library files.
+// Storage/parser versions and taxonomy revisions evolve independently. Updating
+// classification must not rewrite an electrical model or invalidate its key.
 const SCHEMA=4, CHUNK_SIZE=128
 const sha=(value:string|Uint8Array)=>createHash('sha256').update(value).digest('hex')
 const keyPattern=/^[a-f0-9]{64}$/
@@ -20,7 +20,7 @@ const generationPattern=/^[0-9]{13}-[a-f0-9-]{36}$/
 const modelKey=(model:ImportedSpiceModel)=>sha(JSON.stringify(model))
 export interface PersistentDeviceLibraryOptions {cacheRoot?:string;scope?:string;stampPaths?:string[];reviewRoot?:string;seedRoot?:string}
 interface IndexFile {schema:number;scope:string;entries:DeviceLibraryIndexEntry[]}
-interface Manifest {schema:number;scope:string;generation:string;builtAt:string;total:number;versions:number;sourceStamp:string;indexHash:string;chunks:{summaries:string;models:string}[]}
+interface Manifest {schema:number;scope:string;generation:string;taxonomyRevision?:string;electricalGeneration?:string;builtAt:string;total:number;versions:number;sourceStamp:string;indexHash:string;chunks:{summaries:string;models:string}[]}
 interface ActiveLibrary {storageRoot:string;manifest:Manifest;index:IndexFile;byKey:Map<string,DeviceLibraryIndexEntry>}
 export interface DeviceLibraryBuildResult {schema:number;generation:string;builtAt:string;total:number;versions:number;chunks:number}
 export type PersistentDeviceBrowseResult={status:200;data:DeviceLibraryBrowsePage}|{status:202|503;data:DeviceLibraryBuildStatus}
@@ -95,6 +95,52 @@ export class PersistentDeviceLibraryStore {
   }
   private path(generation:string,file:string):string {return join(this.root,generation,file)}
   private activePath(active:ActiveLibrary,file:string):string {return join(active.storageRoot,active.manifest.generation,file)}
+  private async engineReviews(active:ActiveLibrary){
+    const current=await libraryEngineReviews(this.reviewRoot,active.manifest.generation)
+    // A fresh audit for the updated catalog supersedes the inherited audit of
+    // the identical electrical bytes; never silently discard a new failure.
+    return current.size||!active.manifest.electricalGeneration?current:libraryEngineReviews(this.reviewRoot,active.manifest.electricalGeneration)
+  }
+  /** Refresh only classification/search metadata from verified compiled chunks.
+   * Activate once, after every chunk is checked; failed migrations leave the
+   * last manifest intact. Old model bytes, content keys and symbols survive. */
+  private async reclassify(active:ActiveLibrary):Promise<ActiveLibrary> {
+    const {manifest,index}=active
+    const generation=`${Date.now()}-${randomUUID()}`,temporary=this.path(generation+'.pending','')
+    await mkdir(temporary,{recursive:true})
+    const entries:DeviceLibraryIndexEntry[]=[],chunks:Manifest['chunks']=[]
+    const expectedChunks=new Map<number,DeviceLibraryIndexEntry[]>()
+    for(const entry of index.entries){const rows=expectedChunks.get(entry.chunk)??[];rows.push(entry);expectedChunks.set(entry.chunk,rows)}
+    for(let chunk=0;chunk<manifest.chunks.length;chunk++){
+      const [modelRaw,summaryRaw]=await Promise.all([readFile(this.activePath(active,`${chunk}.models.json`)),readFile(this.activePath(active,`${chunk}.summaries.json`))])
+      if(sha(modelRaw)!==manifest.chunks[chunk].models||sha(summaryRaw)!==manifest.chunks[chunk].summaries)throw new Error('分类更新时原模型或摘要校验失败，旧目录已保留')
+      const models=JSON.parse(modelRaw.toString('utf8')) as ImportedSpiceModel[],summaries=JSON.parse(summaryRaw.toString('utf8')) as DeviceLibraryModelSummary[]
+      const expected=expectedChunks.get(chunk)??[]
+      if(!Array.isArray(models)||!Array.isArray(summaries)||models.length!==expected.length||summaries.length!==expected.length||models.length>CHUNK_SIZE)throw new Error('分类更新时分块不完整，旧目录已保留')
+      const modelMap=new Map(models.map(model=>[modelKey(model),model])),summaryMap=new Map(summaries.map(summary=>[summary.key,summary]))
+      if(modelMap.size!==expected.length||summaryMap.size!==expected.length)throw new Error('分类更新时器件键重复，旧目录已保留')
+      const labels=new Map<string,string>()
+      for(const entry of expected){
+        const model=modelMap.get(entry.key),summary=summaryMap.get(entry.key)
+        if(!model||!summary||model.id!==entry.id||summary.id!==entry.id||preferredModelLibrary(model.source)!==entry.source||preferredModelLibrary(summary.source)!==entry.source)throw new Error('分类更新时原模型与索引不一致，旧目录已保留')
+        entries.push(indexDeviceLibraryModel(model,entry.key,chunk));labels.set(entry.key,modelCategoryLabel(model))
+      }
+      const summaryJson=JSON.stringify(summaries.map(summary=>({...summary,categoryLabel:labels.get(summary.key)!})))
+      await writeFile(join(temporary,`${chunk}.summaries.json`),summaryJson,'utf8')
+      const from=this.activePath(active,`${chunk}.models.json`),to=join(temporary,`${chunk}.models.json`)
+      try{await link(from,to)}catch{await copyFile(from,to)}
+      chunks.push({summaries:sha(summaryJson),models:manifest.chunks[chunk].models})
+      await new Promise<void>(done=>setImmediate(done))
+    }
+    const upgradedIndex:IndexFile={schema:manifest.schema,scope:this.scope,entries},indexJson=JSON.stringify(upgradedIndex)
+    await writeFile(join(temporary,'index.json'),indexJson,'utf8')
+    const upgradedManifest:Manifest={...manifest,scope:this.scope,generation,taxonomyRevision:MODEL_TAXONOMY_REVISION,electricalGeneration:manifest.electricalGeneration??manifest.generation,indexHash:sha(indexJson),chunks}
+    await rename(temporary,this.path(generation,''))
+    const pendingManifest=join(this.root,`manifest-${randomUUID()}.pending`)
+    await writeFile(pendingManifest,JSON.stringify(upgradedManifest),'utf8')
+    await rename(pendingManifest,join(this.root,'manifest.json'))
+    return {storageRoot:this.root,manifest:upgradedManifest,index:upgradedIndex,byKey:new Map(entries.map(entry=>[entry.key,entry]))}
+  }
   /** Upgrade the previously compiled library, preserving immutable electrical
    * definitions and symbol keys. Never rescan original vendor installations. */
   private async upgradeCategories(active:ActiveLibrary):Promise<ActiveLibrary> {
@@ -143,7 +189,7 @@ export class PersistentDeviceLibraryStore {
     const upgradedIndex:IndexFile={...index,schema:SCHEMA,entries:index.entries.map(entry=>({...entry,category:categories.get(entry.key)!}))}
     const indexJson=JSON.stringify(upgradedIndex)
     await writeFile(join(temporary,'index.json'),indexJson,'utf8')
-    const upgradedManifest:Manifest={...manifest,schema:SCHEMA,generation,indexHash:sha(indexJson)}
+    const upgradedManifest:Manifest={...manifest,schema:SCHEMA,generation,electricalGeneration:manifest.electricalGeneration??manifest.generation,indexHash:sha(indexJson)}
     await rename(temporary,this.path(generation,''))
     const pendingManifest=join(this.root,`manifest-${randomUUID()}.pending`)
     await writeFile(pendingManifest,JSON.stringify(upgradedManifest),'utf8')
@@ -153,6 +199,7 @@ export class PersistentDeviceLibraryStore {
   private async readActiveLibrary(storageRoot:string):Promise<ActiveLibrary> {
     const seed=storageRoot===this.seedRoot
     const manifest=JSON.parse(await readFile(join(storageRoot,'manifest.json'),'utf8')) as Manifest
+    if(manifest.electricalGeneration!==undefined&&!generationPattern.test(manifest.electricalGeneration))throw new Error('本地器件电气版本无效')
     // A shipped index is signed by its original scope, independently of this
     // clone's path. Runtime generations must still match the current scope.
     if(!(seed?[3,SCHEMA]:[1,2,3,SCHEMA]).includes(manifest.schema)||!keyPattern.test(manifest.scope)||(!seed&&manifest.scope!==this.scope)||!generationPattern.test(manifest.generation)||!Array.isArray(manifest.chunks)||!keyPattern.test(manifest.indexHash))throw new Error('本地器件索引版本或来源已变化，需要重新整理')
@@ -186,6 +233,10 @@ export class PersistentDeviceLibraryStore {
               try{this.active=await this.upgradeCategories(active)}
               catch(error){this.failure=(error as Error).message;this.stale=true}
             }
+            if(this.active.manifest.schema!==1&&this.active.manifest.taxonomyRevision!==MODEL_TAXONOMY_REVISION){
+              try{this.active=await this.reclassify(this.active)}
+              catch(error){this.failure=(error as Error).message;this.stale=true}
+            }
             this.checkedAt=Date.now()
           }catch(error){
             // Invalid data is never authoritative. A valid shipped snapshot can
@@ -201,7 +252,7 @@ export class PersistentDeviceLibraryStore {
     if(!this.active||this.active.storageRoot===this.seedRoot||Date.now()-this.checkedAt<60_000)return
     this.checkedAt=Date.now()
     const generation=this.active.manifest.generation
-    void sourceStamp(this.stamps).then(stamp=>{if(this.active?.manifest.generation===generation)this.stale=this.requiresRebuild||stamp!==this.active.manifest.sourceStamp}).catch(()=>{if(this.active?.manifest.generation===generation)this.stale=true})
+    void sourceStamp(this.stamps).then(stamp=>{if(this.active?.manifest.generation===generation)this.stale=this.requiresRebuild||this.active.manifest.taxonomyRevision!==MODEL_TAXONOMY_REVISION||stamp!==this.active.manifest.sourceStamp}).catch(()=>{if(this.active?.manifest.generation===generation)this.stale=true})
   }
   private async compiledModels(active:ActiveLibrary):Promise<ImportedSpiceModel[]> {
     const result:ImportedSpiceModel[]=[]
@@ -281,7 +332,7 @@ export class PersistentDeviceLibraryStore {
       if(stampBefore!==stampAfter)throw new Error('整理期间原始库发生变化，旧目录已保留，请重新整理')
       const index:IndexFile={schema:SCHEMA,scope:this.scope,entries},indexJson=JSON.stringify(index)
       await writeFile(join(temporary,'index.json'),indexJson,'utf8')
-      const manifest:Manifest={schema:SCHEMA,scope:this.scope,generation,builtAt:new Date().toISOString(),total:new Set(entries.map(entry=>(entry.publicId??entry.id).toLowerCase())).size,versions:entries.length,sourceStamp:stampAfter,indexHash:sha(indexJson),chunks}
+      const manifest:Manifest={schema:SCHEMA,scope:this.scope,generation,taxonomyRevision:MODEL_TAXONOMY_REVISION,builtAt:new Date().toISOString(),total:new Set(entries.map(entry=>(entry.publicId??entry.id).toLowerCase())).size,versions:entries.length,sourceStamp:stampAfter,indexHash:sha(indexJson),chunks}
       // A completed generation is immutable. Activation is a single atomic rename;
       // any failed build leaves the previous good generation and manifest intact.
       await rename(temporary,final)
@@ -316,7 +367,7 @@ export class PersistentDeviceLibraryStore {
       return summaries
     }))
     const byKey=new Map(loaded.flat().map(summary=>[summary.key,summary]))
-    const reviews=await libraryEngineReviews(this.reviewRoot,active.manifest.generation)
+    const reviews=await this.engineReviews(active)
     for(const [key,summary] of byKey){const review=reviews.get(key);if(review&&summary.profile)byKey.set(key,{...summary,profile:{...summary.profile,electrical:{...summary.profile.electrical,engineReview:review}}})}
     return {status:200,data:{...page,state:'ready',generation:active.manifest.generation,builtAt:active.manifest.builtAt,updating:!!this.building,stale:this.stale,groups:groups.map(group=>({id:group.id,models:group.entries.map(entry=>{const summary=byKey.get(entry.key);if(!summary)throw new Error('本地器件摘要缺失，请重新整理目录');return summary}).sort((a,b)=>Number(a.profile?.electrical.engineReview?.status==='compatibility-error')-Number(b.profile?.electrical.engineReview?.status==='compatibility-error'))}))}}
   }
@@ -327,7 +378,7 @@ export class PersistentDeviceLibraryStore {
     // This lookup must not replace or relabel the current runtime selection.
     const active=this.active?.byKey.has(key)?this.active:this.seed,entry=active?.byKey.get(key)
     if(!active||!entry)throw new Error('器件不在当前本地目录中，请重新读取目录并选择')
-    const review=(await libraryEngineReviews(this.reviewRoot,active.manifest.generation)).get(key)
+    const review=(await this.engineReviews(active)).get(key)
     if(review?.status==='compatibility-error')throw new Error(`模型 ${entry.id} 的实际引擎兼容检查未通过，暂不放置：${review.reason}。原件保留，可选择其他来源版本。`)
     let models=this.active===active?this.fullModels.get(entry.chunk):undefined
     if(models)boundedCache(this.fullModels,entry.chunk,models,2)

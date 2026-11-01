@@ -1,12 +1,19 @@
-import { createServer } from 'vite'
+import { createServer, preview } from 'vite'
+import { fileURLToPath } from 'node:url'
+import { runtimeOptions } from './runtime-options.mjs'
 
-// Keep editor drafts intact while the development checkout is being verified.
-const port = Number(process.env.FUXIAN_PORT ?? 3032)
-if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('FUXIAN_PORT must be a valid local port')
-const server = await createServer({ server: { host: '127.0.0.1', port, strictPort: true, hmr: false } })
-await server.listen()
-console.log(`Fuxian Workbench is ready at http://localhost:${port}`)
-if (process.send) process.send({ type: 'fuxian-service-ready' })
+// Both modes load the same config and backend plugins. Normal use serves the
+// built frontend, without a source watcher or on-demand module transforms.
+const root = fileURLToPath(new URL('../', import.meta.url))
+const { port, mode } = runtimeOptions(process.argv.slice(2), process.env, root)
+process.env.FUXIAN_MODE = mode
+const listener = { host: '127.0.0.1', port, strictPort: true, open: false }
+const server = mode === 'development'
+  ? await createServer({ root, server: { ...listener, hmr: false } })
+  : await preview({ root, mode: 'production', preview: listener })
+if (mode === 'development') await server.listen()
+console.log(`Fuxian Workbench is ready at http://localhost:${port} (${mode})`)
+if (process.send) process.send({ type: 'fuxian-service-ready', mode })
 let closing = false
 async function close() {
   if (closing) return

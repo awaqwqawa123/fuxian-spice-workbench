@@ -132,3 +132,19 @@
 .wave-workspace .wave-toolbar-tools-menu .wave-link-note { display: block; margin: 8px 0; }
 .wave-workspace .wave-toolbar-tools-menu label { display: flex; align-items: center; gap: 5px; width: 100%; }
 .wave-workspace .wave-toolbar-tools-menu button { color: var(--ui-ink); background: var(--ui-panel); border-color: var(--ui-border); }
+
+/* Result identity and actions share one compact strip; overflow wraps as a group. */
+.page-waveform-results { container: waveform-result / inline-size; }
+.single-page-workspace .page-result-toolbar { flex-wrap: wrap; gap: 3px; padding: 3px 6px; }
+.single-page-workspace .page-result-toolbar > .page-result-caption { flex: 1 1 100px; gap: 4px; }
+.single-page-workspace .page-result-toolbar > .page-result-tabs { order: 2; flex: 1 0 100%; min-height: 26px; border: 0; padding: 0; gap: 3px; }
+.single-page-workspace .page-result-toolbar .page-result-tabs > .wave-icon-button { width: 25px; min-width: 25px; height: 25px; min-height: 25px; flex-basis: 25px; border-color: transparent; }
+.single-page-workspace .page-result-toolbar .page-result-tabs > .wave-icon-button:is([aria-pressed=true],:hover) { border-color: var(--ui-border); }
+.single-page-workspace .page-result-tabs > .page-result-state { font-size: 10px; margin-left: auto; }
+.single-page-workspace .page-measurement-summary { min-height: 25px; padding: 3px 6px; gap: 3px 9px; font-variant-numeric: tabular-nums; }
+.single-page-workspace .page-measurement-summary > button { min-height: 23px; padding: 1px 5px; }
+@container waveform-result (min-width: 480px) {
+  .single-page-workspace .page-result-toolbar { flex-wrap: nowrap; }
+  .single-page-workspace .page-result-toolbar > .page-result-tabs { order: 0; flex: 0 1 auto; border-left: 1px solid var(--ui-border); padding-left: 5px; margin-left: 2px; }
+  .single-page-workspace .page-result-toolbar .page-result-state { max-width: 92px; }
+}
