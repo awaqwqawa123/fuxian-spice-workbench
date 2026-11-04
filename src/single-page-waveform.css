@@ -64,3 +64,22 @@
 .page-analysis-tools>button{align-self:start}
 .is-compact>.page-schematic-host,.is-compact>.page-waveform-host{flex:1;width:100%;border:0}
 @media(max-height:700px){.page-result-toolbar,.page-device-summary{padding:3px 6px;min-height:30px}.page-measurement-summary{padding:4px 7px}.page-result-setup{gap:7px;padding:8px}.page-op-results td,.page-op-results th{padding:5px}}
+
+/* Short visible names make result tools discoverable without a permanent help row. */
+.single-page-workspace .page-result-toolbar .page-result-tabs>.page-tool-button{display:inline-flex;flex:0 0 auto;align-items:center;gap:3px;padding:2px 5px;min-height:25px;height:25px;font-size:10px;white-space:nowrap;border-color:transparent}
+.single-page-workspace .page-result-toolbar .page-result-tabs>.page-tool-button[aria-pressed=true]{border-color:var(--ui-border);background:var(--ui-accent-soft);color:var(--ui-accent)}
+.page-tool-button svg{flex:none}
+.page-result-log>.page-tool-help{margin:0 0 8px;color:var(--ui-muted);font-size:11px;line-height:1.5}
+.page-log-tools{display:flex;flex-wrap:wrap;gap:5px;flex:none;margin-bottom:8px;align-items:center}
+.page-log-tools>label{display:flex;align-items:center;gap:4px;flex:1 1 130px;min-width:0}
+.page-log-tools>label input{width:100%;min-width:0}
+.page-log-tools>select{flex:0 1 105px;min-width:0}
+.page-result-log>pre{overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ui-ink);background:var(--ui-raised,var(--ui-panel));border:1px solid var(--ui-border);border-radius:5px;padding:8px;font-variant-numeric:tabular-nums}
+.page-result-log>.page-list-navigation{flex:none}
+.page-analysis-intro{flex:none;padding:8px;border:1px solid var(--ui-border);border-radius:5px;background:var(--ui-raised,var(--ui-panel));line-height:1.5}
+.page-analysis-intro>strong{display:block;margin-bottom:3px;font-size:12px}
+.page-analysis-intro p{color:var(--ui-muted)}
+.page-analysis-context{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-top:5px;font-variant-numeric:tabular-nums}
+.page-analysis-context>span{overflow-wrap:anywhere;min-width:0}
+.page-analysis-unavailable{display:flex;flex-direction:column;gap:9px;align-items:flex-start;padding:12px;border:1px dashed var(--ui-border);border-radius:6px;line-height:1.6}
+.page-analysis-unavailable p{color:var(--ui-muted)}

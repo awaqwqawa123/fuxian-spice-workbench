@@ -1,5 +1,6 @@
 import type { ImportedSpiceModel } from './spice-models'
 import type { ModelCategoryId } from './model-taxonomy'
+import { reviewedModelSourceCategory } from './model-category-reviewed-sources'
 
 /** Function evidence is scoped to the enclosing device. Internal .MODEL cards,
  * test benches and filename/model-name prefixes never establish the IC's role. */
@@ -16,6 +17,7 @@ const descriptions: readonly [RegExp, ModelCategoryId][] = [
   [/\b(?:Si[- ])?schottky(?:[- ]diodes?)?\b/i, 'diode:schottky'],
   [/\bzener(?:[- ]diodes?)?\b/i, 'diode:zener'],
   [/\b(?:varactor|varicap)(?:[- ]diodes?)?\b/i, 'diode:varactor'],
+  [/\b(?:Si[- ])?PIN[- ]diodes?\b/i, 'diode:pin'],
   [/\b(?:ultra[- ]?fast|fast)[- ]recovery(?:[- ]diodes?)?\b/i, 'diode:fast'],
   [/^(?:(?:TYPE|SUBTYPE|FUNCTION)\s*:\s*)?RECTIFIER(?:\s+DIODE)?[.:]?$/i, 'diode:rectifier'],
   [/\b(?:triacs?|bidirectional thyristor)\b/i, 'semiconductor:triac'],
@@ -26,6 +28,10 @@ const descriptions: readonly [RegExp, ModelCategoryId][] = [
   [/\b(?:switching regulator|buck converter|boost converter|buck[- ]boost converter)\b/i, 'power:switching-regulator'],
   [/\b(?:PWM controller|pulse[- ]width modulation controller)\b/i, 'power:pwm-controller'],
   [/\b(?:linear voltage regulator|voltage regulator)\b/i, 'power:regulator'],
+  [/\b(?:buffer amplifier|unity[- ]gain buffer)\b/i, 'analog:buffer'],
+  [/\bvariable[- ]gain amplifier\b/i, 'analog:variable-gain'],
+  [/\b(?:difference amplifier)\b/i, 'analog:difference'],
+  [/\b(?:current[- ]sense amplifier|current[- ]shunt monitor)\b/i, 'analog:current-sense'],
   [/\b(?:instrumentation amplifier)\b/i, 'analog:instrumentation'],
   [/\b(?:fully[- ]differential amplifier)\b/i, 'analog:differential'],
   [/\b(?:operational amplifier|op[- ]?amp)\b/i, 'analog:opamp'],
@@ -56,10 +62,10 @@ function rootComments(model: ImportedSpiceModel): string[] {
   let pending: string[] = [], depth = 0
   for (const raw of model.spice.split(/\r?\n/)) {
     const line = raw.trim()
-    const declaration = line.match(/^\.subckt\s+(\S+)/i)
+    const declaration = line.match(/^\.(subckt|model)\s+(\S+)/i)
     if (declaration && depth === 0) {
-      if (declaration[1].toLowerCase() === model.id.toLowerCase()) return pending
-      depth++
+      if (declaration[2].toLowerCase() === model.id.toLowerCase()) return pending
+      if (declaration[1].toLowerCase() === 'subckt') depth++
     } else if (/^\.subckt\b/i.test(line)) depth++
     else if (/^\.ends\b/i.test(line)) depth = Math.max(0, depth - 1)
     if (!depth && line.startsWith('*')) pending.push(line.replace(/^\*+\s*/, ''))
@@ -104,6 +110,8 @@ export function modelCategoryEvidence(model: ImportedSpiceModel): ModelCategoryE
     const result = declaredDescription(text)
     if (result) return result
   }
+  const reviewedSource = reviewedModelSourceCategory(model)
+  if (reviewedSource) return reviewedSource
   const registered = reviewedPropertyCategory(model)
   if (registered) return registered
   return registeredSource(model)

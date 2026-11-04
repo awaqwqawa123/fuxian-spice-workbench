@@ -4,7 +4,7 @@ import { functionalPinEvidenceForModel } from './model-pin-evidence'
 import { modelCategoryEvidence } from './model-category-evidence'
 
 /** Display/index caches must reclassify saved definitions when evidence changes. */
-export const MODEL_TAXONOMY_REVISION = '2026-10-18-reviewed-source-and-property-evidence-v3'
+export const MODEL_TAXONOMY_REVISION = '2026-11-01-reviewed-root-and-hierarchy-evidence-v4.1'
 
 /** Categories describe the model declaration or an explicit source annotation.
  * Electrical parameters alone do not establish a part's intended application. */
@@ -41,6 +41,7 @@ export const modelCategories = [
   { id: 'diode:zener', group: 'diode', label: '稳压二极管' },
   { id: 'diode:tvs', group: 'diode', label: '瞬态抑制二极管' },
   { id: 'diode:varactor', group: 'diode', label: '变容二极管' },
+  { id: 'diode:pin', group: 'diode', label: 'PIN 二极管' },
   { id: 'diode:fast', group: 'diode', label: '快恢复二极管' },
   { id: 'diode:rectifier', group: 'diode', label: '整流二极管' },
   { id: 'diode:switching', group: 'diode', label: '开关二极管' },
@@ -75,6 +76,10 @@ export const modelCategories = [
   { id: 'analog:opamp-quad', group: 'analog', label: '四通道运放宏模型' },
   { id: 'analog:opamp-multi', group: 'analog', label: '多通道运放宏模型' },
   { id: 'analog:instrumentation', group: 'analog', label: '仪表放大器' },
+  { id: 'analog:buffer', group: 'analog', label: '缓冲放大器' },
+  { id: 'analog:variable-gain', group: 'analog', label: '可变增益放大器' },
+  { id: 'analog:difference', group: 'analog', label: '差分输入放大器' },
+  { id: 'analog:current-sense', group: 'analog', label: '电流检测放大器' },
   { id: 'analog:differential', group: 'analog', label: '全差分放大器' },
   { id: 'analog:comparator', group: 'analog', label: '比较器' },
   { id: 'analog:comparator-dual', group: 'analog', label: '双通道比较器宏模型' },
@@ -125,6 +130,8 @@ const explicitDiodeTypes: Record<string, ModelCategoryId> = {
   laser: 'opto:laser',
   varactor: 'diode:varactor',
   varicap: 'diode:varactor',
+  pin: 'diode:pin',
+  pindiode: 'diode:pin',
   fastrecovery: 'diode:fast',
   ultrafastrecovery: 'diode:fast',
   rectifier: 'diode:rectifier',

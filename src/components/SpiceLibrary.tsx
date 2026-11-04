@@ -12,7 +12,7 @@ import { parseModelLibraryPreview } from '../core/model-library-preview'
 type Preview = ReturnType<typeof parseSpiceLibrary>
 type Page = 'local' | 'project' | 'import'
 
-export default function SpiceLibrary({ project, onChange, onPlace, onEditModel, onClose, acquisitions = [], onImportAcquired, onImportAndPlaceModel, initialPage }: {
+export default function SpiceLibrary({ project, onChange, onPlace, onEditModel, onClose, acquisitions = [], onImportAcquired, onImportAndPlaceModel, initialPage, embedded = false }: {
   project: Project
   onChange: (models: ImportedSpiceModel[]) => void
   onPlace: (model: ImportedSpiceModel) => void
@@ -22,6 +22,7 @@ export default function SpiceLibrary({ project, onChange, onPlace, onEditModel, 
   onImportAcquired?: (model: ImportedSpiceModel) => void
   onImportAndPlaceModel?: (model: ImportedSpiceModel, preview: ModelDownloadPreview) => void | Promise<void>
   initialPage?: Page
+  embedded?: boolean
 }) {
   const [page, setPage] = useState<Page>(initialPage ?? (project.models?.length ? 'project' : 'local'))
   const [text, setText] = useState(''), [label, setLabel] = useState('用户导入')
@@ -46,6 +47,7 @@ export default function SpiceLibrary({ project, onChange, onPlace, onEditModel, 
   }, [pendingEdit, project.models, onEditModel])
   useEffect(() => {
     mounted.current = true
+    if (embedded) return () => { mounted.current = false }
     const previous = document.activeElement as HTMLElement | null
     panel.current?.querySelector<HTMLButtonElement>('button')?.focus()
     const key = (event: KeyboardEvent) => {
@@ -58,7 +60,7 @@ export default function SpiceLibrary({ project, onChange, onPlace, onEditModel, 
     }
     window.addEventListener('keydown', key, true)
     return () => { mounted.current = false; window.removeEventListener('keydown', key, true); previous?.focus() }
-  }, [onClose])
+  }, [onClose, embedded])
 
   function resetPreview() { setPreview(null); setSelected(new Set()); setError(''); setNotice('') }
   function inspect(content = text, source = { label, ...(url.trim() ? { url: url.trim() } : {}), ...(license.trim() ? { license: license.trim() } : {}), ...(attribution.trim() ? { attribution: attribution.trim() } : {}) }) {
@@ -105,10 +107,10 @@ export default function SpiceLibrary({ project, onChange, onPlace, onEditModel, 
       setError('')
     } catch (cause) { setError((cause as Error).message) }
   }
-  return <div className="spice-library-overlay" onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
-    <aside ref={panel} className="spice-library-dialog" role="dialog" aria-modal="true" aria-label="SPICE 模型库">
-      <header><div><span className="spice-library-kicker">MODEL LIBRARY</span><h2><LibraryBig size={23} />SPICE 模型库</h2><p>把器件的电气模型带进你的原理图。</p></div><button onClick={onClose} aria-label="关闭 SPICE 模型库"><X size={20}/></button></header>
-      <nav aria-label="模型库页面">{([{id:'local',name:'本地库'},{ id: 'project', name: `工程模型 · ${project.models?.length ?? 0}` }, { id: 'import', name: '导入模型' }] as const).map(tab => <button key={tab.id} aria-pressed={page === tab.id} onClick={() => { setPage(tab.id); setError('') }}>{tab.name}</button>)}</nav>
+  return <div className={embedded ? "spice-library-embedded" : "spice-library-overlay"} onMouseDown={event => { if (!embedded && event.target === event.currentTarget) onClose() }}>
+    <aside ref={panel} className="spice-library-dialog" role={embedded ? "region" : "dialog"} aria-modal={embedded ? undefined : true} aria-label={embedded ? "工程模型与导入" : "SPICE 模型库"}>
+      {!embedded&&<header><div><span className="spice-library-kicker">MODEL LIBRARY</span><h2><LibraryBig size={23} />SPICE 模型库</h2><p>把器件的电气模型带进你的原理图。</p></div><button onClick={onClose} aria-label="关闭 SPICE 模型库"><X size={20}/></button></header>}
+      <nav aria-label="模型库页面">{([{id:'local',name:embedded?'示例与助手':'本地库'},{ id: 'project', name: `工程模型 · ${project.models?.length ?? 0}` }, { id: 'import', name: '导入模型' }] as const).map(tab => <button key={tab.id} aria-pressed={page === tab.id} onClick={() => { setPage(tab.id); setError('') }}>{tab.name}</button>)}</nav>
       <div className="spice-library-content">
         {error && <p className="spice-library-error" role="alert">{error}</p>}
         {notice && <p className="spice-library-notice" role="status"><Check size={16}/>{notice}</p>}
@@ -134,7 +136,7 @@ export default function SpiceLibrary({ project, onChange, onPlace, onEditModel, 
           </section>}
         </>}
       </div>
-      <footer><span>模型随工程 JSON 保存 · 仿真在本机 ngspice 中执行</span><button onClick={onClose}>返回原理图</button></footer>
+      {!embedded&&<footer><span>模型随工程 JSON 保存 · 仿真在本机 ngspice 中执行</span><button onClick={onClose}>返回原理图</button></footer>}
     </aside>
   </div>
 }

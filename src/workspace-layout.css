@@ -293,6 +293,8 @@ body:has(.workspace-shell),
   flex:1 1 0;
   flex-direction:column;
   width:0;
+  /* The editor is not the legacy centered document page (`main`, 1660px). */
+  max-width:none;
   min-width:0;
   min-height:0;
   height:100%;

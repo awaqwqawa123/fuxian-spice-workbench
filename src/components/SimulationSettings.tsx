@@ -25,7 +25,7 @@ export default function SimulationSettings({ project, profiles, newProfile=false
   function removeProfile(){if(profileDraft.profiles.length<2)return;const remaining=profileDraft.profiles.filter(p=>p.id!==profileDraft.activeId);setProfileDraft({...profileDraft,activeId:remaining[0].id,profiles:remaining});setDraft(applySimulationProfile(draft,remaining[0]))}
   const [snapshot] = useState(() => JSON.stringify(project))
   const panel = useRef<HTMLElement>(null)
-  useWorkbenchDialog(panel, modal, onClose)
+  useWorkbenchDialog(panel, modal, onClose, { motionEnabled: modal })
   const pageId = useId()
   const [page, setPage] = useState<SettingsPage>(newProfile ? 'profiles' : 'analysis')
   const [switchPage, setSwitchPage] = useState(0)

@@ -1,0 +1,34 @@
+/* Exit is a short, non-interactive compositor layer. The workspace has already
+   taken its final size; canvas/plot ResizeObservers do not run per animation frame. */
+.workspace-shell [data-layout-motion="leaving"][hidden],
+.single-page-workspace [data-layout-motion="leaving"][hidden] {
+  display: flex !important;
+  position: fixed !important;
+  left: var(--motion-panel-left) !important;
+  top: var(--motion-panel-top) !important;
+  width: var(--motion-panel-width) !important;
+  height: var(--motion-panel-height) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  box-sizing: border-box;
+  flex: none !important;
+  z-index: 28;
+  pointer-events: none !important;
+  overflow: hidden;
+}
+[data-layout-motion] { will-change: transform, opacity; }
+/* Splitters always follow the pointer immediately; only the affordance changes. */
+.sidebar-resize-handle,
+.sidebar-resize-handle .sidebar-resize-grip {
+  transition: background-color var(--motion-fast, 120ms) var(--motion-ease, ease),
+    color var(--motion-fast, 120ms) var(--motion-ease, ease),
+    box-shadow var(--motion-fast, 120ms) var(--motion-ease, ease);
+}
+.sidebar-resize-handle.is-dragging { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  [data-layout-motion] { will-change: auto; }
+  .sidebar-resize-handle,
+  .sidebar-resize-handle .sidebar-resize-grip { transition: none; }
+}

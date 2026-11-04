@@ -15,7 +15,7 @@ const sameGeometry=(a:CanvasDiagramGeometry,b:CanvasDiagramGeometry)=>a.id===b.i
 const textControl=(target:EventTarget)=>!!(target as Element).closest('input,textarea,select,[contenteditable]:not([contenteditable="false"])')
 const embeddedControl=(target:EventTarget)=>textControl(target)||!!(target as Element).closest('button,summary,[data-waveform-control]')
 
-export default function CanvasWaveformDiagram({diagram,active,selected=false,toWorld,screenScale=1,onChange,onPreview,constrainMove,onExpand,onWheelResize,onActivate}:Props) {
+export default function CanvasWaveformDiagram({diagram,active,selected=false,toWorld,screenScale=1,onChange,onPreview,constrainMove,onExpand,onActivate}:Props) {
   const group=useRef<SVGGElement>(null),gesture=useRef<Gesture|null>(null)
   const pointerFocus=useRef(false),suppressClick=useRef(false)
   const titleClip=useId()
@@ -36,32 +36,7 @@ export default function CanvasWaveformDiagram({diagram,active,selected=false,toW
   useEffect(()=>{if(!active)cancel()},[active])
   useEffect(()=>{if(gesture.current&&!sameGeometry(gesture.current.base,normalized))cancel()},[diagram.id,diagram.x,diagram.y,diagram.width,diagram.height])
   useEffect(()=>()=>{const state=gesture.current;gesture.current=null;if(state?.target.hasPointerCapture?.(state.pointerId))state.target.releasePointerCapture(state.pointerId)},[])
-  useEffect(()=>{
-    const frame=group.current,resize=onWheelResize??diagram.onWheelResize
-    if(!active||!frame||!resize)return
-    const wheel=(event:WheelEvent)=>{
-      if(event.defaultPrevented||!event.deltaY)return
-      if((event.target as Element|null)?.closest?.('dialog,[role="dialog"],[aria-modal="true"],.canvas-waveform-legend-details'))return
-      // The React prop is normally authoritative; the data attribute keeps
-      // the capture guard correct when a foreignObject retargets the event
-      // while a parent render is still committing selection state.
-      if(!selected&&frame.getAttribute('data-diagram-selected')!=='true')return
-      const bounds=frame.getBoundingClientRect()
-      if(bounds.width<=0||bounds.height<=0||event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom)return
-      // A frame owns every part of its footprint, including empty/error/OP
-      // states and plot HTML retargeted to the SVG. Never delegate selected
-      // plot events to a result-dependent child listener.
-      if((event.target as Element|null)?.closest?.('input,textarea,select,[contenteditable="true"]')){event.stopPropagation();return}
-      event.preventDefault();event.stopPropagation()
-      const anchor={x:Math.max(0,Math.min(1,(event.clientX-bounds.left)/bounds.width)),y:Math.max(0,Math.min(1,(event.clientY-bounds.top)/bounds.height))}
-      const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?bounds.height:1)
-      resize(Math.exp(-Math.max(-160,Math.min(160,delta))*.0025),anchor)
-    }
-    // Capture at window level because Chromium can retarget foreignObject
-    // wheel events to the surrounding SVG before the frame group sees them.
-    window.addEventListener('wheel',wheel,{capture:true,passive:false})
-    return()=>window.removeEventListener('wheel',wheel,true)
-  },[active,diagram.onWheelResize,onWheelResize,selected])
+
   function begin(event:PointerEvent<SVGGElement>,kind:'move'|'resize',edge:CanvasDiagramEdge='se'){
     event.stopPropagation()
     if(!active||event.button!==0||!onChange)return
@@ -114,14 +89,14 @@ export default function CanvasWaveformDiagram({diagram,active,selected=false,toW
       onChange?.(diagram.id,kind==='move'&&constrainMove?constrainMove(changed):changed,kind)
     }
   }
-  return <g ref={group} className={`canvas-waveform-diagram${preview?' is-manipulating':''}${selected?' is-selected':''}`} data-canvas-diagram={diagram.id} data-diagram-selected={selected?'true':undefined} data-waveform-wheel-owner={(onWheelResize??diagram.onWheelResize)?'frame':undefined} transform={`translate(${box.x} ${box.y})`} role="group" aria-label={diagram.title??'画布波形图'} tabIndex={0}
+  return <g ref={group} className={`canvas-waveform-diagram${preview?' is-manipulating':''}${selected?' is-selected':''}`} data-canvas-diagram={diagram.id} data-diagram-selected={selected?'true':undefined} transform={`translate(${box.x} ${box.y})`} role="group" aria-label={diagram.title??'画布波形图'} tabIndex={0}
     onFocus={event=>{if(active&&!pointerFocus.current&&!selected&&!embeddedControl(event.target))onActivate?.()}}
     onPointerDown={event=>{event.stopPropagation();suppressClick.current=false;if(!embeddedControl(event.target))begin(event,'move')}}
     onPointerMove={move} onPointerUp={finish} onPointerCancel={event=>{event.stopPropagation();cancel()}} onLostPointerCapture={event=>{event.stopPropagation();cancel()}}
     onClickCapture={event=>{if(suppressClick.current){event.preventDefault();event.stopPropagation();suppressClick.current=false}}}
     onDoubleClick={event=>{if(embeddedControl(event.target)||suppressClick.current)return;event.preventDefault();event.stopPropagation();expand()}} onKeyDown={key}
     onDragOver={event=>{event.preventDefault();event.stopPropagation()}} onDrop={event=>{event.preventDefault();event.stopPropagation()}}>
-    <title>直接拖动标题或波形区域移动；拖动边缘或四角调整大小；选中后滚轮缩放整个波形图框占地，未选中时滚轮缩放画布；双击放大查看。Ctrl+C / V 复制粘贴。</title>
+    <title>直接拖动标题或波形区域移动；拖动边缘或四角调整大小；选中后在绘图区滚轮缩放波形坐标，Shift 仅横轴、Alt 仅纵轴，中键拖动波形；标题区域滚轮缩放画布；双击放大查看。Ctrl+C / V 复制粘贴。</title>
     <defs><clipPath id={titleClip}><rect x={42*typeScale} y="0" width={Math.max(1,box.width-(diagram.onCopy?220:155)*typeScale)} height={titleHeight}/></clipPath></defs>
     <rect className="canvas-diagram-frame" width={box.width} height={box.height} rx="5"/>
     <g className="canvas-diagram-title" tabIndex={0} role="button" aria-label="移动画布波形图" onPointerDown={event=>begin(event,'move')}>

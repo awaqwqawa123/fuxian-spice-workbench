@@ -1,7 +1,26 @@
 import type { WaveformTrace } from './waveform-workspace'
+import { nearestSample } from './measurements'
 
 export type CursorSearch = 'maximum' | 'minimum' | 'next-peak' | 'previous-peak' | 'next-trough' | 'previous-trough'
 export interface WaveformCursorSample { index: number; x: number; y: number }
+
+/** Snap a requested coordinate to an actual finite sample in the visible range. */
+export function nearestWaveformCursorSample(trace:WaveformTrace,requested:number,range:readonly[number,number],logarithmic=false):WaveformCursorSample|null {
+  if(!Number.isFinite(requested)||!range.every(Number.isFinite)||range[0]>range[1]||requested<range[0]||requested>range[1]||trace.x.length!==trace.y.length||logarithmic&&requested<=0)return null
+  const index=nearestSample(trace.x,requested,logarithmic),x=trace.x[index],y=trace.y[index]
+  if(Number.isFinite(x)&&Number.isFinite(y)&&x>=range[0]&&x<=range[1]&&(!logarithmic||x>0))return {index,x,y}
+  // Only missing/gapped samples require a scan. Ordinary cursor readouts and
+  // placement remain logarithmic in the number of saved solver points.
+  const coordinate=(value:number)=>logarithmic?Math.log10(value):value,target=coordinate(requested)
+  let nearest:WaveformCursorSample|null=null,distance=Infinity
+  for(let index=0;index<trace.x.length;index++){
+    const x=trace.x[index],y=trace.y[index]
+    if(!Number.isFinite(x)||!Number.isFinite(y)||x<range[0]||x>range[1]||logarithmic&&x<=0)continue
+    const delta=Math.abs(coordinate(x)-target)
+    if(delta<distance||delta===distance&&nearest!==null&&x<nearest.x){distance=delta;nearest={index,x,y}}
+  }
+  return nearest
+}
 
 /** The saved sample closest to the plateau's midpoint in x, with earlier ties. */
 function plateauSample(trace: WaveformTrace, start: number, end: number): WaveformCursorSample {

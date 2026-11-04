@@ -356,7 +356,7 @@ test('DOM workflow: place, rotate, connect, probe, solve, move, undo, edit and e
       assert.ok(!doc.querySelector('[role="dialog"][aria-label="拓展器件"]'),'choosing closes the popup before canvas placement')
       assert.deepEqual(saved(),before,'choosing a component alone does not edit the drawing')
     }
-    await click(button('空白画布'));await click(byText('常用器件'));await chooseExtended('LED 发光二极管','光电')
+    await click(button('空白画布'));await chooseExtended('LED 发光二极管','光电')
     await pointer(canvas(),'pointerdown',300,220)
     assert.equal(saved().drawing!.devices[0].value,'D_LED_RED')
     assert.equal(saved().drawing!.devices[0].kind,'D')

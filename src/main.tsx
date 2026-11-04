@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import CodexSessionLab from './components/CodexSessionLab'
+import { restoreAppearance } from './core/appearance'
 import './styles.css'
 import './components/source-preview.css'
 import './editor.css'
@@ -49,6 +50,7 @@ import './ltspice-symbols.css'
 import './canvas-diagrams.css'
 import './canvas-waveform-preview.css'
 import './netlist-editor.css'
+import './components/simulation-import-dialog.css'
 import './waveform-dialog.css'
 import './final-test-report.css'
 import './waveform-analysis.css'
@@ -84,6 +86,12 @@ import './styles/workspace-view-controls.css'
 import './styles/workspace-canvas-controls.css'
 import './waveform-compact-tools.css'
 import './workbench-refinement.css'
+import './styles/workbench-motion.css'
+import './styles/dialog-motion.css'
+import './styles/layout-motion.css'
+import './styles/control-motion.css'
 
+// Both application entries restore preferences before their first React frame.
+restoreAppearance()
 const sessionLab = new URLSearchParams(window.location.search).get('codexSessionLab') === '1'
 createRoot(document.getElementById('root')!).render(sessionLab ? <CodexSessionLab /> : <App />)

@@ -94,10 +94,27 @@
   .workspace-shell .workspace-commandbar .canvas-overlay-tools { gap:4px; }
 }
 @media(max-width:900px) {
-  .workspace-shell .free-header.workspace-topbar { overflow-x:auto; scrollbar-width:none; }
+  /* A scrolling header also clips the menus vertically. Let compact groups
+     wrap in normal layout so every action and its popup remains reachable. */
+  .workspace-shell .free-app>.free-header.workspace-topbar {
+    height:auto; min-height:var(--studio-chrome-height,46px); flex-basis:auto;
+    flex-wrap:wrap; overflow:visible; gap:4px 7px; padding:5px 8px;
+  }
   .workspace-shell .workspace-topbar .free-brand { display:none; }
-  .workspace-shell .workspace-topbar-title { min-width:130px; }
+  .workspace-shell .workspace-topbar .workspace-topbar-title { flex:1 1 180px; min-width:110px; max-width:none; }
   .workspace-shell .workspace-topbar .workspace-view-tabs>button { font-size:11px; padding-inline:5px; }
+  .workspace-shell .workspace-topbar .workspace-topbar-actions {
+    flex:1 1 100%; width:100%; flex-wrap:wrap; justify-content:flex-start;
+    gap:4px; margin-left:0;
+  }
+  .workspace-shell .free-app .workspace-topbar :is(.workspace-file-menu,.workspace-secondary-menu)>div {
+    left:0; right:auto; width:min(244px,calc(100vw - 88px)); min-width:0; max-width:100vw;
+    max-height:min(70dvh,calc(100dvh - 120px));
+  }
+  .workspace-shell .free-app .workspace-topbar :is(.workspace-file-menu,.workspace-secondary-menu)>div>button {
+    min-width:0; white-space:normal; overflow-wrap:anywhere;
+  }
+  .workspace-shell .free-app .workspace-topbar :is(.workspace-file-menu,.workspace-secondary-menu)>div>button>svg { flex:none; }
   .workspace-shell .workspace-simulation-controls .simulation-profile-select { width:90px; }
 }
 /* Simulation creation and editing remain named actions at compact widths. */

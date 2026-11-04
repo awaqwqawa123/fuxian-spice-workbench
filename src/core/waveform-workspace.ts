@@ -164,6 +164,7 @@ export function waveformTraces(result: Result, comparison: Result | null, signal
 
 /** Shared normalized X window supports both linear time and logarithmic frequency. */
 export function zoomWaveformDomain(domain: WaveformDomain, factor: number, anchor = .5): WaveformDomain {
+  if (!Number.isFinite(factor) || factor <= 0) return domain
   anchor = Math.max(0, Math.min(1, anchor))
   const width = Math.min(1, Math.max(1e-6, (domain[1] - domain[0]) / factor))
   const target = domain[0] + (domain[1] - domain[0]) * Math.max(0, Math.min(1, anchor))

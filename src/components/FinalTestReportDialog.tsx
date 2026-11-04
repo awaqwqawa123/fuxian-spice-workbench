@@ -39,7 +39,7 @@ export default function FinalTestReportDialog({open,onClose,project,projectId,pr
   useEffect(()=>{if(!onReportChange&&project!==localProject.current){localProject.current=project;setLocal(project.report??defaultReportConfiguration());setFieldErrors({});setExportError('')}},[project,onReportChange])
   useEffect(()=>{setFieldErrors({});setExportError('')},[projectId])
   const config=onReportChange?(project.report??defaultReportConfiguration()):local,details=config.details
-  useWorkbenchDialog(panel,open,onClose)
+  const motion=useWorkbenchDialog(panel,open,onClose)
   const coverage=useMemo(()=>testCoverage(project,profiles,results),[project,profiles,results])
   const complete=coverage.length>0&&coverage.every(item=>item.status==='complete'),invalidInput=Object.values(fieldErrors).some(Boolean)
   function save(next:ReportConfiguration):string {
@@ -86,7 +86,7 @@ export default function FinalTestReportDialog({open,onClose,project,projectId,pr
     return current?'A':'V'
   }
   function numberField(key:string,label:string,value:number|undefined,onValue:(value:number|undefined)=>string,optional=false){return <NumericField key={key} label={label} value={value} optional={optional} onValue={onValue} onError={message=>numericError(key,message)}/>}
-  if(!open)return null
+  if(!motion.mounted)return null
   return createPortal(<div className="workbench-window-backdrop final-test-report-backdrop" onMouseDown={event=>{if(event.target===event.currentTarget)onClose()}}><section ref={panel} role="dialog" aria-modal="true" aria-label="最终测试报告" tabIndex={-1} className="workbench-window final-test-report-dialog">
     <header className="final-report-heading"><div><span>设计文档 · 仿真验证 · 测试归档</span><h2><ClipboardList size={20}/>电路设计与仿真验证报告</h2><p>设计依据、测量方法、指标验收与验证覆盖，形成可核查的正式技术文档。</p></div><button type="button" aria-label="关闭最终测试报告" onClick={onClose}><X size={18}/></button></header>
     <div className="final-report-body"><div className="final-report-overview"><div><small>项目</small><strong>{project.title}</strong></div><div><small>测试进度</small><strong>{coverage.filter(item=>item.status==='complete').length} / {coverage.length} 项完成</strong></div><div><small>验收结论</small><strong>{report?.conclusion||'未判定'}</strong></div></div>

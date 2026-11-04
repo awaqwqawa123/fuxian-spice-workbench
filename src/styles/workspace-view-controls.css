@@ -18,6 +18,24 @@
 }
 .single-page-workspace .page-view-caption > svg { color: var(--ui-accent-ink); flex: none; }
 .single-page-workspace .page-view-caption > span { overflow: hidden; text-overflow: ellipsis; }
+.single-page-workspace .page-schematic-controls {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 8px;
+  padding-right: 8px;
+  border-right: 1px solid var(--ui-border);
+}
+.single-page-workspace .page-schematic-controls .schematic-view-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ui-muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.single-page-workspace.is-compact .page-schematic-controls .schematic-view-status { display: none; }
+.single-page-workspace.is-compact .page-schematic-controls { gap: 2px; padding-right: 4px; }
 .single-page-workspace .page-view-modes {
   display: flex;
   flex: none;

@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
-import { ChartNoAxesCombined, CircuitBoard, Columns2, Maximize, PanelLeftOpen, PanelRightClose, PanelRightOpen, SlidersHorizontal } from 'lucide-react'
+import { ChartNoAxesCombined, CircuitBoard, Columns2, Maximize, PanelRightClose, PanelRightOpen, SlidersHorizontal } from 'lucide-react'
 import SidebarResizeHandle from './SidebarResizeHandle'
+import { usePanelMotion } from './usePanelMotion'
 
 export type SinglePageWorkspaceMode = 'split' | 'schematic' | 'waveform'
 export type WorkspaceSidebarTab = 'waveform' | 'properties'
 export interface SinglePageWorkspaceProps {
   schematic: ReactNode
+  schematicControls?: ReactNode
   waveform: ReactNode
   properties?: ReactNode
   sidebarTab?: WorkspaceSidebarTab
@@ -33,10 +35,11 @@ export function readSinglePageLayout(key?: string): { ratio: number; mode: Singl
   } catch { return { ratio: defaultRatio, mode: 'split' } }
 }
 
-export default function SinglePageWorkspace({ schematic, waveform, properties, sidebarTab = 'waveform', onSidebarTabChange, selectionKey, layoutKey, mode: controlledMode, onModeChange, onFitBoth, onRestoreLayout, sidebarScaleRequest }: SinglePageWorkspaceProps) {
+export default function SinglePageWorkspace({ schematic, schematicControls, waveform, properties, sidebarTab = 'waveform', onSidebarTabChange, selectionKey, layoutKey, mode: controlledMode, onModeChange, onFitBoth, onRestoreLayout, sidebarScaleRequest }: SinglePageWorkspaceProps) {
   const host = useRef<HTMLDivElement>(null)
   const schematicHost = useRef<HTMLDivElement>(null)
   const waveformHost = useRef<HTMLElement>(null)
+  const waveformPanel = useRef<HTMLElement>(null), propertiesPanel = useRef<HTMLElement>(null)
   const focusAfterChange = useRef<'schematic' | 'waveform' | null>(null)
   const [width, setWidth] = useState(1000)
   const [tab, setTab] = useState<'schematic' | 'waveform'>('waveform')
@@ -96,6 +99,10 @@ export default function SinglePageWorkspace({ schematic, waveform, properties, s
   }, [sidebarScaleRequest, mode, narrow, layoutKey, width, min, max])
   const schematicHidden = mode === 'waveform' || mode === 'split' && narrow && tab !== 'schematic'
   const waveformHidden = mode === 'schematic' || mode === 'split' && narrow && tab !== 'waveform'
+  usePanelMotion(schematicHost, !schematicHidden, 'left')
+  usePanelMotion(waveformHost, !waveformHidden, 'right')
+  usePanelMotion(waveformPanel, sidebarTab === 'waveform', 'content')
+  usePanelMotion(propertiesPanel, sidebarTab === 'properties', 'content')
   const sidebarLabel = sidebarTab === 'properties' ? '专注属性' : '专注波形'
   const expandLabel = sidebarTab === 'properties' ? '展开侧边栏' : '展开波形'
   const collapseLabel = sidebarTab === 'properties' ? '收起侧边栏' : '收起波形'
@@ -104,7 +111,8 @@ export default function SinglePageWorkspace({ schematic, waveform, properties, s
   const iconProps = { size: 16, strokeWidth: 1.75, 'aria-hidden': true as const }
   return <div ref={host} className={`single-page-workspace v2-workspace${sharedSidebar ? ' has-shared-sidebar' : ''}${narrow ? ' is-compact' : ''} is-${mode}`} data-page-tab={tab} data-sidebar-tab={sidebarTab} data-workspace-mode={mode} style={{ '--page-schematic-width': `${left}px` } as CSSProperties}>
     <nav className="page-workspace-controls page-layout-toolbar" aria-label="工作区视图">
-      <strong className="page-view-caption"><ModeIcon {...iconProps} /><span>{mode === 'schematic' ? '专注电路' : mode === 'waveform' ? sidebarLabel : sidebarTab === 'properties' ? '电路与属性' : '电路与波形'}</span></strong>
+      <strong className="page-view-caption"><ModeIcon {...iconProps} /><span>{mode === 'schematic' ? '原理图' : mode === 'waveform' ? sidebarLabel : sidebarTab === 'properties' ? '电路与属性' : '电路与波形'}</span></strong>
+      {!schematicHidden && schematicControls && <div className="page-schematic-controls">{schematicControls}</div>}
       {onFitBoth && <button className="page-view-action" aria-label="双区适配" onClick={onFitBoth} title="双区适配 · 分别适配完整电路和波形，保留固定坐标"><Maximize {...iconProps} /><span className="page-view-sr-only">双区适配</span></button>}
       <div className="page-view-modes" role="group" aria-label="显示模式">
         <button className="page-view-action" aria-label="恢复左右布局" aria-pressed={mode === 'split'} onClick={restore} title="恢复左右布局 · 恢复默认比例，保留曲线与坐标"><Columns2 {...iconProps} /><span className="page-view-sr-only">恢复左右布局</span></button>
@@ -129,10 +137,8 @@ export default function SinglePageWorkspace({ schematic, waveform, properties, s
           <button id="page-sidebar-waveform-tab" role="tab" title="波形" aria-selected={sidebarTab === 'waveform'} aria-controls="page-sidebar-waveform-panel" tabIndex={sidebarTab === 'waveform' ? 0 : -1} onClick={() => onSidebarTabChange?.('waveform')}><ChartNoAxesCombined {...iconProps} /><span>波形</span></button>
           <button id="page-sidebar-properties-tab" role="tab" title="器件属性" aria-selected={sidebarTab === 'properties'} aria-controls="page-sidebar-properties-panel" tabIndex={sidebarTab === 'properties' ? 0 : -1} onClick={() => onSidebarTabChange?.('properties')}><SlidersHorizontal {...iconProps} /><span>器件属性</span></button>
         </nav>}
-        {sharedSidebar ? <><section id="page-sidebar-waveform-panel" className="page-sidebar-panel" role="tabpanel" aria-labelledby="page-sidebar-waveform-tab" hidden={sidebarTab !== 'waveform'}>{waveform}</section><section id="page-sidebar-properties-panel" className="page-sidebar-panel" role="tabpanel" aria-labelledby="page-sidebar-properties-tab" hidden={sidebarTab !== 'properties'}>{properties}</section></> : waveform}
+        {sharedSidebar ? <><section ref={waveformPanel} id="page-sidebar-waveform-panel" className="page-sidebar-panel" role="tabpanel" aria-labelledby="page-sidebar-waveform-tab" hidden={sidebarTab !== 'waveform'}>{waveform}</section><section ref={propertiesPanel} id="page-sidebar-properties-panel" className="page-sidebar-panel" role="tabpanel" aria-labelledby="page-sidebar-properties-tab" hidden={sidebarTab !== 'properties'}>{properties}</section></> : waveform}
       </aside>
-      {mode === 'schematic' && <aside className="page-collapsed-waveform page-waveform-rail" aria-label="已收起的波形区" title="图组和测量已保留"><button className="page-view-action" aria-label="展开波形" onClick={() => changeMode('split')} title="展开波形 · 恢复原图组和观察范围"><PanelRightOpen {...iconProps} /><span className="page-view-sr-only">展开波形</span></button><SidebarIcon {...iconProps} /></aside>}
-      {mode === 'waveform' && <aside className="page-collapsed-schematic" aria-label="已收起的电路区"><button className="page-view-action" aria-label="恢复左右布局" title="恢复左右布局" onClick={() => changeMode('split')}><PanelLeftOpen {...iconProps} /><span className="page-view-sr-only">恢复左右布局</span></button><CircuitBoard {...iconProps} /></aside>}
     </div>
   </div>
 }

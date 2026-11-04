@@ -29,7 +29,7 @@ export default function ModelEditor({ project, deviceId, modelId, onApply, onClo
   const panel = useRef<HTMLElement>(null)
   const close = useRef(onClose)
   close.current = onClose
-  useWorkbenchDialog(panel, active && !embedded, onClose)
+  useWorkbenchDialog(panel, active && !embedded, onClose, { motionEnabled: !embedded })
   const stale = initial.snapshot !== JSON.stringify(project)
   const result = useMemo(() => {
     if (!initial.draft) return { error: initial.error }

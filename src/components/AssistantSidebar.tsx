@@ -1,11 +1,13 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { MessageSquare, Minus, Sparkles, BookOpenText, X } from 'lucide-react'
+import { usePanelMotion } from './usePanelMotion'
 
 /** A companion surface: drawing remains available while a task runs. */
-export default function AssistantSidebar({ visible, onMinimize, onClose, children, explanation, activeTab = 'chat', onTabChange }: {
+export default function AssistantSidebar({ visible, onMinimize, onClose, onAfterHide, children, explanation, activeTab = 'chat', onTabChange }: {
   visible: boolean
   onMinimize: () => void
   onClose: () => void
+  onAfterHide?: () => void
   children: ReactNode
   explanation?: ReactNode
   activeTab?: 'chat' | 'explain'
@@ -13,6 +15,10 @@ export default function AssistantSidebar({ visible, onMinimize, onClose, childre
 }) {
   const panel = useRef<HTMLElement>(null)
   const returnFocus = useRef<HTMLElement | null>(null)
+  const chatPanel = useRef<HTMLDivElement>(null), explainPanel = useRef<HTMLDivElement>(null)
+  usePanelMotion(panel, visible, 'right', undefined, onAfterHide)
+  usePanelMotion(chatPanel, activeTab === 'chat', 'content')
+  usePanelMotion(explainPanel, activeTab === 'explain', 'content')
 
   useEffect(() => {
     if (!visible) return
@@ -47,6 +53,6 @@ export default function AssistantSidebar({ visible, onMinimize, onClose, childre
       onTabChange?.(next)
       panel.current?.querySelector<HTMLButtonElement>(`#assistant-${next}-tab`)?.focus()
     }}><button type="button" id="assistant-chat-tab" role="tab" aria-selected={activeTab === 'chat'} aria-controls="assistant-chat-panel" tabIndex={activeTab === 'chat' ? 0 : -1} onClick={() => onTabChange?.('chat')}><MessageSquare size={14}/><span className="assistant-tab-label">绘制</span></button><button type="button" id="assistant-explain-tab" role="tab" aria-selected={activeTab === 'explain'} aria-controls="assistant-explain-panel" tabIndex={activeTab === 'explain' ? 0 : -1} onClick={() => onTabChange?.('explain')}><BookOpenText size={14}/><span className="assistant-tab-label">解释</span></button></div>}
-    <div className="assistant-sidebar-content">{explanation === undefined ? children : <><div id="assistant-chat-panel" className="assistant-tab-panel assistant-chat-panel" role="tabpanel" aria-labelledby="assistant-chat-tab" hidden={activeTab !== 'chat'}>{children}</div><div id="assistant-explain-panel" className="assistant-tab-panel assistant-explain-panel" role="tabpanel" aria-labelledby="assistant-explain-tab" hidden={activeTab !== 'explain'}>{explanation}</div></>}</div>
+    <div className="assistant-sidebar-content">{explanation === undefined ? children : <><div ref={chatPanel} id="assistant-chat-panel" className="assistant-tab-panel assistant-chat-panel" role="tabpanel" aria-labelledby="assistant-chat-tab" hidden={activeTab !== 'chat'}>{children}</div><div ref={explainPanel} id="assistant-explain-panel" className="assistant-tab-panel assistant-explain-panel" role="tabpanel" aria-labelledby="assistant-explain-tab" hidden={activeTab !== 'explain'}>{explanation}</div></>}</div>
   </aside>
 }

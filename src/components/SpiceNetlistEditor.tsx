@@ -32,7 +32,7 @@ function NetlistDraft({visible,onClose,projectId,title,netlist,generationError}:
   const [draft,setDraft]=useState(()=>loadDraft(projectId,netlist)),[storageError,setStorageError]=useState(''),[confirmReset,setConfirmReset]=useState(false)
   const [result,setResult]=useState<RawNetlistResult|null>(null),[busy,setBusy]=useState(false),[status,setStatus]=useState(''),[error,setError]=useState('')
   const validation=useMemo(()=>{try{return{prepared:prepareRawNetlist(draft.source),error:''}}catch(e){return{prepared:null,error:(e as Error).message}}},[draft.source])
-  useWorkbenchDialog(panel,visible,onClose)
+  const motion=useWorkbenchDialog(panel,visible,onClose)
   function dispose(){if(timer.current)clearTimeout(timer.current);timer.current=undefined;worker.current?.terminate();worker.current=null}
   useEffect(()=>()=>dispose(),[])
   function save(source:string,generated=draft.generated){
@@ -64,7 +64,7 @@ function NetlistDraft({visible,onClose,projectId,title,netlist,generationError}:
       task.postMessage({netlist:draft.source})
     }catch(e){dispose();setBusy(false);setError((e as Error).message);setStatus('')}
   }
-  return <div className="workbench-window-backdrop netlist-editor-backdrop" hidden={!visible} onMouseDown={event=>{if(event.target===event.currentTarget)onClose()}}>
+  return <div className="workbench-window-backdrop netlist-editor-backdrop" hidden={!motion.mounted} onMouseDown={event=>{if(event.target===event.currentTarget)onClose()}}>
     <section ref={panel} className="workbench-window netlist-editor-window" role={visible?'dialog':undefined} aria-modal={visible?'true':undefined} aria-label="编辑 SPICE 网表" tabIndex={-1}>
       <header className="workbench-window-heading"><div><span className="workbench-window-kicker">SPICE NETLIST</span><h2><Code2 size={20}/>编辑 SPICE 网表</h2><p>{title} · 手工网表独立仿真，草稿按项目保存。</p></div><button type="button" aria-label="关闭网表编辑器" onClick={onClose}><X size={18}/></button></header>
       <div className="netlist-editor-toolbar"><button type="button" onClick={run} disabled={busy||!!validation.error}><Play size={14}/>验证并仿真</button>{busy&&<button type="button" onClick={cancel}><Square size={14}/>停止</button>}<button type="button" disabled={!draft.source} onClick={()=>exportText(draft.source,title)}><Download size={14}/>导出 .cir</button><button type="button" disabled={busy||!netlist} onClick={()=>setConfirmReset(true)}><RotateCcw size={14}/>从原理图重新生成</button><span>{draft.source===draft.generated?'原理图生成稿':'手工编辑稿'}{busy?' · 仿真中':''}</span></div>

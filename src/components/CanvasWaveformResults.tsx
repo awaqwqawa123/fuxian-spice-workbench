@@ -79,7 +79,7 @@ export default function CanvasWaveformResults({diagram,visible,docked,onDockChan
   const currentSource=result?analysisSignals(result.project).sourceId:''
   const report=useMemo(()=>result?buildTestReport(result):null,[result])
   const toolSignals=useMemo(()=>result?waveformSignals(result,measurements,diagram.view?.panels[diagram.view?.activePanel??0]?.expressions).signals:[],[result,measurements,diagram.view])
-  return <WaveformDialog visible={visible} docked={docked} onDockChange={onDockChange} onClose={onClose}><section className="free-results panel" aria-label="仿真结果" hidden={!visible} data-waveform-settings={diagram.id} data-empty={!result&&!running?'true':undefined}>
+  return <WaveformDialog visible={visible} docked={docked} onDockChange={onDockChange} onClose={onClose}><section className="free-results panel" aria-label="仿真结果" data-waveform-settings={diagram.id} data-empty={!result&&!running?'true':undefined}>
     <div className="diagram-settings-toolbar">
       <div className="diagram-settings-fields">
         <label><span>图框名称</span><input aria-label="波形图名称" value={diagram.title} maxLength={80} onChange={event=>onPatch(diagram.id,{title:event.target.value})}/></label>

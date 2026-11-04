@@ -22,7 +22,7 @@ for(const embedded of [true,false])test(`${embedded?'embedded':'full'} waveform 
   let saved:WaveformViewState={analysis:'tran',layout:2,panels,domain:[0,1],cursors:{a:null,b:null},autoFit:false}
   const {createRoot}=await import('react-dom/client'),root=createRoot(doc.getElementById('root')!)
   const pointer=async(element:Element,type:string,x:number,y:number,button=0)=>act(async()=>{const event=new dom.window.MouseEvent(type,{bubbles:true,cancelable:true,button,buttons:type==='pointerup'?0:button===1?4:1,clientX:x,clientY:y});Object.defineProperty(event,'pointerId',{value:7});element.dispatchEvent(event)})
-  const wheel=async(element:Element,keys:{shiftKey?:boolean;altKey?:boolean}={})=>act(async()=>{const event=new dom.window.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY:-120,clientX:400,clientY:125,...keys});element.dispatchEvent(event);assert.equal(event.defaultPrevented,true)})
+  const wheel=async(element:Element,keys:{shiftKey?:boolean;altKey?:boolean}={},deltaY=-120)=>act(async()=>{const event=new dom.window.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY,clientX:400,clientY:125,...keys});element.dispatchEvent(event);assert.equal(event.defaultPrevented,true)})
   const range=(plot:Element,unit:string)=>{const axis=plot.querySelector(`[data-wave-axis="${unit}"]`);assert.ok(axis,unit);return [Number(axis.getAttribute('data-y-min')),Number(axis.getAttribute('data-y-max'))]}
   const span=(range:number[])=>range[1]-range[0]
   let outerWheels=0;doc.body.addEventListener('wheel',()=>outerWheels++)
@@ -36,6 +36,17 @@ for(const embedded of [true,false])test(`${embedded?'embedded':'full'} waveform 
     assert.ok(span(range(plot,'V'))<span(baseV));assert.ok(span(range(plot,'A'))<span(baseA),'separate V and A axes both zoom in their own units')
     assert.ok(saved.domain[1]-saved.domain[0]<1);assert.equal(plots[0].getAttribute('data-x-start'),plots[1].getAttribute('data-x-start'))
     assert.deepEqual(range(plots[1],plots[1].querySelector('[data-wave-axis]')!.getAttribute('data-wave-axis')!),otherY,'another plot keeps its Y range')
+    const closeRange=(actual:readonly number[],expected:readonly number[])=>actual.forEach((value,index)=>assert.ok(Math.abs(value-expected[index])<=Math.max(1e-12,Math.abs(expected[index])*1e-10),`${actual} != ${expected}`))
+    await wheel(plot,{},120);closeRange(range(plot,'V'),baseV);closeRange(range(plot,'A'),baseA);closeRange(saved.domain,[0,1])
+    for(let i=0;i<8;i++)await wheel(plot)
+    for(let i=0;i<8;i++)await wheel(plot,{},120)
+    closeRange(range(plot,'V'),baseV);closeRange(range(plot,'A'),baseA);closeRange(saved.domain,[0,1])
+    await wheel(plot,{},120);closeRange(range(plot,'V'),baseV);closeRange(range(plot,'A'),baseA);closeRange(saved.domain,[0,1])
+    await act(async()=>{for(let i=0;i<5;i++)plot.dispatchEvent(new dom.window.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY:-120,clientX:400,clientY:125}))})
+    assert.ok(Math.abs((saved.domain[1]-saved.domain[0])-Math.exp(-1.5))<1e-12,'native events in the same React batch accumulate all ticks')
+    await act(async()=>{for(let i=0;i<5;i++)plot.dispatchEvent(new dom.window.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY:120,clientX:400,clientY:125}))})
+    closeRange(range(plot,'V'),baseV);closeRange(range(plot,'A'),baseA);closeRange(saved.domain,[0,1])
+    await wheel(plot)
     const priorY=range(plot,'V');await wheel(plot,{shiftKey:true});assert.deepEqual(range(plot,'V'),priorY)
     const priorX=[...saved.domain];await wheel(plot,{altKey:true});assert.deepEqual(saved.domain,priorX);assert.ok(span(range(plot,'V'))<span(priorY))
     assert.equal(outerWheels,0,'internal coordinate gestures never resize/zoom the outer circuit canvas')

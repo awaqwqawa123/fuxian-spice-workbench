@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "library": "pspice",
+      "file": "osram_3mmradial.lib",
+      "sha256": "531d200907157c1e314820358f61eff590940a0cfafb874ca98830f8be638521",
+      "evidence": "原件每个对应型号标题及 Model Limitations 明确为 LED；仅典型正向 Vf-If 特性，25°C，未建模反向及瞬态，不以分类宣称完整仿真能力",
+      "category": "opto:led",
+      "ids": [
+        "LP_3336-typ"
+      ]
+    },
+    {
+      "library": "pspice",
+      "file": "osram_5mmradial.lib",
+      "sha256": "870b330b707131f2f7c3142d0f1cf7dbf824812bdb33bfb75453ea394fdd2094",
+      "evidence": "原件每个对应型号标题及 Model Limitations 明确为 LED；仅典型正向 Vf-If 特性，25°C，未建模反向及瞬态，不以分类宣称完整仿真能力",
+      "category": "opto:led",
+      "ids": [
+        "LY_5415-typ"
+      ]
+    },
+    {
+      "library": "pspice",
+      "file": "osram_golden_dragon.lib",
+      "sha256": "930ea1d0c8a9362ac0489e0cef08893a393a66bd23617c9941f7483d67855a6a",
+      "evidence": "原件每个对应型号标题及 Model Limitations 明确为 LED；仅典型正向 Vf-If 特性，25°C，未建模反向及瞬态，不以分类宣称完整仿真能力",
+      "category": "opto:led",
+      "ids": [
+        "LA_W5KM-typ",
+        "LW_W5SM-typ",
+        "LW_W5SN-typ"
+      ]
+    },
+    {
+      "library": "pspice",
+      "file": "osram_power_topled.lib",
+      "sha256": "1abc94c555707124a629fc33713be9ba38c9ee6aa77a8ffab65b956c04e630a0",
+      "evidence": "原件每个对应型号标题及 Model Limitations 明确为 LED；仅典型正向 Vf-If 特性，25°C，未建模反向及瞬态，不以分类宣称完整仿真能力",
+      "category": "opto:led",
+      "ids": [
+        "ZW_E6SG-typ"
+      ]
+    },
+    {
+      "library": "pspice",
+      "file": "osram_sideled.lib",
+      "sha256": "032cc78811b353a383359f3454115c343750c23ce761f66331b04525ec9c0be2",
+      "evidence": "原件每个对应型号标题及 Model Limitations 明确为 LED；仅典型正向 Vf-If 特性，25°C，未建模反向及瞬态，不以分类宣称完整仿真能力",
+      "category": "opto:led",
+      "ids": [
+        "LG_A67K-typ",
+        "LO_A67K-typ",
+        "LP_A67C-typ",
+        "LP_A67K-typ",
+        "LV_A673-typ"
+      ]
+    },
+    {
+      "library": "pspice",
+      "file": "osram_smartled.lib",
+      "sha256": "e0dd7eb7c9017746b391b7e8b4f7871cb5b92287f32c24b9b468687b8ad162f0",
+      "evidence": "原件每个对应型号标题及 Model Limitations 明确为 LED；仅典型正向 Vf-If 特性，25°C，未建模反向及瞬态，不以分类宣称完整仿真能力",
+      "category": "opto:led",
+      "ids": [
+        "LB_L39G-typ"
+      ]
+    },
+    {
+      "library": "pspice",
+      "file": "osram_topled.lib",
+      "sha256": "48370af72dfb9f8a3c4f7dfc32c01bed3f27810a05c13eccaf98aa99e9316f6d",
+      "evidence": "原件每个对应型号标题及 Model Limitations 明确为 LED；仅典型正向 Vf-If 特性，25°C，未建模反向及瞬态，不以分类宣称完整仿真能力",
+      "category": "opto:led",
+      "ids": [
+        "LG_T656-typ",
+        "LP_T656-typ"
+      ]
+    }
+  ]
+}

@@ -201,6 +201,14 @@
 .workspace-shell .editor-inspector .selection-summary p { color: var(--ui-muted); font-size: var(--ui-font-body, 12px); line-height: 1.65; }
 .workspace-shell .editor-inspector .pin-list > div { padding-top: 8px; padding-bottom: 8px; }
 .workspace-shell .editor-inspector .pin-list code { font-size: var(--ui-font-body, 12px); font-variant-numeric: tabular-nums; }
+.workspace-shell .editor-inspector .pin-list > div { min-width:0; }
+.workspace-shell .editor-inspector .pin-list code {
+  flex:1 1 0;
+  min-width:0;
+  overflow-wrap:anywhere;
+  text-align:right;
+}
+.workspace-shell .editor-inspector .pin-list button { flex:none; }
 .workspace-shell .editor-inspector .pin-list { padding-top: 12px; margin-top: 12px; }
 
 /* Assistant chrome stays subordinate to messages, active tasks and the composer. */

@@ -1,0 +1,36 @@
+/* Dialog motion is registered on the actual surface, including React portals.
+   Only the composited shell moves: no curve, SVG path or engineering data animates. */
+[data-motion-surface="dialog"][data-motion-state="enter"] {
+  animation: workbench-backdrop-enter var(--motion-normal, 180ms) var(--motion-ease, ease-out) both;
+}
+[data-motion-surface="dialog"][data-motion-state="enter"] > [role="dialog"] {
+  animation: workbench-dialog-enter var(--motion-panel, 220ms) var(--motion-ease, ease-out) both;
+}
+[data-motion-surface="dialog"][data-motion-state="exit"] {
+  animation: workbench-backdrop-exit var(--motion-normal, 180ms) var(--motion-exit-ease, ease-in) both;
+}
+[data-motion-surface="dialog"][data-motion-state="exit"] > :is([role="dialog"], .workbench-window, .model-editor-dialog, .example-gallery, .component-value-editor) {
+  pointer-events: none;
+  animation: workbench-dialog-exit var(--motion-normal, 180ms) var(--motion-exit-ease, ease-in) both;
+}
+/* Docked plots are a panel; their plot camera remains independent. */
+.waveform-dialog-backdrop.is-docked[data-motion-state="enter"] > .waveform-dialog {
+  animation: workbench-dialog-enter var(--motion-normal, 180ms) var(--motion-ease, ease-out) both;
+}
+@keyframes workbench-backdrop-enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes workbench-backdrop-exit { from { opacity: 1; } to { opacity: 0; } }
+@keyframes workbench-dialog-enter {
+  from { opacity: 0; translate: 0 8px; scale: .985; }
+  to { opacity: 1; translate: none; scale: none; }
+}
+@keyframes workbench-dialog-exit {
+  from { opacity: 1; translate: 0 0; scale: 1; }
+  to { opacity: 0; translate: 0 5px; scale: .99; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-motion-surface="dialog"],
+  [data-motion-surface="dialog"] > :is([role="dialog"], .workbench-window, .model-editor-dialog, .example-gallery, .component-value-editor) {
+    animation: none !important;
+    transition: none !important;
+  }
+}

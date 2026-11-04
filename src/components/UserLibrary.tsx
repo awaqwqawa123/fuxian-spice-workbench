@@ -7,6 +7,7 @@ import { modelSymbolOriginLabel } from '../core/model-symbol'
 import ModelSymbolPreview from './ModelSymbolPreview'
 import SaveToUserLibrary from './SaveToUserLibrary'
 import ModelingScopePanel, { legacyModelingAssessment } from './ModelingScopePanel'
+import UserLibrarySpiceImport from './UserLibrarySpiceImport'
 
 export default function UserLibrary({ search = '', projectModels = [], onPlace }: { search?: string; projectModels?: ImportedSpiceModel[]; onPlace?: (model: ImportedSpiceModel) => void }) {
   const [library, setLibrary] = useState<UserLibraryDocument>({ schemaVersion: 1, entries: [] }), [error, setError] = useState(''), [notice, setNotice] = useState('')
@@ -50,9 +51,10 @@ export default function UserLibrary({ search = '', projectModels = [], onPlace }
   return <section className="user-library" aria-label="自建器件库">
     <div className="library-section-heading"><span>自建库</span><span>{matches.length} / {library.entries.length} 个</span></div>
     <p className="user-library-note">自建库是所有项目共用的本机器件库。保存后关闭页面、切换项目仍会保留；点击器件即可放置。工程的「保存」用于保存当前电路。</p>
+    <UserLibrarySpiceImport library={library} disabled={loading || working} onStart={() => { setError(''); setNotice('') }} onBusyChange={setWorking} onImported={(document, message) => { setLibrary(document); setError(''); setNotice(message) }}/>
     <div className="user-library-tools"><button type="button" disabled={loading || working} onClick={() => input.current?.click()}><Upload size={13}/>导入备份</button><button type="button" disabled={loading || working} onClick={download}><Download size={13}/>导出备份</button><input ref={input} type="file" hidden accept=".json,application/json" aria-label="导入自建库备份" onChange={event => void readFile(event.target.files?.[0])}/></div>
     {currentModel && <div className="user-library-project-save"><label>从当前项目保存<select aria-label="保存到自建库的项目模型" value={currentModel.id} onChange={event => setSelected(event.target.value)}>{projectModels.map(model => <option key={model.id} value={model.id}>{model.id} · {model.type}</option>)}</select></label><SaveToUserLibrary model={currentModel}/></div>}
-    {error && <p role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}{loading && <p role="status">正在读取本机自建库…</p>}{working && <p role="status">正在保存自建库更改…</p>}
+    {error && <p role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}{loading && <p role="status">正在读取本机自建库…</p>}{working && <p role="status">正在处理自建库操作…</p>}
     {!loading && !matches.length && <div className="user-library-empty"><FolderOpen size={25}/><strong>{library.entries.length ? '没有匹配的自建器件' : '保存你自己的器件'}</strong><p>将编辑、导入或建模后的模型保存到这里。模型与符号一起保存，可跨项目放置。</p></div>}
     <div className="user-library-cards">{matches.map(entry => <article key={entry.id} className="user-library-card">
       <button type="button" className="user-library-place" disabled={!onPlace} onClick={() => { try { onPlace?.(entry.model); setError('') } catch (reason) { setError((reason as Error).message) } }} aria-label={`放置自建器件 ${entry.name}`}><ModelSymbolPreview model={entry.model}/><span><strong>{entry.name}</strong><code>{entry.model.id}</code><small>{entry.model.type} · {modelSymbolOriginLabel(entry.model.symbol)}</small></span></button>

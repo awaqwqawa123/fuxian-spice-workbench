@@ -119,13 +119,17 @@ export class PersistentDeviceLibraryStore {
       if(!Array.isArray(models)||!Array.isArray(summaries)||models.length!==expected.length||summaries.length!==expected.length||models.length>CHUNK_SIZE)throw new Error('分类更新时分块不完整，旧目录已保留')
       const modelMap=new Map(models.map(model=>[modelKey(model),model])),summaryMap=new Map(summaries.map(summary=>[summary.key,summary]))
       if(modelMap.size!==expected.length||summaryMap.size!==expected.length)throw new Error('分类更新时器件键重复，旧目录已保留')
-      const labels=new Map<string,string>()
+      const classifications=new Map<string,{category:string;categoryLabel:string}>()
       for(const entry of expected){
         const model=modelMap.get(entry.key),summary=summaryMap.get(entry.key)
         if(!model||!summary||model.id!==entry.id||summary.id!==entry.id||preferredModelLibrary(model.source)!==entry.source||preferredModelLibrary(summary.source)!==entry.source)throw new Error('分类更新时原模型与索引不一致，旧目录已保留')
-        entries.push(indexDeviceLibraryModel(model,entry.key,chunk));labels.set(entry.key,modelCategoryLabel(model))
+        const indexed=indexDeviceLibraryModel(model,entry.key,chunk)
+        entries.push(indexed);classifications.set(entry.key,{category:indexed.category,categoryLabel:modelCategoryLabel(model)})
       }
-      const summaryJson=JSON.stringify(summaries.map(summary=>({...summary,categoryLabel:labels.get(summary.key)!})))
+      const summaryJson=JSON.stringify(summaries.map(summary=>{
+        const classification=classifications.get(summary.key)!
+        return {...summary,categoryLabel:classification.categoryLabel,...(summary.profile?{profile:{...summary.profile,device:{...summary.profile.device,...classification}}}:{})}
+      }))
       await writeFile(join(temporary,`${chunk}.summaries.json`),summaryJson,'utf8')
       const from=this.activePath(active,`${chunk}.models.json`),to=join(temporary,`${chunk}.models.json`)
       try{await link(from,to)}catch{await copyFile(from,to)}

@@ -16,10 +16,10 @@ export default function ModelSearchDialog({ visible, onClose, onOpenLibrary, onD
   const panel = useRef<HTMLElement>(null)
   const [dragging, setDragging] = useState(false)
   const [dropError, setDropError] = useState('')
-  useWorkbenchDialog(panel, visible, onClose)
+  const motion = useWorkbenchDialog(panel, visible, onClose)
   useEffect(() => { if (!visible) setDragging(false) }, [visible])
 
-  return <div className="workbench-window-backdrop model-search-backdrop" hidden={!visible} onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
+  return <div className="workbench-window-backdrop model-search-backdrop" hidden={!motion.mounted} onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>
     <section ref={panel} id="model-search-window" className="workbench-window model-search-window" role={visible ? 'dialog' : undefined} aria-modal={visible ? 'true' : undefined} aria-label="模型助手" tabIndex={-1}
       onDragOver={event => {
         if (!Array.from(event.dataTransfer.types).includes('Files') && !event.dataTransfer.files.length) return

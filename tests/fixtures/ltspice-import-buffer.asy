@@ -1,0 +1,19 @@
+Version 4
+SymbolType CELL
+LINE Normal -32 -32 -32 32
+LINE Normal -32 32 32 0
+LINE Normal 32 0 -32 -32
+LINE Normal -48 -16 -32 -16
+LINE Normal -48 16 -32 16
+LINE Normal 32 0 48 0
+SYMATTR Prefix X
+SYMATTR Value IMPORT_BUFFER
+PIN 48 0 NONE 0
+PINATTR PinName OUT
+PINATTR SpiceOrder 3
+PIN -48 16 NONE 0
+PINATTR PinName REF
+PINATTR SpiceOrder 2
+PIN -48 -16 NONE 0
+PINATTR PinName IN
+PINATTR SpiceOrder 1

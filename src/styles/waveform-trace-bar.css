@@ -1,6 +1,8 @@
 /* Persistent bottom legend with controls shared by page and detailed waveforms. */
-.wave-trace-bar { display:flex; align-items:center; gap:6px; flex:none; min-width:0; padding:4px 6px; border-top:1px solid var(--ui-border); background:var(--ui-panel); }
-.wave-trace-bar .wave-trace-list { display:flex; flex:1; min-width:0; flex-wrap:nowrap; gap:7px; overflow-x:auto; scrollbar-width:thin; padding:0; min-height:32px; }
+.wave-trace-bar { display:flex; align-items:center; flex-wrap:wrap; gap:4px 6px; flex:none; min-width:0; padding:4px 6px; border-top:1px solid var(--ui-border); background:var(--ui-panel); }
+/* A narrow view keeps a readable trace target instead of shrinking the list to
+   zero beside fixed-width actions. Only constrained plots gain a second row. */
+.wave-trace-bar .wave-trace-list { display:flex; flex:1 1 96px; min-width:min(96px,100%); flex-wrap:nowrap; gap:7px; overflow-x:auto; scrollbar-width:thin; padding:0; min-height:32px; }
 .wave-trace-bar .wave-trace-chip { flex:none; border:1px solid transparent; border-radius:4px; background:transparent!important; }
 .wave-trace-bar .wave-trace-chip.selected { border-color:var(--ui-accent); background:var(--ui-accent-soft)!important; }
 .wave-trace-bar .wave-trace-chip button { border:0; background:transparent!important; border-radius:0; min-height:32px; padding:3px 5px; font:12px/1.35 var(--mono); color:var(--ui-ink); white-space:nowrap; }
@@ -10,7 +12,7 @@
 .wave-trace-bar .wave-trace-chip i,.wave-trace-reference i { width:14px; height:3px; flex:none; border-radius:2px; }
 .wave-trace-bar .wave-hide-trace,.wave-trace-bar .wave-trace-edit { width:25px; flex:none; justify-content:center; }
 .wave-trace-bar .wave-hide-trace:hover { color:var(--ui-danger)!important; background:var(--ui-danger-bg)!important; }
-.wave-trace-actions { display:flex; gap:4px; flex:none; }
+.wave-trace-actions { display:flex; gap:4px; flex:none; margin-left:auto; }
 .wave-trace-bar > button,.wave-trace-actions button { display:inline-flex; align-items:center; gap:4px; min-height:32px; font-size:12px; padding:3px 6px; border:1px solid var(--ui-border); border-radius:4px; background:var(--ui-panel); color:var(--ui-ink); white-space:nowrap; }
 .wave-formula-icon { font:italic 15px Georgia,serif; }
 .wave-trace-reference { display:flex; align-items:center; gap:5px; flex:none; max-width:220px; font:12px/1.35 var(--mono); color:var(--ui-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }

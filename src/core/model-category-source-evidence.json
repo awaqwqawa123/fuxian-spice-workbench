@@ -1,0 +1,597 @@
+{
+  "version": 1,
+  "generation": "1792303872240-d8376d95-a1d9-476e-a88c-114ac714162e",
+  "taxonomyRevision": "2026-10-18-reviewed-source-and-property-evidence-v3",
+  "scope": "Exact paired TLD tags and complete PRP implementation-symbol evidence for stored unclassified subcircuits; no electrical model, pin or symbol change.",
+  "storedUnknown": 1287,
+  "classifiedVersions": 182,
+  "skipped": {
+    "metadata-not-specific-or-unresolved": 523,
+    "no-paired-metadata": 274,
+    "outside-PRP-TLD-subcircuit-scope": 63,
+    "semiconductor-audit-owned-separately": 245
+  },
+  "sources": [
+    {
+      "library": "pspice",
+      "file": "maxim.lib",
+      "sha256": "b0a51cce632aaef2caaef58aa77e3d8a4bb178ddf86714df97509e5399cabd15",
+      "evidenceFile": "maxim.prp",
+      "evidence": "PRP exact root and every explicitly linked Hierarchical Implementation: SYMBOL_NAME=opamp8; symbol labels establish this category only, never pin order",
+      "category": "analog:amplifier-unverified",
+      "ids": [
+        "MAX406Ac/MXM",
+        "MAX406Ad/MXM",
+        "MAX406Bc/MXM",
+        "MAX406Bd/MXM",
+        "MAX407/MXM",
+        "MAX409A/MXM",
+        "MAX409B/MXM",
+        "MAX410/MXM",
+        "MAX410B/MXM",
+        "MAX412/MXM",
+        "MAX412B/MXM",
+        "MAX4130/MXM",
+        "MAX4132/MXM",
+        "MAX4134/MXM",
+        "MAX414/MXM",
+        "MAX414B/MXM",
+        "MAX417/MXM",
+        "MAX418/MXM",
+        "MAX419/MXM",
+        "MAX427/MXM",
+        "MAX437/MXM",
+        "MAX438/MXM",
+        "MAX439/MXM",
+        "MAX473/MXM",
+        "MAX474/MXM",
+        "MAX475/MXM",
+        "MAX47815/MXM",
+        "MAX4783/MXM",
+        "MAX4785/MXM",
+        "MAX47915/MXM",
+        "MAX4793/MXM",
+        "MAX4795/MXM",
+        "MAX492/MXM",
+        "MAX494/MXM",
+        "MAX495/MXM"
+      ],
+      "lines": [],
+      "implementationExamples": [
+        {
+          "id": "MAX406Ac/MXM",
+          "implementations": [
+            "MAX406ACSA_C/MXM",
+            "MAX406AESA_C/MXM",
+            "MAX406AMJA_C/MXM",
+            "MAX406AEPA_C/MXM",
+            "MAX406ACPA_C/MXM"
+          ]
+        },
+        {
+          "id": "MAX406Ad/MXM",
+          "implementations": [
+            "MAX406AMJA_D/MXM",
+            "MAX406AESA_D/MXM",
+            "MAX406AEPA_D/MXM",
+            "MAX406ACPA_D/MXM",
+            "MAX406ACSA_D/MXM"
+          ]
+        }
+      ]
+    },
+    {
+      "library": "pspice",
+      "file": "maxim.lib",
+      "sha256": "b0a51cce632aaef2caaef58aa77e3d8a4bb178ddf86714df97509e5399cabd15",
+      "evidenceFile": "maxim.prp",
+      "evidence": "PRP exact root and every explicitly linked Hierarchical Implementation: SYMBOL_NAME=vcomp; symbol labels establish this category only, never pin order",
+      "category": "analog:comparator",
+      "ids": [
+        "max907/MXM",
+        "max908/MXM",
+        "max921/MXM",
+        "max924/MXM",
+        "max931/MXM",
+        "max934/MXM",
+        "max941/MXM",
+        "max942/MXM",
+        "max944/MXM"
+      ],
+      "lines": [],
+      "implementationExamples": [
+        {
+          "id": "max907/MXM",
+          "implementations": [
+            "MAX907CPA/MXM",
+            "MAX907CSA/MXM",
+            "MAX907EPA/MXM",
+            "MAX907ESA/MXM",
+            "MAX907MJA/MXM"
+          ]
+        },
+        {
+          "id": "max908/MXM",
+          "implementations": [
+            "MAX908CPD/MXM",
+            "MAX908CSD/MXM",
+            "MAX908EPD/MXM",
+            "MAX908ESD/MXM",
+            "MAX908MJD/MXM"
+          ]
+        }
+      ]
+    },
+    {
+      "library": "tina",
+      "file": "BB.LIB",
+      "sha256": "9be4ace5b093654874efe921b869c71da346ea10fb97b9d8e31161b0ae517921",
+      "evidenceFile": "BB.TLD",
+      "evidence": "Paired TLD exact root [Buffer] index",
+      "category": "analog:buffer",
+      "ids": [
+        "BUF600X1",
+        "BUF601X1",
+        "BUF601X2"
+      ],
+      "lines": [
+        3,
+        5,
+        6
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "BB.LIB",
+      "sha256": "9be4ace5b093654874efe921b869c71da346ea10fb97b9d8e31161b0ae517921",
+      "evidenceFile": "BB.TLD",
+      "evidence": "Paired TLD exact root [OpAmp] index",
+      "category": "analog:opamp",
+      "ids": [
+        "OPA623X1",
+        "OPA623X2",
+        "OPA648X"
+      ],
+      "lines": [
+        112,
+        116,
+        127
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "BB.LIB",
+      "sha256": "9be4ace5b093654874efe921b869c71da346ea10fb97b9d8e31161b0ae517921",
+      "evidenceFile": "BB.TLD",
+      "evidence": "Paired TLD exact root [VGAmp] index",
+      "category": "analog:variable-gain",
+      "ids": [
+        "VCA610M"
+      ],
+      "lines": [
+        155
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "BUFFERS.LIB",
+      "sha256": "17eb70f9cf29ab6706b90d7fd770d7515d4e435bf9aa81c0a18a41808fae5eff",
+      "evidenceFile": "BUFFERS.TLD",
+      "evidence": "Paired TLD exact root [Buffer] index",
+      "category": "analog:buffer",
+      "ids": [
+        "BUF634"
+      ],
+      "lines": [
+        2
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "Current Shunt Monitors.LIB",
+      "sha256": "6309454558e5ef1537e5c57b86d11dbbd746696aff881709b7df81aaff363419",
+      "evidenceFile": "Current Shunt Monitors.tld",
+      "evidence": "Paired TLD exact root [CurrShuntMon] index",
+      "category": "analog:current-sense",
+      "ids": [
+        "INA169",
+        "INA170",
+        "INA193",
+        "INA194",
+        "INA195"
+      ],
+      "lines": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "Difference Amplifiers.LIB",
+      "sha256": "c3929d1234116d0d9b95590257e32b09ca5a71a876727eaa13624aa890c1c758",
+      "evidenceFile": "Difference Amplifiers.tld",
+      "evidence": "Paired TLD exact root [DiffAmp] index",
+      "category": "analog:difference",
+      "ids": [
+        "INA133",
+        "INA143",
+        "INA145",
+        "INA146",
+        "INA148",
+        "INA159"
+      ],
+      "lines": [
+        6,
+        11,
+        12,
+        13,
+        14,
+        32
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "Fully-Differential Amplifiers.LIB",
+      "sha256": "a51a07ce419aa1fcd4853ca5f2f361848ce60c89895334e62a8e346653b3338c",
+      "evidenceFile": "Fully-Differential Amplifiers.tld",
+      "evidence": "Paired TLD exact root [FullDiffAmp] index",
+      "category": "analog:differential",
+      "ids": [
+        "THS4130",
+        "THS4502",
+        "THS4503",
+        "THS4505",
+        "THS4509",
+        "THS4513",
+        "THS4520",
+        "THS7530"
+      ],
+      "lines": [
+        7,
+        13,
+        14,
+        17,
+        20,
+        21,
+        24,
+        26
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "Instrument Amplifiers.LIB",
+      "sha256": "ec2a7f2436a7fbd7f5e4c42161ab883a8c50def32e8f958e89a6fe0093f77ea2",
+      "evidenceFile": "Instrument Amplifiers.TLD",
+      "evidence": "Paired TLD exact root [InstAmp] index",
+      "category": "analog:instrumentation",
+      "ids": [
+        "INA331",
+        "INA332",
+        "PGA206",
+        "PGA207"
+      ],
+      "lines": [
+        40,
+        41,
+        42,
+        47
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "LM4562.LIB",
+      "sha256": "dd1638a4ee38313c9f6937678feeae7fc668941002daf36b24164686858835f3",
+      "evidenceFile": "LM4562.tld",
+      "evidence": "Paired TLD exact root [OpAmp] index",
+      "category": "analog:opamp",
+      "ids": [
+        "LM4562"
+      ],
+      "lines": [
+        2
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "LMH6724.lib",
+      "sha256": "205569eadf66b5c045a394c76f0660ce0b08f0c634ecf679cd5c52d93c6ce5c6",
+      "evidenceFile": "LMH6724.tld",
+      "evidence": "Paired TLD exact root [OpAmp] index",
+      "category": "analog:opamp",
+      "ids": [
+        "LMH6724"
+      ],
+      "lines": [
+        2
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "NSC.lib",
+      "sha256": "ea83018a3ed8a6bb60b79c592d23e2bb8d4d2ed5671c8b1bec35fbd9b4cb102e",
+      "evidenceFile": "NSC.tld",
+      "evidence": "Paired TLD exact root [Buffer] index",
+      "category": "analog:buffer",
+      "ids": [
+        "LMH6321",
+        "LMH6559"
+      ],
+      "lines": [
+        108,
+        119
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "NSC.lib",
+      "sha256": "ea83018a3ed8a6bb60b79c592d23e2bb8d4d2ed5671c8b1bec35fbd9b4cb102e",
+      "evidenceFile": "NSC.tld",
+      "evidence": "Paired TLD exact root [Comparator] index",
+      "category": "analog:comparator",
+      "ids": [
+        "LMV7271",
+        "LMV7291",
+        "LPV7215"
+      ],
+      "lines": [
+        197,
+        198,
+        235
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "NSC.lib",
+      "sha256": "ea83018a3ed8a6bb60b79c592d23e2bb8d4d2ed5671c8b1bec35fbd9b4cb102e",
+      "evidenceFile": "NSC.tld",
+      "evidence": "Paired TLD exact root [FullDiffAmp] index",
+      "category": "analog:differential",
+      "ids": [
+        "LMH6550",
+        "LMH6551",
+        "LMH6552",
+        "lmh6554",
+        "LMH6555"
+      ],
+      "lines": [
+        113,
+        114,
+        115,
+        117,
+        118
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "NSC.lib",
+      "sha256": "ea83018a3ed8a6bb60b79c592d23e2bb8d4d2ed5671c8b1bec35fbd9b4cb102e",
+      "evidenceFile": "NSC.tld",
+      "evidence": "Paired TLD exact root [OpAmp] index",
+      "category": "analog:opamp",
+      "ids": [
+        "LM13700",
+        "LM359",
+        "LM6211",
+        "LM7321",
+        "LM7332",
+        "LM7341",
+        "LM7372",
+        "LM8261",
+        "LM8272",
+        "lmc8101",
+        "LME49860",
+        "LMH6601",
+        "LMH6609",
+        "LMH6611",
+        "LMH6612",
+        "LMH6618",
+        "LMH6619",
+        "LMH6622",
+        "LMH6624",
+        "LMH6628",
+        "LMH6629",
+        "LMH6639",
+        "LMH6642",
+        "LMH6643",
+        "LMH6644",
+        "LMH6645",
+        "LMH6646",
+        "LMH6647",
+        "LMH6655",
+        "LMH6657",
+        "LMH6672",
+        "LMH6702",
+        "LMH6703T",
+        "LMH6714",
+        "LMH6715",
+        "LMH6720",
+        "LMH6733",
+        "LMP2011",
+        "LMP2011_NOCHOP",
+        "LMP2021",
+        "LMP2022",
+        "LMP2231",
+        "LMP2232",
+        "LMP2234",
+        "LMP7701",
+        "LMP7702",
+        "LMP7704",
+        "LMP7707",
+        "LMP7708",
+        "LMP7709",
+        "LMP7711",
+        "LMP7712",
+        "LMP7715",
+        "LMP7716",
+        "LMP7717",
+        "LMP7718",
+        "LMP7721",
+        "LMP7731",
+        "LMP7732",
+        "LMV2011",
+        "LMV2011_NOCHOP",
+        "LMV342",
+        "LMV551",
+        "LMV552",
+        "LMV554",
+        "LMV641",
+        "LMV651",
+        "LMV652",
+        "LMV654",
+        "LMV716",
+        "LMV771",
+        "LMV791",
+        "LMV792",
+        "LMV793",
+        "LMV794",
+        "LMV796",
+        "LMV797",
+        "LMV831",
+        "LMV832",
+        "LMV834",
+        "LMV841",
+        "LMV842",
+        "LMV844",
+        "LMV851",
+        "LMV852",
+        "LMV854",
+        "LMV861",
+        "LMV862",
+        "LMV931",
+        "LMV951",
+        "LPV511"
+      ],
+      "lines": [
+        15,
+        24,
+        36,
+        41,
+        42,
+        43,
+        44,
+        46,
+        47,
+        106,
+        107,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        146,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154,
+        155,
+        157,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        176,
+        177,
+        182,
+        185,
+        186,
+        187,
+        188,
+        189,
+        190,
+        191,
+        194,
+        200,
+        201,
+        202,
+        203,
+        204,
+        205,
+        206,
+        210,
+        211,
+        212,
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        233
+      ],
+      "implementationExamples": []
+    },
+    {
+      "library": "tina",
+      "file": "NSC.lib",
+      "sha256": "ea83018a3ed8a6bb60b79c592d23e2bb8d4d2ed5671c8b1bec35fbd9b4cb102e",
+      "evidenceFile": "NSC.tld",
+      "evidence": "Paired TLD exact root [VGAmp] index",
+      "category": "analog:variable-gain",
+      "ids": [
+        "LMH6502",
+        "LMH6503",
+        "LMH6504",
+        "LMH6505"
+      ],
+      "lines": [
+        109,
+        110,
+        111,
+        112
+      ],
+      "implementationExamples": []
+    }
+  ]
+}

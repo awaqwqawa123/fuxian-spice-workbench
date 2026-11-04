@@ -109,7 +109,7 @@ test('diagram drag follows world scale, previews without committing and commits 
   }
 })
 
-test('selected waveform frame wheel changes its occupied frame size before the canvas handler',async()=>{
+test('selected waveform frame never steals wheel events to resize its geometry',async()=>{
   const page=await environment(1,true)
   try{
     const frame=page.get('[data-canvas-diagram]')
@@ -122,10 +122,11 @@ test('selected waveform frame wheel changes its occupied frame size before the c
     const before={width:page.geometry.width,height:page.geometry.height}
     const wheel=new page.doc.defaultView!.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY:120,clientX:500,clientY:400})
     await act(async()=>frame.dispatchEvent(wheel))
-    assert.equal(page.wheelResizes.length,1)
-    assert.ok(page.geometry.width<before.width&&page.geometry.height<before.height)
+    assert.equal(page.wheelResizes.length,0)
+    assert.deepEqual({width:page.geometry.width,height:page.geometry.height},before)
     assert.equal(wheel.defaultPrevented,true)
-    assert.deepEqual(page.zooms,[],'the selected frame consumes the wheel before canvas zoom')
+    await act(async()=>new Promise(resolve=>setTimeout(resolve,170)))
+    assert.ok(page.zooms.length>0,'a frame without an interactive plot leaves ordinary canvas navigation available')
   }finally{await page.cleanup()}
 })
 

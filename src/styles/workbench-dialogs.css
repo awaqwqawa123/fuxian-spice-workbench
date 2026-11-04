@@ -187,6 +187,11 @@
 .extension-library-window .extension-library-search:has(input:focus-visible) { outline:2px solid var(--ui-accent); outline-offset:2px; }
 .extension-library-window .extension-library-search input:focus-visible { outline:none; }
 .extension-library-window .local-device-filters select { font-size:12px; }
+/* The browser can be narrow even on a desktop: the category rail and dialog
+   margins consume width before these controls receive their available space. */
+.extension-library-window .local-device-filters { flex-wrap:wrap; }
+.extension-library-window .local-device-filters .extension-library-search { flex:1 1 240px; }
+.extension-library-window .local-device-filters select { flex:1 1 150px; min-width:0; max-width:100%; }
 .extension-library-window :is(.local-device-card,.extension-library-cards>button) { border-radius:8px; padding:16px; }
 .extension-library-window .local-device-card { box-shadow:none; }
 .extension-library-window .local-device-card:focus-within { border-color:var(--ui-accent); }
@@ -245,3 +250,14 @@
   .extension-library-window .extension-library-modes>button { flex-wrap:wrap; text-align:left; }
   .settings-dialog .settings-section-title { flex-wrap:wrap; }
 }
+
+/* Actions remain reachable with a narrow window, larger text, or a longer
+   recovery label. Wrapping the footer alone does not wrap its inner group. */
+:is(.appearance-settings,.settings-dialog,.model-editor-dialog,.spice-library-dialog) > :is(footer,.workbench-window-footer) > div {
+  min-width:0;
+  max-width:100%;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.model-editor-dialog > footer { flex-wrap:wrap; }
+.model-editor-dialog > footer > span { min-width:0; overflow-wrap:anywhere; }

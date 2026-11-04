@@ -1,0 +1,153 @@
+/* Workbench motion is scoped to chrome, never to schematic geometry or plot paths.
+   Defaults keep isolated component previews usable without the global token sheet. */
+:is(.workspace-shell, .workbench-window, .component-value-editor, .example-gallery,
+    .model-editor-dialog, .spice-library-dialog, .canvas-context-menu,
+    .schematic-symbol-menu, .probe-tool-popover) :is(button, summary, a, input, select, textarea) {
+  transition: background-color var(--motion-fast, 120ms) var(--motion-ease, ease),
+    border-color var(--motion-fast, 120ms) var(--motion-ease, ease),
+    color var(--motion-fast, 120ms) var(--motion-ease, ease),
+    box-shadow var(--motion-fast, 120ms) var(--motion-ease, ease),
+    opacity var(--motion-fast, 120ms) var(--motion-ease, ease);
+}
+
+/* Menus have a small displacement; the window/canvas itself never scales. */
+:is(.canvas-context-menu, .schematic-symbol-menu, .probe-tool-popover)[data-motion-surface='menu'] {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity var(--motion-normal, 180ms) var(--motion-ease, ease),
+    translate var(--motion-normal, 180ms) var(--motion-ease, ease);
+}
+:is(.canvas-context-menu, .schematic-symbol-menu, .probe-tool-popover)[data-motion-state='exit'] {
+  pointer-events: none;
+  opacity: 0;
+  translate: 0 -4px;
+  transition-timing-function: var(--motion-exit-ease, ease);
+}
+@starting-style {
+  :is(.canvas-context-menu, .schematic-symbol-menu, .probe-tool-popover)[data-motion-state='enter'] {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+
+/* A tab switch reveals its new pane without remounting editors or keeping a
+   second interactive pane over it. Assistant/workspace tabs own their motion. */
+:is(.workspace-shell, .workbench-window) :is(
+  .inspector-tab-panel, #workspace-projects-panel, #workspace-library-panel,
+  .simulation-settings-body [role='tabpanel'], .extension-library-model-manager,
+  .page-result-content, .page-result-analysis, .page-result-setup, .page-result-log,
+  #model-search-online, #model-search-datasheet
+):not([hidden]) {
+  animation: workbench-pane-reveal var(--motion-normal, 180ms) var(--motion-ease, ease) both;
+}
+@keyframes workbench-pane-reveal {
+  from { opacity: .35; }
+  to { opacity: 1; }
+}
+
+/* Short feedback on selected cards and focus rings does not animate dimensions. */
+:is(.workspace-shell, .workbench-window) :is(
+  .common-device-button, .project-card, .example-card, .appearance-theme-card,
+  .schematic-symbol-group, .page-tool-button, .wave-curve-row, .model-task-tab
+) {
+  transition: background-color var(--motion-fast, 120ms) var(--motion-ease, ease),
+    border-color var(--motion-fast, 120ms) var(--motion-ease, ease),
+    box-shadow var(--motion-fast, 120ms) var(--motion-ease, ease),
+    color var(--motion-fast, 120ms) var(--motion-ease, ease);
+}
+.workspace-file-menu > summary > svg:last-child,
+.schematic-symbol-dropdown > svg {
+  transition: rotate var(--motion-normal, 180ms) var(--motion-ease, ease);
+}
+.workspace-file-menu[open] > summary > svg:last-child,
+.schematic-symbol-dropdown[aria-expanded='true'] > svg { rotate: 180deg; }
+
+/* Native details retains its keyboard and accessibility behavior. Animating its
+   content slot also supports close; unsupported engines retain normal details. */
+@supports selector(details::details-content) and (interpolate-size: allow-keywords) {
+  :is(.workspace-shell, .workbench-window, .component-value-editor, .example-gallery,
+      .model-editor-dialog, .spice-library-dialog, .codex-session-lab)
+    details:not(:is(.workspace-file-menu, .drawing-edit-menu, .file-exchange-menu,
+      .wave-toolbar-tools, .canvas-waveform-legend-menu))::details-content {
+    interpolate-size: allow-keywords;
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition: block-size var(--motion-normal, 180ms) var(--motion-ease, ease),
+      opacity var(--motion-normal, 180ms) var(--motion-ease, ease),
+      content-visibility var(--motion-normal, 180ms) allow-discrete;
+  }
+  :is(.workspace-shell, .workbench-window, .component-value-editor, .example-gallery,
+      .model-editor-dialog, .spice-library-dialog, .codex-session-lab)
+    details:not(:is(.workspace-file-menu, .drawing-edit-menu, .file-exchange-menu,
+      .wave-toolbar-tools, .canvas-waveform-legend-menu))[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+
+  /* Floating menus must not inherit the accordion's clipping or transform a
+     containing block: waveform tools use viewport-relative fixed positions. */
+  :is(.workspace-shell, .workbench-window)
+    :is(.workspace-file-menu, .drawing-edit-menu, .file-exchange-menu,
+      .wave-toolbar-tools, .canvas-waveform-legend-menu)::details-content {
+    overflow: visible;
+    transition: content-visibility var(--motion-normal, 180ms) allow-discrete;
+  }
+  :is(.workspace-shell, .workbench-window)
+    :is(.workspace-file-menu, .drawing-edit-menu, .file-exchange-menu,
+      .wave-toolbar-tools, .canvas-waveform-legend-menu) > :not(summary) {
+    opacity: 0;
+    translate: 0 -4px;
+    transition: opacity var(--motion-normal, 180ms) var(--motion-ease, ease),
+      translate var(--motion-normal, 180ms) var(--motion-ease, ease);
+  }
+  :is(.workspace-shell, .workbench-window)
+    :is(.workspace-file-menu, .drawing-edit-menu, .file-exchange-menu,
+      .wave-toolbar-tools, .canvas-waveform-legend-menu)[open] > :not(summary) {
+    opacity: 1;
+    translate: 0 0;
+  }
+  :is(.workspace-shell, .workbench-window)
+    :is(.workspace-file-menu, .drawing-edit-menu, .file-exchange-menu,
+      .wave-toolbar-tools, .canvas-waveform-legend-menu):not([open]) > :not(summary) {
+    pointer-events: none;
+  }
+  /* These legacy closed rules otherwise cut off the exit on its first frame. */
+  .workspace-shell .workspace-commandbar .drawing-edit-menu:not([open]) > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  :is(.workspace-shell, .workbench-window) .wave-toolbar-tools:not([open]) > .wave-toolbar-tools-menu { display: block; }
+  @starting-style {
+    :is(.workspace-shell, .workbench-window)
+      :is(.workspace-file-menu, .drawing-edit-menu, .file-exchange-menu,
+        .wave-toolbar-tools, .canvas-waveform-legend-menu)[open] > :not(summary) {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.workspace-shell, .workbench-window, .component-value-editor, .example-gallery,
+      .model-editor-dialog, .spice-library-dialog, .canvas-context-menu,
+      .schematic-symbol-menu, .probe-tool-popover) :is(button, summary, a, input, select, textarea),
+  :is(.workspace-shell, .workbench-window) :is(.common-device-button, .project-card,
+      .example-card, .appearance-theme-card, .schematic-symbol-group, .page-tool-button,
+      .wave-curve-row, .model-task-tab),
+  .workspace-file-menu > summary > svg:last-child,
+  .schematic-symbol-dropdown > svg { transition: none; }
+  :is(.canvas-context-menu, .schematic-symbol-menu, .probe-tool-popover)[data-motion-state],
+  :is(.workspace-shell, .workbench-window) :is(.inspector-tab-panel,
+      #workspace-projects-panel, #workspace-library-panel,
+      .simulation-settings-body [role='tabpanel'], .extension-library-model-manager,
+      .page-result-content, .page-result-analysis, .page-result-setup, .page-result-log,
+      #model-search-online, #model-search-datasheet):not([hidden]) { animation: none; }
+  :is(.canvas-context-menu, .schematic-symbol-menu, .probe-tool-popover)[data-motion-surface='menu'] { transition: none; }
+  :is(.workspace-shell, .workbench-window, .component-value-editor, .example-gallery,
+      .model-editor-dialog, .spice-library-dialog, .codex-session-lab) details::details-content,
+  :is(.workspace-shell, .workbench-window)
+    :is(.workspace-file-menu, .drawing-edit-menu, .file-exchange-menu,
+      .wave-toolbar-tools, .canvas-waveform-legend-menu) > :not(summary) { transition: none; }
+}

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowRight, BookOpen, Search, X } from 'lucide-react'
+import { useWorkbenchDialog } from './AssistantWindow'
 import { templates, type TemplateId } from '../core/circuit'
 import { editorTemplate } from '../core/editor'
 import { advancedExamples, exampleProject, type ExampleId } from '../core/examples'
@@ -30,26 +31,16 @@ export default function TemplateGallery({ onClose, onUse }: { onClose: () => voi
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<GalleryExampleId>('rc-lowpass')
   const panel = useRef<HTMLElement>(null), searchInput = useRef<HTMLInputElement>(null)
-  const close = useRef(onClose); close.current = onClose
+  useWorkbenchDialog(panel, true, onClose)
   const visible = searchableExamples.filter(e => (category === '全部' || e.category === category) && e.searchText.includes(search.trim().toLowerCase()))
   const entry = visible.find(e => e.id === selected) ?? visible[0]
   const project = useMemo(() => entry?.project(), [entry])
   const preview = useMemo(() => project && entry ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(schematicSvg(project.drawing!, { title: entry.name }))}` : '', [entry, project])
   useEffect(() => {
-    const previous = document.activeElement as HTMLElement | null
     const overflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     searchInput.current?.focus()
-    const key = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); close.current(); return }
-      if (event.key !== 'Tab') return
-      const focusable = [...(panel.current?.querySelectorAll<HTMLElement>('button:not(:disabled),input') ?? [])]
-      const first = focusable[0], last = focusable.at(-1)
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
-      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
-    }
-    window.addEventListener('keydown', key, true)
-    return () => { document.body.style.overflow = overflow; window.removeEventListener('keydown', key, true); previous?.focus() }
+    return () => { document.body.style.overflow = overflow }
   }, [])
   return <div className="examples-backdrop" onClick={onClose}>
     <section ref={panel} className="example-gallery" role="dialog" aria-modal="true" aria-label="示例电路" aria-describedby="example-gallery-hint" onClick={event => event.stopPropagation()}>

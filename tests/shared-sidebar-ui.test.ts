@@ -105,11 +105,21 @@ test('waveform and editable properties share one mounted sidebar and preserve th
     assert.equal(ui.query<HTMLSelectElement>('[aria-label="当前波形图组"]').value, groupId)
     assert.equal(canvas.getAttribute('viewBox'), viewBox)
     const split=ui.query<HTMLElement>('.single-page-workspace'),beforeWheel=split.style.getPropertyValue('--page-schematic-width')
-    const beforeProject=JSON.stringify(ui.active())
-    await act(async()=>{for(let index=0;index<2;index++)plot.dispatchEvent(new ui.dom.window.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY:-120}))})
-    assert.notEqual(split.style.getPropertyValue('--page-schematic-width'),beforeWheel,'actual App plot resizes the dock through the shared workspace')
-    assert.equal(canvas.getAttribute('viewBox'),viewBox,'waveform resize never zooms the circuit camera')
-    assert.equal(JSON.stringify(ui.active()),beforeProject,'outer resize does not rewrite circuit, wave axes or samples')
+    // Plot wheel zoom now changes coordinates; the splitter owns dock sizing.
+    // JSDOM has no layout, so provide the real hit rectangle rather than a
+    // zero-width SVG which would turn pointer fractions into NaN.
+    Object.defineProperty(plot,'getBoundingClientRect',{configurable:true,value:()=>({x:0,y:0,left:0,top:0,right:640,bottom:320,width:640,height:320,toJSON(){return this}})})
+    const beforeProject=ui.active(),beforeView=JSON.stringify(beforeProject.waveformSetup?.diagrams.find(diagram=>diagram.id===groupId)?.view)
+    const beforeDomain=[Number(plot.getAttribute('data-x-start')),Number(plot.getAttribute('data-x-end'))]
+    await act(async()=>{for(let index=0;index<2;index++)plot.dispatchEvent(new ui.dom.window.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY:-120,clientX:320,clientY:160}))})
+    assert.equal(split.style.getPropertyValue('--page-schematic-width'),beforeWheel,'plot wheel retains the dock width')
+    assert.equal(canvas.getAttribute('viewBox'),viewBox,'waveform zoom never changes the circuit camera')
+    const afterProject=ui.active(),afterDomain=[Number(plot.getAttribute('data-x-start')),Number(plot.getAttribute('data-x-end'))]
+    assert.ok(afterDomain.every(Number.isFinite))
+    assert.ok(Math.abs(afterDomain[1]-afterDomain[0])<Math.abs(beforeDomain[1]-beforeDomain[0]),'plot coordinate span contracts')
+    assert.notEqual(JSON.stringify(afterProject.waveformSetup!.diagrams.find(diagram=>diagram.id===groupId)!.view),beforeView,'changed axes persist with this waveform')
+    assert.equal(projectKey(afterProject),projectKey(beforeProject),'coordinate changes retain the solver input')
+    assert.deepEqual(afterProject.drawing,beforeProject.drawing,'coordinate changes retain all schematic geometry')
     const beforeRuns = ui.pending.length
     await ui.key('ArrowRight', ui.query('#page-sidebar-waveform-tab'))
     assert.equal(ui.query('#page-sidebar-properties-tab').getAttribute('aria-selected'), 'true')

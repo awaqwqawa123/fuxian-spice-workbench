@@ -9,7 +9,7 @@ import { initialSimulationProfiles } from '../src/core/simulation-profiles'
 import { defaultWaveformPanels, waveformSignals } from '../src/core/waveform-workspace'
 import type { CanvasWaveform } from '../src/core/canvas-waveform-store'
 
-test('docked result wheel resizes its host once without changing axes or samples; tools share one header', async () => {
+test('docked result wheel zooms coordinates reversibly while its host and samples stay fixed; tools share one header', async () => {
   const dom = new JSDOM('<div id="root"></div>', { url: 'http://localhost/' }), doc = dom.window.document
   const prior = new Map<string, PropertyDescriptor | undefined>()
   for (const [key, value] of Object.entries({window:dom.window,document:doc,HTMLElement:dom.window.HTMLElement,SVGElement:dom.window.SVGElement,IS_REACT_ACT_ENVIRONMENT:true})) {
@@ -38,20 +38,21 @@ test('docked result wheel resizes its host once without changing axes or samples
     await act(async()=>root.render(createElement(Harness)))
     const plot=doc.querySelector('.wave-plot')!
     assert.ok(plot)
-    assert.ok(doc.body.textContent!.includes('滚轮调整波形区大小'))
-    const domain=structuredClone(current.view!.domain),axes=structuredClone(current.view!.panels.map(panel=>panel.axisRanges))
-    for (const deltaY of [120,-120,30]) {
-      const before=Number.parseFloat((doc.querySelector('[data-host]') as HTMLElement).style.width)
-      const event=new dom.window.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY})
-      await act(async()=>plot.dispatchEvent(event))
-      const after=Number.parseFloat((doc.querySelector('[data-host]') as HTMLElement).style.width)
-      assert.equal(event.defaultPrevented,true)
-      assert.ok(deltaY>0?after<before:after>before)
-    }
-    assert.equal(resizes.length,3,'exactly one outer resize per wheel event')
+    assert.doesNotMatch(doc.body.textContent!,/滚轮调整波形区大小/)
+    Object.assign(plot,{getBoundingClientRect:()=>({left:0,top:0,width:800,height:260,right:800,bottom:260})})
+    const domain=structuredClone(current.view!.domain)
+    const range=()=>[...plot.querySelectorAll('[data-wave-axis]')].flatMap(axis=>[Number(axis.getAttribute('data-y-min')),Number(axis.getAttribute('data-y-max'))])
+    const axes=range(),stateRows=doc.querySelectorAll('.wave-embedded-state').length
+    const near=(actual:readonly number[],expected:readonly number[])=>actual.forEach((value,index)=>assert.ok(Math.abs(value-expected[index])<Math.max(1e-12,Math.abs(expected[index])*1e-10)))
+    const wheel=async(deltaY:number)=>{const event=new dom.window.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY,clientX:400,clientY:125});await act(async()=>plot.dispatchEvent(event));assert.equal(event.defaultPrevented,true)}
+    for(let i=0;i<6;i++)await wheel(-120)
+    assert.ok(current.view!.domain[1]-current.view!.domain[0]<1)
+    assert.equal(doc.querySelectorAll('.wave-embedded-state').length,stateRows,'zoom must not insert a header row that moves the pointer anchor')
+    for(let i=0;i<6;i++)await wheel(120)
+    near(current.view!.domain,domain);near(range(),axes)
+    assert.equal(Number.parseFloat((doc.querySelector('[data-host]') as HTMLElement).style.width),640)
+    assert.equal(resizes.length,0,'a legacy host resize callback cannot hijack coordinate zoom')
     assert.equal(outerWheels,0,'the outer schematic cannot receive this wheel')
-    assert.deepEqual(current.view!.domain,domain)
-    assert.deepEqual(current.view!.panels.map(panel=>panel.axisRanges),axes)
     assert.deepEqual(result.x,originalSamples)
     assert.ok(snapshots.length)
     const toolbar=doc.querySelector('.page-result-toolbar')!

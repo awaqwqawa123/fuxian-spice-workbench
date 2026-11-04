@@ -7,6 +7,7 @@ import { resolveModelFunctionalSymbol } from '../core/model-functional-symbol'
 import { renameLibraryModel } from '../core/user-library'
 import { addModelToPersistentUserLibrary } from '../core/user-library-sync'
 import { useWorkbenchDialog } from './AssistantWindow'
+import MotionPresence from './MotionPresence'
 import ModelSymbolPreview from './ModelSymbolPreview'
 
 export function SaveLibraryDialog({ model, onClose, onSaved }: { model: ImportedSpiceModel; onClose: () => void; onSaved?: () => void }) {
@@ -54,5 +55,5 @@ export function SaveLibraryDialog({ model, onClose, onSaved }: { model: Imported
 
 export default function SaveToUserLibrary({ model, label = '保存到自建库', onSaved }: { model: ImportedSpiceModel; label?: string; onSaved?: () => void }) {
   const [snapshot, setSnapshot] = useState<ImportedSpiceModel | null>(null)
-  return <><button type="button" className="save-to-user-library" onClick={() => setSnapshot(structuredClone(model))}><FolderPlus size={14}/>{label}</button>{snapshot && <SaveLibraryDialog model={snapshot} onClose={() => setSnapshot(null)} onSaved={onSaved}/>}</>
+  return <><button type="button" className="save-to-user-library" onClick={() => setSnapshot(structuredClone(model))}><FolderPlus size={14}/>{label}</button><MotionPresence present={!!snapshot}>{snapshot && <SaveLibraryDialog model={snapshot} onClose={() => setSnapshot(null)} onSaved={onSaved}/>}</MotionPresence></>
 }

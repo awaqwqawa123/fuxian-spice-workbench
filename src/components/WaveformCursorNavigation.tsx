@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { formatSI } from '../core/circuit'
-import { findWaveformCursorSample, type CursorSearch } from '../core/waveform-cursor-navigation'
+import { parseWaveformAxisValue } from '../core/waveform-axis-settings'
+import { findWaveformCursorSample, nearestWaveformCursorSample, type CursorSearch } from '../core/waveform-cursor-navigation'
 import type { WaveformDomain, WaveformTrace } from '../core/waveform-workspace'
 
 interface Props {
@@ -14,35 +15,36 @@ const actions: [CursorSearch, string][] = [
   ['maximum', '最大值'], ['minimum', '最小值'], ['previous-peak', '上一峰'], ['next-peak', '下一峰'], ['previous-trough', '上一谷'], ['next-trough', '下一谷'],
 ]
 export default function WaveformCursorNavigation({ index, traces, primaryId, range, xUnit, detail, cursors, onSelect, onMove, availableHeight=500, onPlace, onClear }: Props) {
-  const [target, setTarget] = useState<'a' | 'b'>('a'), [message, setMessage] = useState('')
-  const [page,setPage]=useState(0)
-  const primary = traces.find(trace => trace.id === primaryId) ?? traces[0]
-  useEffect(() => setMessage(''), [primary?.id, target, range[0], range[1]])
-  const find = (mode: CursorSearch) => {
-    if (!primary) return
-    const point = findWaveformCursorSample(primary, range, cursors[target], mode)
-    if (!point) { setMessage('此方向的显示区间内没有符合条件的采样点。'); return }
-    onMove(target, point.x)
-    setMessage(`${target.toUpperCase()}：${formatSI(point.x, xUnit, 6)} / ${formatSI(point.y, primary.unit, 6)}`)
+  const [target,setTarget]=useState<'a'|'b'>('a'),[message,setMessage]=useState(''),[position,setPosition]=useState('')
+  const primary=traces.find(trace=>trace.id===primaryId)??traces[0],prefix=`视图 ${index+1}`
+  useEffect(()=>setMessage(''),[primary?.id,target,range[0],range[1]])
+  const report=(point:{x:number;y:number}|null)=>{
+    if(!point){setMessage('当前显示区间内没有符合条件的原始采样点。');return}
+    onMove(target,point.x);setMessage(`${target.toUpperCase()}：${formatSI(point.x,xUnit,6)} / ${formatSI(point.y,primary!.unit,6)}`)
   }
-  if(availableHeight<350){
-    const labels=['选择游标与曲线','最大值与最小值','峰值定位','谷值定位','定位读数','放置与清除']
-    return <div className="wave-cursor-navigation wave-bounded-form" role="group" aria-label={`视图 ${index+1} 游标定位`}>
-      <div className="wave-form-page-nav"><button type="button" disabled={!page} onClick={()=>setPage(page-1)}>上一页</button><select aria-label="游标定位页面" value={page} onChange={event=>setPage(Number(event.target.value))}>{labels.map((label,i)=><option key={label} value={i}>{label} · {i+1}/6</option>)}</select><button type="button" disabled={page===5} onClick={()=>setPage(page+1)}>下一页</button></div>
-      <div hidden={page!==0} className="wave-form-fields"><label>定位游标<select aria-label={`视图 ${index+1} 定位游标`} value={target} onChange={event=>setTarget(event.target.value as 'a'|'b')}><option value="a">游标 A</option><option value="b">游标 B</option></select></label><label>测量曲线<select aria-label={`视图 ${index+1} 游标曲线`} value={primary?.id??''} onChange={event=>{const trace=traces.find(item=>item.id===event.target.value);if(trace)onSelect(trace)}}>{traces.map(trace=><option key={trace.id} value={trace.id}>{trace.name} [{trace.unit}]</option>)}</select></label></div>
-      {[1,2,3].map(value=><div key={value} hidden={page!==value} className="wave-form-actions">{actions.slice((value-1)*2,value*2).map(([mode,label])=><button key={mode} type="button" aria-label={`视图 ${index+1} 游标${target.toUpperCase()}定位${label}`} disabled={!primary} onClick={()=>{find(mode);setPage(4)}}>{label}</button>)}</div>)}
-      <div hidden={page!==4} className="wave-form-actions"><p>{detail?'在局部细节范围内查找':'在当前显示范围内查找'} · 定位到原始采样点</p><p role="status" title={message}>{message||'选择定位动作后显示读数。'}</p></div>
-      <div hidden={page!==5} className="wave-form-actions">{onPlace&&(['a','b'] as const).map(name=><button type="button" key={name} onClick={()=>onPlace(name)}>放置游标 {name.toUpperCase()}</button>)}{onClear&&<button type="button" onClick={onClear}>清除游标</button>}</div>
-    </div>
+  const find=(mode:CursorSearch)=>{if(primary)report(findWaveformCursorSample(primary,range,cursors[target],mode))}
+  const locate=()=>{
+    if(!primary)return
+    try{
+      const value=parseWaveformAxisValue(position,xUnit)
+      if(value<range[0]||value>range[1])throw new Error(`位置须在 ${formatSI(range[0],xUnit,5)} 至 ${formatSI(range[1],xUnit,5)} 之间。`)
+      report(nearestWaveformCursorSample(primary,value,range,xUnit==='Hz'))
+    }catch(cause){setMessage((cause as Error).message)}
   }
-  return <div className="wave-cursor-navigation" role="group" aria-label={`视图 ${index + 1} 游标定位`}>
-    <div className="wave-cursor-navigation-controls"><strong>游标定位</strong>
-      <select aria-label={`视图 ${index + 1} 定位游标`} value={target} onChange={event => setTarget(event.target.value as 'a' | 'b')}><option value="a">游标 A</option><option value="b">游标 B</option></select>
-      <select aria-label={`视图 ${index + 1} 游标曲线`} value={primary?.id ?? ''} onChange={event => { const trace = traces.find(item => item.id === event.target.value); if (trace) onSelect(trace) }}>
-        {traces.map(trace => <option key={trace.id} value={trace.id}>{trace.name} [{trace.unit}]</option>)}
-      </select>
-      {actions.map(([mode, label]) => <button key={mode} type="button" aria-label={`视图 ${index + 1} 游标${target.toUpperCase()}定位${label}`} disabled={!primary} onClick={() => find(mode)}>{label}</button>)}
-    </div>
-    <div className="wave-cursor-navigation-status"><small>{detail ? '在局部细节范围内查找' : '在当前显示范围内查找'} · 定位到原始采样点</small>{message && <span role="status">{message}</span>}</div>
+  const point=(name:'a'|'b')=>{
+    if(!primary||cursors[name]===null||!primary.x.length)return null
+    return nearestWaveformCursorSample(primary,cursors[name]!,[Math.min(primary.x[0],primary.x.at(-1)!),Math.max(primary.x[0],primary.x.at(-1)!)],xUnit==='Hz')
+  }
+  const a=point('a'),b=point('b'),deltaLabel=xUnit==='s'?'Δt':xUnit==='Hz'?'Δf':`Δ${xUnit}`
+  return <div className="wave-cursor-navigation wave-cursor-console" role="group" aria-label={`${prefix} 游标定位`} data-compact={availableHeight<350||undefined}>
+    <header className="wave-cursor-intro"><strong>A / B 游标测量</strong><p>选择测量曲线，放置 A、B 后比较两点。绘图中可拖动游标，用左右方向键逐个原始采样点移动。</p></header>
+    <div className="wave-cursor-selectors"><label>测量曲线<select aria-label={`${prefix} 游标曲线`} disabled={!primary} value={primary?.id??''} onChange={event=>{const trace=traces.find(item=>item.id===event.target.value);if(trace)onSelect(trace)}}>{!primary&&<option value="">当前视图没有曲线</option>}{traces.map(trace=><option key={trace.id} value={trace.id}>{trace.name} [{trace.unit}]</option>)}</select></label><label>定位对象<select aria-label={`${prefix} 定位游标`} value={target} onChange={event=>setTarget(event.target.value as 'a'|'b')}><option value="a">游标 A</option><option value="b">游标 B</option></select></label></div>
+    {onPlace&&<div className="wave-cursor-place-actions">{(['a','b'] as const).map(name=><button type="button" key={name} disabled={!primary} onClick={()=>onPlace(name)}>放置游标 {name.toUpperCase()}</button>)}{onClear&&<button type="button" disabled={cursors.a===null&&cursors.b===null} onClick={()=>{onClear();setMessage('')}}>清除游标</button>}</div>}
+    <dl className="wave-cursor-values" aria-label={`${prefix} 游标读数`}>
+      {(['a','b'] as const).map((name,i)=>{const sample=i===0?a:b;return <div key={name}><dt><i className={`wave-cursor-key wave-cursor-key-${name}`}>{name.toUpperCase()}</i></dt><dd>{cursors[name]===null?<span className="wave-cursor-unset">未放置</span>:sample?<><b>{formatSI(sample.x,xUnit,6)}</b><span>{formatSI(sample.y,primary!.unit,6)}</span></>:<span className="wave-cursor-unset">此曲线没有对应采样</span>}</dd></div>})}
+      <div className="wave-cursor-delta"><dt>差值 B − A</dt><dd>{a&&b?<><b>{deltaLabel} {formatSI(b.x-a.x,xUnit,6)}</b><span>ΔY {formatSI(b.y-a.y,primary!.unit,6)}</span>{xUnit==='s'&&a.x!==b.x&&<span>1/|Δt| {formatSI(1/Math.abs(b.x-a.x),'Hz',6)}</span>}</>:<span className="wave-cursor-unset">放置 A 和 B 后显示差值</span>}</dd></div>
+    </dl>
+    <section className="wave-cursor-locate"><strong>定位游标 {target.toUpperCase()}</strong><div className="wave-cursor-exact-position"><input type="text" aria-label={`${prefix} 游标位置`} value={position} onChange={event=>setPosition(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();locate()}}} placeholder={xUnit==='s'?'输入位置，例如 2ms':xUnit==='Hz'?'输入频率，例如 1kHz':`输入位置 (${xUnit})`}/><button type="button" disabled={!primary||!position.trim()} onClick={locate}>定位</button></div><div className="wave-cursor-find-actions">{actions.map(([mode,label])=><button key={mode} type="button" aria-label={`${prefix} 游标${target.toUpperCase()}定位${label}`} disabled={!primary} onClick={()=>find(mode)}>{label}</button>)}</div></section>
+    <div className="wave-cursor-navigation-status"><small>{detail?'在局部细节范围内查找':'在当前显示范围内查找'} · 定位到原始采样点</small><span role="status">{message||'放置游标返回绘图页；精确定位和峰谷读数会显示在上方。'}</span></div>
   </div>
 }

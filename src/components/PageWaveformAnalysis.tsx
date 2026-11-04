@@ -12,6 +12,7 @@ interface Props {
   result: Result; signals: WaveformSignal[]; initialSettings?: WaveformAnalysisSettings
   onSettingsChange?: (settings: WaveformAnalysisSettings) => void
   visibleRange?: WaveformDomain; request?: PageWaveformAnalysisRequest; active?: boolean
+  onOpenWaveform?: () => void
   exportContext?: { groupName?: string; profileName?: string; stale?: boolean; status?: string }
 }
 type Tab = 'measure' | 'range' | 'events' | 'fft' | 'display' | 'spectrum' | 'harmonics' | 'notes'
@@ -23,7 +24,7 @@ function download(name: string, text: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
-export default function PageWaveformAnalysis({ result, signals, initialSettings, onSettingsChange, visibleRange, request, active = true, exportContext }: Props) {
+export default function PageWaveformAnalysis({ result, signals, initialSettings, onSettingsChange, visibleRange, request, active = true, exportContext, onOpenWaveform }: Props) {
   const choices = useMemo(() => signals.filter(signal => signal.kind !== 'noise' && signal.kind !== 'transfer'), [signals])
   const [settings, setSettings] = useState<WaveformAnalysisSettings>(() => initialSettings ?? defaultWaveformAnalysisSettings(choices.find(signal => signal.kind === 'voltage')?.id ?? choices[0]?.id))
   const saved = JSON.stringify(initialSettings), incoming = useRef(saved), onChange = useRef(onSettingsChange)
@@ -115,8 +116,9 @@ export default function PageWaveformAnalysis({ result, signals, initialSettings,
   const tabValues = ['measure', 'range', 'events', 'fft', 'display', 'spectrum', 'harmonics', 'notes'] as const
   const tabNames = ['统计测量', '测量范围', '跃迁设置', '频谱设置', '频谱显示', 'FFT', '谐波', '说明']
   return <section ref={panel} className="page-analysis-tools" aria-label="自动测量与频谱分析" data-analysis-run={result.id} data-analysis-page={tab} data-analysis-range={validation.range?.join(',')}>
+    <div className="page-analysis-intro"><strong>自动测量与频谱</strong><p>统计真实采样的均值、有效值和峰峰值；瞬态还可测上升时间、延迟与 FFT。A/B 两点差值请在波形的“游标”页查看。</p>{supported&&<div className="page-analysis-context"><span title={signal?.name}>曲线：{signal?.name??'待选择'}</span><span>范围：{validation.range?`${formatSI(validation.range[0],isTran?'s':'V',4)}–${formatSI(validation.range[1],isTran?'s':'V',4)}`:'待设置'}</span><button type="button" onClick={()=>switchTab('range')}>更改曲线与范围</button></div>}</div>
     {compact ? <label className="page-analysis-page-picker">分析工具<select aria-label="分析工具页面" value={tab} onChange={event=>switchTab(event.target.value as Tab)}>{tabValues.map((value,index)=><option key={value} value={value} disabled={!['measure','range','notes'].includes(value)&&!isTran}>{tabNames[index]}</option>)}</select></label> : <nav className="page-analysis-tabs" aria-label="分析工具页面">{tabValues.map((value, index) => <button key={value} disabled={!['measure', 'range', 'notes'].includes(value) && !isTran} aria-pressed={tab === value} onClick={() => switchTab(value)}>{tabNames[index]}</button>)}</nav>}
-    {!supported ? <p>自动测量适用于瞬态波形和直流扫描；FFT 适用于瞬态波形。</p> : <>
+    {!supported ? <div className="page-analysis-unavailable"><strong>{result.analysis==='ac'?'当前是 AC 频率响应':result.analysis==='noise'?'当前是噪声分析':'当前分析没有可用的时域统计'}</strong><p>{result.analysis==='ac'?'在“曲线”中选择幅度/增益或相位，再用“游标”读取指定频率处的值。均值、上升时间和 FFT 等时域工具适用于瞬态分析。':'自动统计支持瞬态波形和直流扫描；FFT 支持瞬态分析。可切换相应仿真配置后重新运行。'}</p>{onOpenWaveform&&<button type="button" onClick={onOpenWaveform}>返回波形选择曲线或游标</button>}</div> : <>
       {tab === 'range' && <><div className="page-analysis-fields"><label>测量曲线<select aria-label="自动测量曲线" value={settings.signalId ?? ''} onChange={event => change({ ...settings, signalId: event.target.value })}>{!signal && <option value={settings.signalId ?? ''}>所选曲线已缺失</option>}{choices.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><label>测量范围<select aria-label="测量范围" value={settings.rangeMode} onChange={event => change({ ...settings, rangeMode: event.target.value as WaveformAnalysisSettings['rangeMode'], ...(event.target.value === 'fixed' && !settings.fixedRange ? { fixedRange: visibleRange ? [...visibleRange] : [result.x[0], result.x.at(-1)!] } : {}) })}><option value="visible">当前可见区间</option><option value="full">完整运行</option><option value="fixed">固定区间</option></select></label></div>
       <div className="page-analysis-range" data-analysis-range={validation.range?.join(',')}>{([0, 1] as const).map(index => <label key={index}>{index ? '区间结束' : '区间开始'} ({isTran ? 's' : 'V'})<input aria-label={index ? '测量区间结束' : '测量区间开始'} type="number" step="any" disabled={settings.rangeMode !== 'fixed'} value={(settings.rangeMode === 'fixed' ? settings.fixedRange?.[index] : validation.range?.[index]) ?? ''} onChange={event => { const fixedRange: [number, number] = [...(settings.fixedRange ?? validation.range ?? [result.x[0], result.x.at(-1)!])]; fixedRange[index] = event.target.value === '' ? NaN : Number(event.target.value); change({ ...settings, fixedRange }) }} /></label>)}</div></>}
       {(validation.error || measured.error) && <p role="alert">{validation.error ?? measured.error}</p>}

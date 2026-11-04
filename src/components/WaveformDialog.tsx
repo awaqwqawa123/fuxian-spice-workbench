@@ -9,9 +9,9 @@ interface Props { visible: boolean; docked?: boolean; onDockChange?: (docked: bo
 export default function WaveformDialog({ visible, docked = false, onDockChange, onClose, children }: Props) {
   const panel = useRef<HTMLElement>(null)
   const [dragging, setDragging] = useState(false)
-  useWorkbenchDialog(panel, visible && !docked, onClose)
+  const motion = useWorkbenchDialog(panel, visible && !docked, onClose, { motionVisible: visible })
   return createPortal(
-    <div className={`workbench-window-backdrop waveform-dialog-backdrop${docked ? ' is-docked' : ''}${dragging ? ' is-dragging' : ''}`} hidden={!visible}
+    <div className={`workbench-window-backdrop waveform-dialog-backdrop${docked ? ' is-docked' : ''}${dragging ? ' is-dragging' : ''}`} hidden={!motion.mounted}
       onMouseDown={event => { if (!docked && event.target === event.currentTarget) onClose() }}>
       <section ref={panel} className="workbench-window waveform-dialog" role={visible ? docked ? 'region' : 'dialog' : undefined}
         aria-modal={visible && !docked ? 'true' : undefined} aria-label={docked ? '顶栏停靠波形' : '放大波形'} tabIndex={-1}

@@ -1,10 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState, type DragEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type DragEvent, type ReactNode, type RefObject } from 'react'
 import { createPortal } from 'react-dom'
 import { ChevronDown } from 'lucide-react'
 import { libraryParts, type LibraryPart } from '../core/library'
 import { networkSymbolPresets, type NetworkSymbolPreset } from '../core/net-symbol-presets'
 import { DeviceSymbol } from './DeviceSymbol'
 import { NetSymbolGraphic, netSymbolBounds } from './NetSymbolGraphic'
+import MotionPresence, { useMotionSurface } from './MotionPresence'
 
 type SymbolOption = { id: string; name: string; part?: LibraryPart; preset?: NetworkSymbolPreset }
 const groups = [
@@ -27,6 +28,12 @@ function dragSymbol(event: DragEvent, option: SymbolOption) {
     event.dataTransfer.setData('application/x-fuxian-library-part', option.part.id)
   } else event.dataTransfer.setData('application/x-fuxian-net-symbol', option.id)
   event.dataTransfer.effectAllowed = 'copy'
+}
+
+/** Kept during the short exit, without keeping the menu's global shortcuts active. */
+function SymbolMenuSurface({ surface, label, style, children }: { surface: RefObject<HTMLDivElement | null>; label: string; style: CSSProperties; children: ReactNode }) {
+  useMotionSurface(surface, { kind: 'menu' })
+  return <div ref={surface} id="schematic-symbol-menu" role="menu" aria-label={label} className="schematic-symbol-menu" style={style}>{children}</div>
 }
 
 export default function SchematicSymbolsToolbar({ activePart, activeNetworkSymbol, onPlacePart, onPlaceNetworkSymbol }: {
@@ -88,6 +95,6 @@ export default function SchematicSymbolsToolbar({ activePart, activeNetworkSymbo
         <button ref={element => { triggers.current[item.id] = element }} type="button" className="schematic-symbol-dropdown" aria-label={`选择${item.name}`} title={`选择${item.name}`} aria-haspopup="menu" aria-expanded={open === item.id} aria-controls={open === item.id ? 'schematic-symbol-menu' : undefined} onClick={() => setOpen(open === item.id ? null : item.id)}><ChevronDown size={11}/></button>
       </div>
     })}
-    {group && createPortal(<div ref={menu} id="schematic-symbol-menu" role="menu" aria-label={`选择${group.name}`} className="schematic-symbol-menu" style={{ left: position.left, top: position.top, maxHeight: position.maxHeight }}><div className="schematic-symbol-menu-heading">{group.name}<small>点击或拖入画布</small></div>{group.options.map(option => <button key={option.id} type="button" role="menuitem" data-symbol-preset={option.id} draggable aria-label={`放置${option.name}`} className={option.id === (chosen[group.id] ?? group.options[0].id) ? 'selected' : ''} onClick={() => place(option)} onDragStart={event => { dragSymbol(event, option); setChosen(previous => ({ ...previous, [group.id]: option.id })) }} onDragEnd={() => close()}><SymbolGlyph option={option}/><span>{option.name}</span></button>)}</div>, document.body)}
+    <MotionPresence present={!!group}>{group && createPortal(<SymbolMenuSurface surface={menu} label={`选择${group.name}`} style={{ left: position.left, top: position.top, maxHeight: position.maxHeight }}><div className="schematic-symbol-menu-heading">{group.name}<small>点击或拖入画布</small></div>{group.options.map(option => <button key={option.id} type="button" role="menuitem" data-symbol-preset={option.id} draggable aria-label={`放置${option.name}`} className={option.id === (chosen[group.id] ?? group.options[0].id) ? 'selected' : ''} onClick={() => place(option)} onDragStart={event => { dragSymbol(event, option); setChosen(previous => ({ ...previous, [group.id]: option.id })) }} onDragEnd={() => close()}><SymbolGlyph option={option}/><span>{option.name}</span></button>)}</SymbolMenuSurface>, document.body)}</MotionPresence>
   </div>
 }

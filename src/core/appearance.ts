@@ -88,6 +88,18 @@ export function applyAppearance(value: AppearancePreferences, root = typeof docu
   root.style.setProperty('--canvas-muted', darkCanvas ? '#a2b3bf' : '#687a87')
   root.style.setProperty('--canvas-grid', darkCanvas ? '#394b63' : '#d3dce8')
   root.style.setProperty('--canvas-label-background', darkCanvas ? '#24323b' : '#f0f4f6')
+  // Keep the installed app/browser chrome in step with previews and restoration.
+  if (root === root.ownerDocument.documentElement) {
+    root.ownerDocument.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_PRESETS[clean.theme].rail)
+  }
+}
+
+/** Restore before mounting React so the first workbench frame uses the saved style.
+ * Reading an older/blocked store never rewrites the user's theme or custom colors. */
+export function restoreAppearance(storage = browserStorage(), root = typeof document === 'undefined' ? undefined : document.documentElement): AppearancePreferences {
+  const appearance = loadAppearance(storage)
+  applyAppearance(appearance, root)
+  return appearance
 }
 
 /** Preferences are local UI settings, not part of a circuit or its undo stack. */
@@ -95,7 +107,7 @@ export function useAppearance() {
   const [appearance, updateAppearance] = useState<AppearancePreferences>(() => loadAppearance())
   const [status, setStatus] = useState<{ persisted: boolean; message: string | null }>({ persisted: true, message: null })
   // Applying on mount and receiving another tab's preferences must never write them back.
-  useEffect(() => { applyAppearance(loadAppearance()) }, [])
+  useEffect(() => { restoreAppearance() }, [])
   const setAppearance = useCallback((value: AppearancePreferences): boolean => {
     const clean = normalizeAppearance(value)
     applyAppearance(clean)

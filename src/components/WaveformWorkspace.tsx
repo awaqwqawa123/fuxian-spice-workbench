@@ -11,12 +11,13 @@ import WaveformTraceBar from './WaveformTraceBar'
 import WaveformAxisSettings from './WaveformAxisSettings'
 import WaveformCursorNavigation from './WaveformCursorNavigation'
 import { zoomWaveformAxisRanges, type WaveformAxisRanges } from '../core/waveform-axis-settings'
+import { waveformWheelFactor, zoomWaveformCoordinates } from '../core/waveform-navigation'
 import { waveformSelectedCsv, waveformPlotSvg, waveformSvgPng, type WaveformExportApi, type WaveformExportContext, type WaveformExportMetadata } from '../core/waveform-export'
 import { waveformSampleWindow } from '../core/waveform-plot-details'
 export type { WaveformExportApi } from '../core/waveform-export'
 import {
   defaultWaveformPanels, panWaveformDomain, waveformPath, waveformSignals, waveformTraces,
-  waveformXBounds, waveformYBounds, zoomWaveformDomain,
+  waveformXBounds, waveformYBounds, waveformUnit, zoomWaveformDomain,
   type WaveformDomain, type WaveformPanel, type WaveformSignal, type WaveformTrace,
 } from '../core/waveform-workspace'
 
@@ -30,7 +31,7 @@ export interface WaveformInspectionState {
 interface Props {
   /** Fixed main-page workspace; settings stay inside the region. */
   embedded?: boolean
-  /** The surrounding dock owns wheel events; axis controls remain explicit. */
+  /** @deprecated Wheel always changes waveform coordinates; retained for caller compatibility. */
   resizeFrameOnWheel?: boolean
   result: Result; comparison: Result | null; measurements?: Measurement[]
   sweepComparisons?:readonly Result[]
@@ -61,6 +62,7 @@ interface SharedView {
   onZoom: (factor: number, anchor?: number) => void; onPan: (fraction: number) => void
   onMoveCursor?: (name:'a'|'b',x:number)=>void
   onPanAxes?: (index:number,ranges:WaveformAxisRanges)=>void
+  onCoordinateZoom?: (index:number,domain:WaveformDomain,ranges:WaveformAxisRanges)=>void
 }
 
 const formatValue = (value: number, unit: string) => unit === 'A' || unit === 'V' || unit.endsWith('/√Hz') ? formatSI(value, unit, 5) : `${Number(value.toPrecision(5))} ${unit}`
@@ -77,7 +79,7 @@ function axisTicks([min,max]:WaveformDomain,target:number):number[] {
   return ticks.length>=2?ticks:[min,max]
 }
 
-function SignalPlot({ index, result, traces, primaryId, shared, interactive=true, selecting=false, selectionDomain, onSelectDomain, detail=false, reserveRightAxis=false, axisOrder, axisRanges, compact=false, active=true, onSelectTrace, suppressIdleReadout=false, pannable=interactive, onPanAxes=shared.onPanAxes? ranges=>shared.onPanAxes!(index,ranges):undefined }: {
+function SignalPlot({ index, result, traces, primaryId, shared, interactive=true, wheelable=interactive, selecting=false, selectionDomain, onSelectDomain, detail=false, reserveRightAxis=false, axisOrder, axisRanges, compact=false, active=true, onSelectTrace, suppressIdleReadout=false, pannable=interactive, onPanAxes=shared.onPanAxes? ranges=>shared.onPanAxes!(index,ranges):undefined }: {
   index: number; result: Result; traces: WaveformTrace[]; primaryId?: string; shared: SharedView; interactive?:boolean
   selecting?:boolean; selectionDomain?:WaveformDomain; onSelectDomain?:(domain:WaveformDomain,ranges?:WaveformAxisRanges)=>void; detail?:boolean
   reserveRightAxis?:boolean
@@ -86,6 +88,7 @@ function SignalPlot({ index, result, traces, primaryId, shared, interactive=true
   compact?:boolean
   suppressIdleReadout?:boolean
   pannable?:boolean; onPanAxes?:(ranges:WaveformAxisRanges)=>void
+  wheelable?:boolean
   active?:boolean;onSelectTrace?:(trace:WaveformTrace)=>void
 }) {
   const svg = useRef<SVGSVGElement>(null), clipId = useId()
@@ -106,6 +109,8 @@ function SignalPlot({ index, result, traces, primaryId, shared, interactive=true
   const span = Math.max(shared.bounds[1] - shared.bounds[0], 1e-12)
   const xDomain: WaveformDomain = useMemo(() => [shared.bounds[0] + span * shared.domain[0], shared.bounds[0] + span * shared.domain[1]], [shared.bounds, shared.domain, span])
   const yDomains = useMemo(() => new Map(units.map(unit => [unit, axisRanges?.[unit] ?? waveformYBounds(traces, unit, xDomain, ac)])), [units, traces, xDomain, ac, axisRanges])
+  const wheelState=useRef({domain:shared.domain,ranges:Object.fromEntries(yDomains)})
+  wheelState.current={domain:shared.domain,ranges:Object.fromEntries(yDomains)}
   const px = (x: number) => l + ((ac ? Math.log10(x) : x) - xDomain[0]) / (xDomain[1] - xDomain[0]) * plotWidth
   const py = (y: number, unit: string) => {
     const [min, max] = yDomains.get(unit)!
@@ -159,18 +164,38 @@ function SignalPlot({ index, result, traces, primaryId, shared, interactive=true
   }, [traces.length > 0,active])
   useEffect(() => {
     const element = svg.current
-    if (!element || !interactive || !active) return
+    if (!element || !wheelable || !active) return
     const wheel = (event: WheelEvent) => {
-      if (!event.deltaY) return
+      if (event.defaultPrevented || !event.deltaY || event.altKey&&event.shiftKey) return
+      const target=event.target as Element|null
+      if(target?.closest?.('dialog,[role="dialog"],[aria-modal="true"],.canvas-waveform-legend-details,input,textarea,select,[contenteditable="true"]'))return
+      const frame=element.closest('[data-canvas-diagram]')
+      if(frame&&frame.getAttribute('data-diagram-selected')!=='true')return
+      const hit=target?.closest?.('.wave-plot')
+      if(hit&&hit!==element)return
+      const box=element.getBoundingClientRect()
+      const inside=box.width>0&&box.height>0&&event.clientX>=box.left&&event.clientX<=box.right&&event.clientY>=box.top&&event.clientY<=box.bottom
+      // A foreignObject wheel may target the outer SVG. Only this plot's
+      // rectangle may claim it; titles, controls and other plots stay usable.
+      if(hit!==element&&!inside)return
       event.preventDefault();event.stopPropagation()
-      const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?element.getBoundingClientRect().height:1)
-      const factor=Math.exp(-Math.max(-160,Math.min(160,delta))*.0025)
-      // These plots are the expanded waveform view. Canvas previews retain frame resizing.
-      if(!event.altKey)shared.onZoom(factor, fraction(event.clientX))
-      if(!event.shiftKey&&onPanAxes)onPanAxes(zoomWaveformAxisRanges(Object.fromEntries(yDomains),factor,1-verticalFraction(event.clientY)))
+      const factor=waveformWheelFactor(event.deltaY,event.deltaMode,box.height)
+      const anchorX=fraction(event.clientX),anchorY=1-verticalFraction(event.clientY)
+      // Native wheel events can arrive in one React batch. Continue from the
+      // newest requested range rather than applying each tick to a stale render.
+      const next=zoomWaveformCoordinates(wheelState.current.domain,wheelState.current.ranges,factor,anchorX,anchorY,{x:!event.altKey,y:!event.shiftKey})
+      wheelState.current=next
+      if(shared.onCoordinateZoom)shared.onCoordinateZoom(index,next.domain,next.ranges)
+      else {
+        if(!event.altKey)shared.onZoom(factor,anchorX)
+        if(!event.shiftKey&&onPanAxes)onPanAxes(next.ranges)
+      }
     }
-    element.addEventListener('wheel', wheel, { passive: false })
-    return () => element.removeEventListener('wheel', wheel)
+    // Capture before the schematic listener, including Chromium's retargeted
+    // foreignObject events which never pass through the inner SVG node.
+    const owner=element.ownerDocument.defaultView
+    owner?.addEventListener('wheel',wheel,{capture:true,passive:false})
+    return () => owner?.removeEventListener('wheel',wheel,true)
   })
   const primary = traces.find(t => !t.comparison && t.id === primaryId) ?? traces.find(t => !t.comparison)
   const sample = (trace: WaveformTrace, target: number | null) => {
@@ -281,14 +306,23 @@ function SignalPlot({ index, result, traces, primaryId, shared, interactive=true
   </>
 }
 
-function EmbeddedCurvePicker({index,panel,signals,onChange,onDefault,availableHeight=500}:{index:number;panel:WaveformPanel;signals:WaveformSignal[];onChange:(values:Partial<WaveformPanel>)=>void;onDefault:()=>void;availableHeight?:number}) {
-  const [page,setPage]=useState(0),pageSize=availableHeight<220?1:availableHeight<350?2:5,total=Math.max(1,Math.ceil(signals.length/pageSize)),currentPage=Math.min(page,total-1)
-  return <section className="wave-embedded-curves" aria-label={`视图 ${index+1} 曲线选择`}>
-    <div className="wave-embedded-pagination"><strong>可用 {signals.length} 条 · 已选 {panel.ids.length} 条</strong><button type="button" onClick={onDefault}>恢复默认</button></div>
-    <p>电压与电流使用独立纵轴；测量对象在绘图页选择。</p>
-    {signals.slice(currentPage*pageSize,(currentPage+1)*pageSize).map(signal=><label key={signal.id}><input type="checkbox" aria-label={`视图 ${index+1} 曲线 ${signal.name}`} checked={panel.source==='signals'&&panel.ids.includes(signal.id)} onChange={event=>onChange({source:'signals',ids:event.target.checked?[...new Set([...panel.ids,signal.id])]:panel.ids.filter(id=>id!==signal.id)})}/><i style={{background:signal.color}}/><span title={signal.name}>{signal.name}</span><small>{signal.kind==='current'?'电流':signal.kind==='noise'?'噪声':'电压'}</small></label>)}
-    {!signals.length&&<p>此结果没有可用的探针 / 节点数据。</p>}
-    <div className="wave-embedded-pagination"><button type="button" aria-label="上一页曲线" disabled={currentPage===0} onClick={()=>setPage(currentPage-1)}>上一页</button><span>第 {currentPage+1} / {total} 页 · 每页 {pageSize} 条</span><button type="button" aria-label="下一页曲线" disabled={currentPage===total-1} onClick={()=>setPage(currentPage+1)}>下一页</button></div>
+function EmbeddedCurvePicker({index,panel,signals,result,onChange,onDefault,availableHeight=500}:{index:number;panel:WaveformPanel;signals:WaveformSignal[];result:Result;onChange:(values:Partial<WaveformPanel>)=>void;onDefault:()=>void;availableHeight?:number}) {
+  const [query,setQuery]=useState(''),[unit,setUnit]=useState(''),[selectedOnly,setSelectedOnly]=useState(false),[page,setPage]=useState(0)
+  const units=[...new Set(signals.map(signal=>waveformUnit(result,signal,panel.display)))].sort()
+  const selected=panel.source==='signals'?panel.ids:[]
+  const filtered=signals.filter(signal=>(!unit||waveformUnit(result,signal,panel.display)===unit)&&(!selectedOnly||selected.includes(signal.id))&&`${signal.name} ${signal.expression??''} ${signal.measurementId??''}`.toLowerCase().includes(query.trim().toLowerCase()))
+  const pageSize=Math.max(3,Math.min(40,Math.floor((availableHeight-160)/36))),total=Math.max(1,Math.ceil(filtered.length/pageSize)),currentPage=Math.min(page,total-1)
+  const selectIds=(ids:string[])=>onChange({source:'signals',ids,primary:panel.primary&&ids.includes(panel.primary)?panel.primary:ids[0]})
+  return <section className="wave-embedded-curves wave-curve-picker" aria-label={`视图 ${index+1} 曲线选择`}>
+    <header className="wave-curve-heading"><strong>视图 {index+1} · 曲线选择</strong><span>{selected.length} 已选 / {signals.length} 可用</span></header>
+    <div className="wave-curve-filters"><input type="search" aria-label={`视图 ${index+1} 搜索曲线`} placeholder="搜索名称、探针或表达式" value={query} onChange={event=>{setQuery(event.target.value);setPage(0)}}/><select aria-label={`视图 ${index+1} 筛选单位`} value={unit} onChange={event=>{setUnit(event.target.value);setPage(0)}}><option value="">全部单位</option>{units.map(value=><option key={value} value={value}>{value}</option>)}</select></div>
+    <div className="wave-curve-actions"><label className="wave-curve-selected-filter"><input type="checkbox" checked={selectedOnly} onChange={event=>{setSelectedOnly(event.target.checked);setPage(0)}}/>仅已选</label><button type="button" disabled={!filtered.length} onClick={()=>selectIds([...new Set([...selected,...filtered.map(signal=>signal.id)])])}>全选筛选结果</button><button type="button" disabled={!selected.length} onClick={()=>selectIds([])}>清空已选</button><button type="button" onClick={onDefault}>恢复默认</button></div>
+    <p className="wave-curve-help">勾选后立即显示在当前视图，电压与电流使用独立纵轴。{panel.source==='transfer'?'当前为传递函数，勾选可切换为探针 / 节点。':''}</p>
+    <div className="wave-curve-rows" aria-label={`视图 ${index+1} 可选曲线`}>
+      {filtered.slice(currentPage*pageSize,(currentPage+1)*pageSize).map(signal=><label key={signal.id} className="wave-curve-row" data-selected={selected.includes(signal.id)||undefined}><input type="checkbox" aria-label={`视图 ${index+1} 曲线 ${signal.name}`} checked={selected.includes(signal.id)} onChange={event=>selectIds(event.target.checked?[...new Set([...selected,signal.id])]:selected.filter(id=>id!==signal.id))}/><i style={{background:signal.color}}/><span className="wave-curve-identity"><strong title={signal.name}>{signal.name}</strong>{signal.expression&&<code title={signal.expression}>{signal.expression}</code>}</span><small title="本视图显示单位">{waveformUnit(result,signal,panel.display)}</small></label>)}
+      {!filtered.length&&<div className="wave-curve-empty" role="status">{!signals.length?'本次运行没有可用的探针 / 节点数据，请检查保存向量并重新仿真。':selectedOnly&&!selected.length?'当前视图还没有勾选曲线。取消“仅已选”后选择要观察的信号。':'没有匹配曲线，试试其他名称或单位。'}</div>}
+    </div>
+    <footer className="wave-embedded-pagination"><button type="button" aria-label="上一页曲线" disabled={currentPage===0} onClick={()=>setPage(currentPage-1)}>上一页</button><span>{filtered.length} 条匹配 · {currentPage+1} / {total} 页</span><button type="button" aria-label="下一页曲线" disabled={currentPage===total-1} onClick={()=>setPage(currentPage+1)}>下一页</button></footer>
   </section>
 }
 
@@ -312,7 +346,7 @@ function WaveformTools({ children, active=false }: {children:import('react').Rea
   </details>
 }
 
-function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, measurements = noMeasurements, selectedMeasurement, probeRequest, probeRequests, onSelectMeasurement, onSnapshot, initialView, onViewChange, inspectRequest, embedded=false, resizeFrameOnWheel=false, active:workspaceActive=true, fitRequest, showRequest, onInspectionChange, onSignalSelect, onExportReady, exportContext }: Props) {
+function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, measurements = noMeasurements, selectedMeasurement, probeRequest, probeRequests, onSelectMeasurement, onSnapshot, initialView, onViewChange, inspectRequest, embedded=false, active:workspaceActive=true, fitRequest, showRequest, onInspectionChange, onSignalSelect, onExportReady, exportContext }: Props) {
   const embeddedRegion=useRef<HTMLElement>(null)
   const fullRegion=useRef<HTMLElement>(null)
   const [embeddedSize,setEmbeddedSize]=useState({width:600,height:500})
@@ -482,8 +516,9 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
     }))
   }
   const pan = (fraction: number) => setDomain(old => panWaveformDomain(old, fraction))
-  const shared: SharedView = { domain, bounds, hover, cursors, active, wheelHint:resizeFrameOnWheel?'滚轮调整波形区大小 · 放大镜缩放坐标 · 中键拖动平移':undefined, onHover: setHover, onZoom: zoom, onPan: pan,
+  const shared: SharedView = { domain, bounds, hover, cursors, active, onHover: setHover, onZoom: zoom, onPan: pan,
     onPanAxes:(index,ranges)=>{setAutoFitExplicit(true);setAutoFit(false);patch(index,{axisRanges:ranges})},
+    onCoordinateZoom:(index,nextDomain,ranges)=>{setDomain(nextDomain);setAutoFitExplicit(true);setAutoFit(false);patch(index,{axisRanges:ranges})},
     onMoveCursor:(name,x)=>{setCursors(old=>({...old,[name]:sampleAt(x)}));setActive(null)},
     onPin: x => {
       if (!active || x < Math.min(result.x[0],result.x.at(-1)!) || x > Math.max(result.x[0],result.x.at(-1)!)) return
@@ -548,13 +583,14 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
     const infoTotal=Math.max(1,Math.ceil(infoItems.length/infoPageSize)),page=Math.min(infoPage,infoTotal-1)
     return <section ref={embeddedRegion} className="wave-workspace wave-workspace-embedded" aria-label="波形工作台" data-embedded-waveform="true" data-embedded-condensed={condensed} data-embedded-size={`${embeddedSize.width}x${embeddedSize.height}`} onKeyDown={event=>{if((event.target as HTMLElement).closest('input,select,textarea,button,[role=tab]'))event.stopPropagation()}}>
       <div className="wave-embedded-tabs wave-embedded-header" aria-label="波形顶部控件">
-        <select hidden={layout===1} aria-label="当前波形视图" value={index} onChange={event=>setActivePanel(Number(event.target.value))}>{Array.from({length:layout},(_,i)=><option key={i} value={i}>视图 {i+1}</option>)}</select>
-        <div role="tablist" aria-label="波形工作区页面">{([['plot','绘图',ChartNoAxesCombined],['curves','曲线',SlidersHorizontal],['cursor','游标',Crosshair]] as const).map(([value,label,Icon])=><button key={value} type="button" className="wave-icon-button" role="tab" aria-label={label} title={label} aria-selected={embeddedTab===value} aria-controls={`wave-embedded-page-${result.id}`} onClick={()=>{if(value==='cursor'&&inspectMode!=='measure')startInspect('measure');setEmbeddedTab(value)}}><Icon size={16}/></button>)}</div>
+        <select hidden={layout===1||embeddedSize.width<320} aria-label="当前波形视图" value={index} onChange={event=>setActivePanel(Number(event.target.value))}>{Array.from({length:layout},(_,i)=><option key={i} value={i}>视图 {i+1}</option>)}</select>
+        <div role="tablist" aria-label="波形工作区页面">{([['plot','绘图',ChartNoAxesCombined],['curves','曲线',SlidersHorizontal],['cursor','游标',Crosshair]] as const).map(([value,label,Icon])=><button key={value} type="button" className="wave-page-tab" role="tab" aria-label={label} title={label} aria-selected={embeddedTab===value} aria-controls={`wave-embedded-page-${result.id}`} onClick={()=>setEmbeddedTab(value)}><Icon size={14}/><span>{label}</span></button>)}</div>
         {embeddedSize.width>=320&&<button type="button" className="wave-icon-button" title="局部放大：框选横轴和纵轴矩形范围" aria-label="局部放大" aria-pressed={inspectMode==='zoom'} onClick={()=>inspectMode==='zoom'?setInspectMode(null):startInspect('zoom')}><ScanSearch size={16}/></button>}
         {embeddedSize.width>=260&&<button type="button" className="wave-icon-button" title={autoFit?'自动适配已开启：新结果适配横轴，纵轴跟随可见曲线；点击固定当前视图':'开启自动适配视图'} aria-label="自动适配视图" aria-pressed={autoFit} onClick={toggleAutoFit}><ScanLine size={16}/></button>}
         {embeddedSize.width>=500&&<div className="wave-embedded-quick-zoom" role="group" aria-label="快捷缩放"><button type="button" className="wave-icon-button" title="放大横轴和各视图纵轴" aria-label="放大所有波形" onClick={()=>zoomAll(2)} disabled={domain[1]-domain[0]<=1e-6}><Plus size={16}/></button><button type="button" className="wave-icon-button" title="缩小横轴和各视图纵轴" aria-label="缩小所有波形" onClick={()=>zoomAll(.5)} ><Minus size={16}/></button></div>}
         <WaveformTools active={!['plot','curves','cursor'].includes(embeddedTab)}>
           <div className="wave-toolbar-tools-heading">视图与显示</div>
+          {layout>1&&embeddedSize.width<320&&<label>当前视图<select aria-label="切换波形视图" value={index} onChange={event=>setActivePanel(Number(event.target.value))}>{Array.from({length:layout},(_,i)=><option key={i} value={i}>视图 {i+1}</option>)}</select></label>}
           <div className="wave-toolbar-tools-row"><select aria-label="波形视图布局" value={layout} onChange={event=>{const value=Number(event.target.value) as 1|2|4;setLayout(value);setActivePanel(old=>Math.min(old,value-1))}}><option value="1">单图</option><option value="2">双图</option><option value="4">四图</option></select>{ac&&<button type="button" aria-label="设置 Bode 增益相位双图" onClick={event=>{setLayout(2);setActivePanel(0);setEmbeddedTab('plot');setPanels(old=>old.map((item,i)=>i<2?{...item,source:'transfer',display:i===0?'magnitude':'phase'}:item));event.currentTarget.closest('details')!.open=false}}>Bode 双图</button>}</div>
           <div role="tablist" aria-label="波形详细工具">{([['expression','数学',FunctionSquare],['axes','坐标',Axis3D],['info',`信息${notices.length?` ${notices.length}`:''}`,Info]] as const).map(([value,label,Icon])=><button key={value} type="button" role="tab" aria-label={label} aria-selected={embeddedTab===value} aria-controls={`wave-embedded-page-${result.id}`} onClick={event=>{setEmbeddedTab(value);event.currentTarget.closest('details')!.open=false}}><Icon size={16}/>{label}</button>)}</div>
           <div className="wave-toolbar-tools-heading">共享横轴 / 游标</div>
@@ -565,24 +601,24 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
         </WaveformTools>
       </div>
       <div id={`wave-embedded-page-${result.id}`} className="wave-embedded-body" role="tabpanel" aria-label={`${{plot:'绘图',curves:'曲线',expression:'数学',axes:'坐标',cursor:'游标',info:'信息',navigation:'视图操作'}[embeddedTab]} · 视图 ${index+1}`}>
-        {embeddedTab==='navigation'&&<section className="wave-embedded-navigation-page" aria-label="共享波形横轴操作"><p hidden={tight}>{resizeFrameOnWheel?'滚轮调整波形区大小；用放大镜或缩放按钮调整坐标，中键拖动平移。':'滚轮缩放双轴；Shift 仅横轴，Alt 仅纵轴；中键拖动平移。横轴同步，纵轴只调整当前视图。'}</p>{tight&&<select aria-label="视图操作页面" value={navigationPage} onChange={event=>setNavigationPage(Number(event.target.value))}><option value="0">布局与测量</option><option value="1">平移与缩放</option></select>}{tight&&<div className="wave-embedded-zoom" hidden={navigationPage!==0}><select aria-label="波形视图布局" value={layout} onChange={event=>{const value=Number(event.target.value) as 1|2|4;setLayout(value);setActivePanel(old=>Math.min(old,value-1))}}><option value="1">单图</option><option value="2">双图</option><option value="4">四图</option></select>{ac&&<button type="button" aria-label="设置 Bode 增益相位双图" onClick={()=>{setLayout(2);setActivePanel(0);setEmbeddedTab('plot');setPanels(old=>old.map((item,i)=>i<2?{...item,source:'transfer',display:i===0?'magnitude':'phase'}:item))}}>Bode</button>}<button type="button" aria-pressed={inspectMode==='zoom'} onClick={()=>{inspectMode==='zoom'?setInspectMode(null):startInspect('zoom');setEmbeddedTab('plot')}}><ScanSearch size={12}/>局部放大</button><button type="button" onClick={()=>{startInspect('measure');setEmbeddedTab('plot')}}><Ruler size={12}/>A/B 测量</button></div>}<div className="wave-embedded-zoom" hidden={tight&&navigationPage!==1} role="group" aria-label="共享波形横轴"><button type="button" className="wave-icon-button" title="波形向左平移" aria-label="波形向左平移" disabled={domain[0]<=0} onClick={()=>pan(-.5)}><ArrowLeft size={16}/></button><button type="button" className="wave-icon-button" title="放大横轴和各视图纵轴" aria-label="放大所有波形" onClick={()=>zoomAll(2)} disabled={domain[1]-domain[0]<=1e-6}><Plus size={16}/></button><button type="button" className="wave-icon-button" title="缩小横轴和各视图纵轴" aria-label="缩小所有波形" onClick={()=>zoomAll(.5)} ><Minus size={16}/></button><button type="button" className="wave-icon-button" title="波形向右平移" aria-label="波形向右平移" disabled={domain[1]>=1} onClick={()=>pan(.5)}><ArrowRight size={16}/></button><button type="button" className="wave-icon-button" title="适配所有波形" aria-label="适配所有波形" onClick={()=>{fitCoordinates();setEmbeddedTab('plot')}}><Expand size={16}/></button></div><button type="button" hidden={tight} onClick={()=>setEmbeddedTab('plot')}>返回绘图</button></section>}
+        {embeddedTab==='navigation'&&<section className="wave-embedded-navigation-page" aria-label="共享波形横轴操作"><p hidden={tight}>滚轮缩放双轴；Shift 仅横轴，Alt 仅纵轴；中键拖动平移。横轴同步，纵轴只调整当前视图。</p>{tight&&<select aria-label="视图操作页面" value={navigationPage} onChange={event=>setNavigationPage(Number(event.target.value))}><option value="0">布局与测量</option><option value="1">平移与缩放</option></select>}{tight&&<div className="wave-embedded-zoom" hidden={navigationPage!==0}><select aria-label="波形视图布局" value={layout} onChange={event=>{const value=Number(event.target.value) as 1|2|4;setLayout(value);setActivePanel(old=>Math.min(old,value-1))}}><option value="1">单图</option><option value="2">双图</option><option value="4">四图</option></select>{ac&&<button type="button" aria-label="设置 Bode 增益相位双图" onClick={()=>{setLayout(2);setActivePanel(0);setEmbeddedTab('plot');setPanels(old=>old.map((item,i)=>i<2?{...item,source:'transfer',display:i===0?'magnitude':'phase'}:item))}}>Bode</button>}<button type="button" aria-pressed={inspectMode==='zoom'} onClick={()=>{inspectMode==='zoom'?setInspectMode(null):startInspect('zoom');setEmbeddedTab('plot')}}><ScanSearch size={12}/>局部放大</button><button type="button" onClick={()=>{startInspect('measure');setEmbeddedTab('plot')}}><Ruler size={12}/>A/B 测量</button></div>}<div className="wave-embedded-zoom" hidden={tight&&navigationPage!==1} role="group" aria-label="共享波形横轴"><button type="button" className="wave-icon-button" title="波形向左平移" aria-label="波形向左平移" disabled={domain[0]<=0} onClick={()=>pan(-.5)}><ArrowLeft size={16}/></button><button type="button" className="wave-icon-button" title="放大横轴和各视图纵轴" aria-label="放大所有波形" onClick={()=>zoomAll(2)} disabled={domain[1]-domain[0]<=1e-6}><Plus size={16}/></button><button type="button" className="wave-icon-button" title="缩小横轴和各视图纵轴" aria-label="缩小所有波形" onClick={()=>zoomAll(.5)} ><Minus size={16}/></button><button type="button" className="wave-icon-button" title="波形向右平移" aria-label="波形向右平移" disabled={domain[1]>=1} onClick={()=>pan(.5)}><ArrowRight size={16}/></button><button type="button" className="wave-icon-button" title="适配所有波形" aria-label="适配所有波形" onClick={()=>{fitCoordinates();setEmbeddedTab('plot')}}><Expand size={16}/></button></div><button type="button" hidden={tight} onClick={()=>setEmbeddedTab('plot')}>返回绘图</button></section>}
         {embeddedTab!=='plot'&&<div className="wave-embedded-return"><button type="button" onClick={()=>setEmbeddedTab('plot')}>返回波形</button>{Object.keys(panel.axisRanges??{}).length>0&&<span data-wave-y-locked="true">纵轴已固定</span>}</div>}
         {embeddedTab==='plot'&&<>
-          {(inspectMode==='zoom' || active || visible.length<layout || Object.keys(panel.axisRanges??{}).length>0)&&<div className="wave-embedded-state"><span title={resolution?`当前曲线有 ${resolution.count} 个真实保留样本，最大间距 ${formatSI(resolution.maximumStep,xUnit,4)}。放大后小圆点标记真实采样；若尖峰或边沿细节不足，请缩短仿真最大步长后重新运行，图形不会补造采样。`:undefined}>{lens?'局部细节':inspectMode==='zoom'?'横纵框选区间':active?`放置游标 ${active.toUpperCase()}`:resolution?`真实 ${resolution.count} 点 · 最大间距 ${formatSI(resolution.maximumStep,xUnit,3)}`:'X 轴 / 游标同步'}</span>{Object.keys(panel.axisRanges??{}).length>0&&<small data-wave-y-locked="true" title="适配所有波形可恢复横纵轴；坐标页可重置">纵轴已固定</small>}{visible.length<layout&&<small>显示 {visible.map(i=>i+1).join('、')} / {layout} 图</small>}</div>}
+          {(inspectMode==='zoom' || active || visible.length<layout)&&<div className="wave-embedded-state"><span title={resolution?`当前曲线有 ${resolution.count} 个真实保留样本，最大间距 ${formatSI(resolution.maximumStep,xUnit,4)}。放大后小圆点标记真实采样；若尖峰或边沿细节不足，请缩短仿真最大步长后重新运行，图形不会补造采样。`:undefined}>{lens?'局部细节':inspectMode==='zoom'?'横纵框选区间':active?`放置游标 ${active.toUpperCase()}`:resolution?`真实 ${resolution.count} 点 · 最大间距 ${formatSI(resolution.maximumStep,xUnit,3)}`:'X 轴 / 游标同步'}</span>{Object.keys(panel.axisRanges??{}).length>0&&<small data-wave-y-locked="true" title="适配所有波形可恢复横纵轴；坐标页可重置">纵轴已固定</small>}{visible.length<layout&&<small>显示 {visible.map(i=>i+1).join('、')} / {layout} 图</small>}</div>}
           <div className={`wave-embedded-plots wave-embedded-count-${visible.length}${embeddedSize.width>=900?' wave-embedded-wide':''}`}>
             {visible.map(i=>{
               const p=panels[i],group=traceGroups[i],own=group.filter(trace=>!trace.comparison),selected=own.find(trace=>trace.id===p.primary)??own[0],detail=lens?.panel===i
               return <section key={i} className={`wave-view wave-embedded-view${index===i?' is-probe-target':''}`} aria-label={`波形视图 ${i+1}`} onPointerDown={()=>setActivePanel(i)}>
-                <SignalPlot suppressIdleReadout={tight} active={workspaceActive} onSelectTrace={trace=>choose(i,trace)} compact index={i} result={result} traces={group} primaryId={selected?.id} axisRanges={detail?lens!.axisRanges??p.axisRanges:p.axisRanges} detail={detail} shared={detail?{...shared,domain:lens!.domain,onPanAxes:(_index,ranges)=>setLens(old=>old?{...old,axisRanges:ranges}:null),onZoom:(factor,anchor=.5)=>setLens(old=>old?{...old,domain:zoomWaveformDomain(old.domain,factor,anchor)}:null),onPan:fraction=>setLens(old=>old?{...old,domain:panWaveformDomain(old.domain,fraction)}:null)}:shared} selecting={inspectMode==='zoom'} onSelectDomain={(next,ranges)=>{setLens({panel:i,domain:next,axisRanges:ranges});setInspectMode(null)}}/>
+                <SignalPlot suppressIdleReadout={tight} active={workspaceActive} onSelectTrace={trace=>choose(i,trace)} compact index={i} result={result} traces={group} primaryId={selected?.id} axisRanges={detail?lens!.axisRanges??p.axisRanges:p.axisRanges} detail={detail} shared={detail?{...shared,domain:lens!.domain,onCoordinateZoom:(_index,nextDomain,ranges)=>setLens(old=>old?{...old,domain:nextDomain,axisRanges:ranges}:null),onPanAxes:(_index,ranges)=>setLens(old=>old?{...old,axisRanges:ranges}:null),onZoom:(factor,anchor=.5)=>setLens(old=>old?{...old,domain:zoomWaveformDomain(old.domain,factor,anchor)}:null),onPan:fraction=>setLens(old=>old?{...old,domain:panWaveformDomain(old.domain,fraction)}:null)}:shared} selecting={inspectMode==='zoom'} onSelectDomain={(next,ranges)=>{setLens({panel:i,domain:next,axisRanges:ranges});setInspectMode(null)}}/>
                 <WaveformTraceBar index={i} result={result} panel={p} signals={panelCatalogues[i].signals} traces={group} measurements={measurements} onChange={next=>patch(i,next)} onSelect={trace=>choose(i,trace)} onTarget={()=>setActivePanel(i)} target={index===i} onSoloToggle={()=>p.solo?restoreOverlay(i):selected&&focusTrace(i,selected)} onReturnOverview={detail?()=>setLens(null):undefined} onDefault={()=>patch(i,{...defaults[i],source:'signals',solo:false,overlayIds:undefined})}/>
               </section>
             })}
           </div>
         </>}
-        {embeddedTab==='curves'&&<><div className="wave-embedded-source">{ac&&<><select value={panel.source} aria-label={`视图 ${index+1} 图源`} onChange={event=>patch(index,{source:event.target.value as WaveformPanel['source']})}><option value="signals">探针 / 节点</option><option value="transfer">VOUT / VIN</option></select><select value={panel.display} aria-label={`视图 ${index+1} 显示内容`} onChange={event=>patch(index,{display:event.target.value as WaveformPanel['display']})}><option value="magnitude">幅度 / 增益</option><option value="phase">相位</option></select></>}</div><EmbeddedCurvePicker availableHeight={formHeight-(ac?36:0)} key={index} index={index} panel={panel} signals={panelCatalogues[index].signals.filter(signal=>signal.kind!=='transfer')} onChange={values=>patch(index,values)} onDefault={()=>patch(index,{...defaults[index],source:'signals'})}/></>}
+        {embeddedTab==='curves'&&<><div className="wave-embedded-source">{ac&&<><select value={panel.source} aria-label={`视图 ${index+1} 图源`} onChange={event=>patch(index,{source:event.target.value as WaveformPanel['source']})}><option value="signals">探针 / 节点</option><option value="transfer">VOUT / VIN</option></select><select value={panel.display} aria-label={`视图 ${index+1} 显示内容`} onChange={event=>patch(index,{display:event.target.value as WaveformPanel['display']})}><option value="magnitude">幅度 / 增益</option><option value="phase">相位</option></select></>}</div><EmbeddedCurvePicker result={result} availableHeight={formHeight-(ac?36:0)} key={index} index={index} panel={panel} signals={panelCatalogues[index].signals.filter(signal=>signal.kind!=='transfer')} onChange={values=>patch(index,values)} onDefault={()=>patch(index,{...defaults[index],source:'signals'})}/></>}
         {embeddedTab==='expression'&&<WaveformExpressionEditor embedded availableHeight={formHeight} key={index} panel={panel} result={result} index={index} onChange={next=>patch(index,next)}/>}
         {embeddedTab==='axes'&&<><div className="wave-coordinate-actions" hidden={formHeight<350}><label><input type="checkbox" checked={includeComparison} onChange={event=>setIncludeComparison(event.target.checked)}/>适配时包含对比运行</label><button type="button" onClick={()=>fitCoordinates('reset')}>重置坐标</button><button type="button" disabled={!previousCoordinates} onClick={()=>fitCoordinates('return')}>返回原范围</button></div><WaveformAxisSettings embedded availableHeight={formHeight} includeComparison={includeComparison} onIncludeComparison={setIncludeComparison} onResetCoordinates={()=>fitCoordinates('reset')} onRestoreCoordinates={()=>fitCoordinates('return')} canRestoreCoordinates={!!previousCoordinates} key={index} index={index} panel={panel} traces={traces} bounds={bounds} domain={domain} xUnit={xUnit} logarithmic={frequency} onApply={(next,ranges)=>{setAutoFitExplicit(true);setAutoFit(false);setDomain(next);patch(index,{axisRanges:ranges});setEmbeddedTab('plot')}}/></>}
-        {embeddedTab==='cursor'&&<div className="wave-embedded-cursors"><div className="wave-embedded-cursor-buttons" hidden={formHeight<350}>{(['a','b'] as const).map(name=><button type="button" key={name} aria-pressed={active===name} onClick={()=>{setActive(name);setEmbeddedTab('plot')}}>放置游标 {name.toUpperCase()}</button>)}<button type="button" onClick={()=>{setCursors({a:null,b:null});setActive(null)}}>清除游标</button></div><WaveformCursorNavigation availableHeight={formHeight} onPlace={name=>{setActive(name);setEmbeddedTab('plot')}} onClear={()=>{setCursors({a:null,b:null});setActive(null)}} index={index} traces={current} primaryId={primary?.id} cursors={cursors} range={lens?.panel===index?[xAt(lens.domain[0]),xAt(lens.domain[1])]:[xAt(domain[0]),xAt(domain[1])]} xUnit={xUnit} detail={lens?.panel===index} onSelect={trace=>choose(index,trace)} onMove={(name,x)=>{setCursors(old=>({...old,[name]:x}));setActive(null)}}/><p hidden={formHeight<350}>定位后切回绘图页查看读数；A / B 光标可拖动，左右方向键逐点移动。</p></div>}
+        {embeddedTab==='cursor'&&<div className="wave-embedded-cursors"><WaveformCursorNavigation availableHeight={formHeight} onPlace={name=>{setInspectMode('measure');setActive(name);setEmbeddedTab('plot')}} onClear={()=>{setCursors({a:null,b:null});setActive(null);setInspectMode(null)}} index={index} traces={current} primaryId={primary?.id} cursors={cursors} range={lens?.panel===index?[xAt(lens.domain[0]),xAt(lens.domain[1])]:[xAt(domain[0]),xAt(domain[1])]} xUnit={xUnit} detail={lens?.panel===index} onSelect={trace=>choose(index,trace)} onMove={(name,x)=>{setCursors(old=>({...old,[name]:x}));setActive(null)}}/></div>}
         {embeddedTab==='info'&&<section className="wave-embedded-info"><p>本次结果 {notices.length} 条说明</p>{infoItems.slice(page*infoPageSize,(page+1)*infoPageSize).map((notice,i)=><p key={i} role="status">{notice}</p>)}{!infoItems.length&&<p>所有已选曲线均有有效数据。</p>}<div className="wave-embedded-pagination"><button type="button" disabled={page===0} onClick={()=>setInfoPage(page-1)}>上一页</button><span>{page+1} / {infoTotal} 页</span><button type="button" disabled={page===infoTotal-1} onClick={()=>setInfoPage(page+1)}>下一页</button></div></section>}
       </div>
     </section>
@@ -643,7 +679,7 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
           <SignalPlot active={workspaceActive} onSelectTrace={trace=>choose(index,trace)} index={index} result={result} traces={traces} primaryId={primary?.id} axisRanges={panel.axisRanges} shared={shared} selecting={inspectMode==='zoom'} selectionDomain={lens?.panel===index?lens.domain:undefined} onSelectDomain={(next,ranges)=>{setLens({panel:index,domain:next,axisRanges:ranges});setInspectMode(null)}}/>
           {lens?.panel===index&&<section className="wave-detail" data-wave-detail={index} aria-label={`视图 ${index+1} 局部放大细节窗`}>
             <header><div><ScanSearch size={15}/><strong>局部细节</strong><span>{formatSI(xAt(lens.domain[0]),frequency?'Hz':resultXAxisUnit(result),4)} — {formatSI(xAt(lens.domain[1]),frequency?'Hz':resultXAxisUnit(result),4)}</span></div><div><small>{Number(((domain[1]-domain[0])/(lens.domain[1]-lens.domain[0])).toPrecision(3))}× 横轴 · 纵轴可独立缩放</small><button type="button" aria-label="重新框选放大区间" onClick={()=>startInspect('zoom')}><ScanSearch size={13}/>重选</button><button type="button" aria-label="关闭局部细节窗" onClick={()=>setLens(null)}><X size={14}/></button></div></header>
-            <SignalPlot active={workspaceActive} onSelectTrace={trace=>choose(index,trace)} index={index} result={result} traces={traces} primaryId={primary?.id} axisRanges={lens.axisRanges??panel.axisRanges} detail shared={{...shared,domain:lens.domain,onPanAxes:(_index,ranges)=>setLens(old=>old?{...old,axisRanges:ranges}:null),onZoom:(factor,anchor=.5)=>setLens(old=>old?{...old,domain:zoomWaveformDomain(old.domain,factor,anchor)}:null),onPan:fraction=>setLens(old=>old?{...old,domain:panWaveformDomain(old.domain,fraction)}:null)}}/>
+            <SignalPlot active={workspaceActive} onSelectTrace={trace=>choose(index,trace)} index={index} result={result} traces={traces} primaryId={primary?.id} axisRanges={lens.axisRanges??panel.axisRanges} detail shared={{...shared,domain:lens.domain,onCoordinateZoom:(_index,nextDomain,ranges)=>setLens(old=>old?{...old,domain:nextDomain,axisRanges:ranges}:null),onPanAxes:(_index,ranges)=>setLens(old=>old?{...old,axisRanges:ranges}:null),onZoom:(factor,anchor=.5)=>setLens(old=>old?{...old,domain:zoomWaveformDomain(old.domain,factor,anchor)}:null),onPan:fraction=>setLens(old=>old?{...old,domain:panWaveformDomain(old.domain,fraction)}:null)}}/>
           </section>}
           <WaveformTraceBar index={index} result={result} panel={panel} signals={panelCatalogues[index].signals} traces={traces} measurements={measurements} onChange={next=>patch(index,next)} onSelect={trace=>choose(index,trace)} onSoloToggle={()=>panel.solo?restoreOverlay(index):primary&&focusTrace(index,primary)} onDefault={()=>patch(index,{...defaults[index],source:'signals',solo:false,overlayIds:undefined})}/>
         </section>{layout===2&&index===0&&<div className={`wave-splitter${draggingSplit?' is-dragging':''}`} role="separator" aria-label={splitDirection==='rows'?'上下波形分隔条':'左右波形分隔条'} aria-orientation={splitDirection==='rows'?'horizontal':'vertical'} aria-valuemin={25} aria-valuemax={75} aria-valuenow={splitRatio} tabIndex={0} title="拖动调整两个波形视图的大小；双击恢复均分" onPointerDown={event=>{event.preventDefault();event.stopPropagation();event.currentTarget.setPointerCapture?.(event.pointerId);setDraggingSplit(true);updateSplit(event)}} onPointerMove={event=>{if(draggingSplit)updateSplit(event)}} onPointerUp={event=>{if(draggingSplit)updateSplit(event);event.currentTarget.releasePointerCapture?.(event.pointerId);setDraggingSplit(false)}} onPointerCancel={()=>setDraggingSplit(false)} onDoubleClick={()=>setSplitRatio(50)} onKeyDown={event=>{const negative=splitDirection==='rows'?'ArrowUp':'ArrowLeft',positive=splitDirection==='rows'?'ArrowDown':'ArrowRight';if(event.key===negative||event.key===positive){event.preventDefault();setSplitRatio(old=>Math.max(25,Math.min(75,old+(event.key===positive?1:-1)*(event.shiftKey?10:5))))}else if(event.key==='Home'||event.key==='End'){event.preventDefault();setSplitRatio(event.key==='Home'?25:75)}}}><span className="wave-splitter-grip" aria-hidden="true"/><span className="wave-splitter-value">{splitRatio}%</span></div>}</Fragment>
@@ -693,81 +729,23 @@ function CompactLegend({traces,index,target}:{traces:WaveformTrace[];index:numbe
   </header>
 }
 
-/** A diagram is a read-only view of the same selected traces, zoom and cursors. */
-export function CanvasWaveformPreview({result,snapshot,activePanel=0,onSelectPanel,showProbeTarget=true,onWheelResize,onWheelZoom}:{result:Result;snapshot:WaveformSnapshot|null;activePanel?:number;onSelectPanel?:(index:number)=>void;showProbeTarget?:boolean;onWheelResize?:(factor:number,anchor?:{x:number;y:number})=>void;/** @deprecated use onWheelResize; retained for embedded callers during migration. */onWheelZoom?:(factor:number,anchor?:number)=>void}) {
+/** A diagram shares selected traces, coordinates and cursors with the result view. */
+export function CanvasWaveformPreview({result,snapshot,activePanel=0,onSelectPanel,showProbeTarget=true,onViewZoom,onWheelZoom}:{
+  result:Result;snapshot:WaveformSnapshot|null;activePanel?:number;onSelectPanel?:(index:number)=>void;showProbeTarget?:boolean
+  onViewZoom?:(domain:WaveformDomain,panelIndex:number,ranges:WaveformAxisRanges)=>void
+  /** @deprecated Frame resizing is only available through the resize handles. */
+  onWheelResize?:(factor:number,anchor?:{x:number;y:number})=>void
+  /** @deprecated Use onViewZoom for both axes and per-plot units. */
+  onWheelZoom?:(factor:number,anchor?:number)=>void
+}) {
   const preview=useRef<HTMLDivElement>(null)
-  useEffect(()=>{
-    const element=preview.current
-    if(!element||(!onWheelResize&&!onWheelZoom))return
-    const selectedFrame=()=>element.closest('[data-canvas-diagram]')
-      ?? [...element.ownerDocument.querySelectorAll('[data-canvas-diagram]')].find(candidate=>candidate.contains(element))
-    const insideFrame=(event:WheelEvent,frame:Element|null)=>{
-      if(event.target&&frame?.contains(event.target as Node))return true
-      // Chromium can retarget a wheel from a foreignObject's HTML subtree to
-      // the surrounding SVG. Coordinates still identify the selected frame,
-      // including its title and controls.
-      const bounds=(frame??element).getBoundingClientRect()
-      return bounds.width>0&&bounds.height>0&&event.clientX>=bounds.left&&event.clientX<=bounds.right&&event.clientY>=bounds.top&&event.clientY<=bounds.bottom
-    }
-    const wheel=(event:WheelEvent)=>{
-      if(event.defaultPrevented)return
-      if((event.target as Element|null)?.closest?.('dialog,[role="dialog"],[aria-modal="true"],.canvas-waveform-legend-details'))return
-      const frame=selectedFrame()
-      // The parent frame handles title, controls and all result states in one
-      // place. Retain this listener only for standalone/legacy preview hosts.
-      if(frame?.getAttribute('data-waveform-wheel-owner')==='frame')return
-      // An unselected frame deliberately leaves the event for EditorCanvas,
-      // whose wheel handler zooms/pans the schematic as usual.
-      if(frame?.getAttribute('data-diagram-selected')!=='true'||!event.deltaY||!insideFrame(event,frame))return
-      // JSDOM does not always expose Element on the global object, and
-      // Chromium may retarget a foreignObject wheel to an SVG element. Use
-      // the capability we need instead of an instanceof check so both paths
-      // share the same hit testing logic.
-      const hitElement=event.target&&typeof (event.target as {closest?:unknown}).closest==='function'
-        ? event.target as Element
-        : null
-      const plot=[...element.querySelectorAll<SVGElement>('.wave-plot')].find(candidate=>{
-        if(hitElement?.closest('.wave-plot')===candidate)return true
-        const plotBounds=candidate.getBoundingClientRect()
-        return plotBounds.width>0&&plotBounds.height>0&&event.clientX>=plotBounds.left&&event.clientX<=plotBounds.right&&event.clientY>=plotBounds.top&&event.clientY<=plotBounds.bottom
-      })
-      const frameBounds=frame?.getBoundingClientRect()??element.getBoundingClientRect()
-      const plotBounds=plot?.getBoundingClientRect()??frameBounds
-      const bounds=plot?plotBounds:frameBounds
-      const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?(frameBounds.height||element.clientHeight):1)
-      const factor=Math.exp(-Math.max(-160,Math.min(160,delta))*.0025)
-      if(plot&&(onWheelResize||onWheelZoom)){
-        event.preventDefault();event.stopPropagation()
-        const anchorBounds=onWheelResize?frameBounds:bounds
-        const anchor=anchorBounds.width>0?Math.max(0,Math.min(1,(event.clientX-anchorBounds.left)/anchorBounds.width)):.5
-        if(onWheelResize)onWheelResize(factor,{x:anchor,y:anchorBounds.height>0?Math.max(0,Math.min(1,(event.clientY-anchorBounds.top)/anchorBounds.height)):.5})
-        else onWheelZoom?.(factor,anchor)
-        return
-      }
-      // Wheel over a frame title/background still resizes the sheet object.
-      // Keep the legacy callback as a fallback for embedded callers without a
-      // plot callback, while plot events always take the internal path above.
-      if(!plot&&onWheelResize){
-        event.preventDefault();event.stopPropagation()
-        const anchor={x:bounds.width>0?Math.max(0,Math.min(1,(event.clientX-bounds.left)/bounds.width)):.5,
-          y:bounds.height>0?Math.max(0,Math.min(1,(event.clientY-bounds.top)/bounds.height)):.5}
-        onWheelResize(factor,anchor)
-        return
-      }
-    }
-    // Capture inside the foreignObject before the SVG editor's wheel listener
-    // can see the event.  A bubbling listener is unreliable in Chromium when
-    // an HTML descendant of an SVG foreignObject is the wheel target: the
-    // outer schematic may receive the event first and zoom the whole canvas.
-    element.addEventListener('wheel',wheel,{capture:true,passive:false})
-    // Keep a window capture guard as well. Some Chromium versions retarget
-    // the event to the outer SVG, bypassing the HTML node's capture phase.
-    window.addEventListener('wheel',wheel,{capture:true,passive:false})
-    return()=>{element.removeEventListener('wheel',wheel,true);window.removeEventListener('wheel',wheel,true)}
-  },[onWheelResize,onWheelZoom])
   if(result.analysis==='op')return <div ref={preview} className="canvas-op-preview"><strong>直流工作点</strong>{Object.entries(result.voltages??{}).slice(0,8).map(([name,values])=><div key={name}><span>{name}</span><b>{formatSI(values[0],'V',5)}</b></div>)}<small>双击查看完整结果</small></div>
   if(!snapshot||snapshot.resultId!==result.id)return <div ref={preview} className="canvas-waveform-empty">正在准备波形…</div>
-  const shared:SharedView={...snapshot,hover:null,active:null,onHover:()=>{},onPin:()=>{},onZoom:()=>{},onPan:()=>{}}
+  const shared:SharedView={...snapshot,hover:null,active:null,onHover:()=>{},onPin:()=>{},onZoom:(factor,anchor)=>onWheelZoom?.(factor,anchor),
+    onPan:fraction=>onViewZoom?.(panWaveformDomain(snapshot.domain,fraction),activePanel,snapshot.panels[activePanel]?.axisRanges??{}),
+    ...(onViewZoom?{onCoordinateZoom:(index:number,domain:WaveformDomain,ranges:WaveformAxisRanges)=>onViewZoom(domain,index,ranges),
+      onPanAxes:(index:number,ranges:WaveformAxisRanges)=>onViewZoom(snapshot.domain,index,ranges)}:{})}
+
   const reserveRightAxis=snapshot.panels.some(panel=>new Set(panel.traces.map(trace=>trace.unit)).size>1)
   const axisOrder=[...new Set(snapshot.panels.flatMap(panel=>panel.traces.map(trace=>trace.unit)))].sort((a,b)=>['V','A','dBV','dBA','dB','°'].indexOf(a)-['V','A','dBV','dBA','dB','°'].indexOf(b))
   const previewDirection=snapshot.splitDirection??'rows',previewRatio=snapshot.splitRatio??50
@@ -777,7 +755,7 @@ export function CanvasWaveformPreview({result,snapshot,activePanel=0,onSelectPan
   return <div ref={preview} className={`canvas-waveform-preview canvas-waveform-layout-${snapshot.layout}${snapshot.layout===2?` canvas-waveform-split-${previewDirection}`:''}`} style={previewStyle} aria-label="画布中的波形预览">
     {snapshot.panels.map((panel,index)=><section key={index} className={`canvas-waveform-preview-panel${onSelectPanel&&showProbeTarget&&activePanel===index?' is-probe-target':''}`} aria-label={`画布波形视图 ${index+1}`} data-waveform-panel={index} role={onSelectPanel?'button':undefined} tabIndex={onSelectPanel?0:undefined} aria-pressed={onSelectPanel?showProbeTarget&&activePanel===index:undefined} onClick={()=>onSelectPanel?.(index)} onKeyDown={event=>{if(event.target===event.currentTarget&&onSelectPanel&&(event.key==='Enter'||event.key===' ')){event.preventDefault();event.stopPropagation();onSelectPanel(index)}}}>
       <CompactLegend traces={panel.traces} index={index} target={!!onSelectPanel&&showProbeTarget&&activePanel===index}/>
-      <SignalPlot index={index} result={result} traces={panel.traces} primaryId={panel.primaryId} axisRanges={panel.axisRanges} shared={shared} interactive={false} reserveRightAxis={reserveRightAxis} axisOrder={axisOrder}/>
+      <SignalPlot index={index} result={result} traces={panel.traces} primaryId={panel.primaryId} axisRanges={panel.axisRanges} shared={shared} interactive={false} wheelable={!!onViewZoom||!!onWheelZoom} pannable={!!onViewZoom} reserveRightAxis={reserveRightAxis} axisOrder={axisOrder}/>
     </section>)}
   </div>
 }

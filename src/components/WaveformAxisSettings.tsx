@@ -17,7 +17,7 @@ interface Props {
 export default function WaveformAxisSettings({ index, traces, panel, bounds, domain, xUnit, logarithmic, onApply, embedded=false, availableHeight=500, includeComparison=false, onIncludeComparison, onResetCoordinates, onRestoreCoordinates, canRestoreCoordinates=false }: Props) {
   const window = useRef<HTMLElement>(null)
   const [open, setOpen] = useState(false)
-  useWorkbenchDialog(window, open && !embedded, () => setOpen(false))
+  const motion = useWorkbenchDialog(window, open && !embedded, () => setOpen(false), { motionEnabled: !embedded })
   const [xStart, setXStart] = useState(''), [xEnd, setXEnd] = useState('')
   const [axes, setAxes] = useState<Record<string, { fixed: boolean; start: string; end: string }>>({})
   const [error, setError] = useState('')
@@ -88,7 +88,7 @@ export default function WaveformAxisSettings({ index, traces, panel, bounds, dom
     <footer><button type="button" onClick={()=>setAxes(old=>Object.fromEntries(Object.entries(old).map(([key,value])=>[key,{...value,fixed:false}]))) }>恢复自动纵轴</button><button type="button" aria-label={`视图 ${index + 1} 应用坐标轴设置`} onClick={apply}>应用设置</button></footer>
   </section>
   return <><button type="button" className="wave-axis-settings-toggle" aria-label={`视图 ${index + 1} 坐标轴设置`} onClick={() => { load(); setOpen(true) }}><SlidersHorizontal size={12} />坐标轴{units.some(unit => panel.axisRanges?.[unit]) && <small>固定</small>}</button>
-    {createPortal(<div className="workbench-window-backdrop wave-axis-backdrop" hidden={!open} onMouseDown={event => { if(event.target === event.currentTarget) setOpen(false) }}>
+    {createPortal(<div className="workbench-window-backdrop wave-axis-backdrop" hidden={!motion.mounted} onMouseDown={event => { if(event.target === event.currentTarget) setOpen(false) }}>
     <section ref={window} className="workbench-window wave-axis-window" role={open ? 'dialog' : undefined} aria-modal={open ? true : undefined} aria-label={`视图 ${index + 1} 坐标轴设置`} onKeyDown={event => event.stopPropagation()}>
     <header className="workbench-window-heading"><div><h2><SlidersHorizontal size={18} />坐标轴 · 视图 {index + 1}</h2></div><button type="button" aria-label="关闭坐标轴设置" onClick={() => setOpen(false)}>关闭</button></header>
     <div className="wave-axis-settings-body">

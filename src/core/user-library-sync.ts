@@ -71,6 +71,16 @@ export function importPersistentUserLibrary(text: string, options: PersistentUse
     cache(result.document, options); return result
   })
 }
+/** One durable merge keeps a multi-model file atomic when any name conflicts. */
+export function importModelsToPersistentUserLibrary(models: ImportedSpiceModel[], options: PersistentUserLibraryOptions = {}): Promise<MergeResult> {
+  return serialize(async () => {
+    if (!models.length) throw new Error('请先选择要导入自建库的模型。')
+    const document = parseUserLibrary({ schemaVersion: 1, entries: models.map(model => createUserLibraryEntry(model)) })
+    await migrate(options)
+    const result = await request('merge', { document }, options)
+    cache(result.document, options); return result
+  })
+}
 export function removeModelFromPersistentUserLibrary(id: string, options: PersistentUserLibraryOptions = {}): Promise<RemoveResult> {
   return serialize(async () => {
     await migrate(options)

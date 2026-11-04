@@ -26,7 +26,7 @@ function previewImage(project: Project) {
 export default function AgentProposalPreview({ project, baseline, proposalLabel = '候选原理图', baselineLabel = '任务开始时的原理图' }: AgentProposalPreviewProps) {
   const [expanded, setExpanded] = useState(false), [comparison, setComparison] = useState(false), [zoom, setZoom] = useState<number | null>(null)
   const panel = useRef<HTMLElement>(null)
-  useWorkbenchDialog(panel, expanded, () => setExpanded(false))
+  const motion = useWorkbenchDialog(panel, expanded, () => setExpanded(false))
   const proposal = useMemo(() => { try { return { image: previewImage(project), error: '' } } catch (error) { return { image: null, error: (error as Error).message } } }, [project])
   const original = useMemo(() => { try { return baseline ? previewImage(baseline) : null } catch { return null } }, [baseline])
   const image = comparison && original ? original : proposal.image
@@ -45,7 +45,7 @@ export default function AgentProposalPreview({ project, baseline, proposalLabel 
     <button className="agent-proposal-thumbnail" style={thumbnailStyle} type="button" aria-label="放大预览候选原理图" onClick={() => setExpanded(true)}><img src={proposal.image.src} alt={`${project.title}的${proposalLabel}`}/><span><Expand size={13}/>放大预览</span></button>
     <small>只读预览 · 应用前可检查器件与接线</small>
     <WaveformSetupPreview project={project}/>
-    {expanded && createPortal(<div className="workbench-window-backdrop agent-proposal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setExpanded(false) }}>
+    {motion.mounted && createPortal(<div className="workbench-window-backdrop agent-proposal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setExpanded(false) }}>
       <section ref={panel} className="workbench-window agent-proposal-window" role="dialog" aria-modal="true" aria-label="候选原理图放大预览" tabIndex={-1}>
         <header className="agent-proposal-window-heading"><div><span>SCHEMATIC REVIEW</span><h2>{label}</h2><p>{comparison && baseline ? baseline.title : project.title}</p></div><button type="button" aria-label="关闭原理图预览" onClick={() => setExpanded(false)}><X size={20}/></button></header>
         <div className="agent-proposal-preview-tools"><div className="agent-proposal-compare" aria-label="预览版本"><button type="button" aria-pressed={!comparison} onClick={() => { setComparison(false); setZoom(null) }}>{proposalLabel === '候选原理图' ? '候选方案' : proposalLabel}</button>{original && <button type="button" aria-pressed={comparison} onClick={() => { setComparison(true); setZoom(null) }}>{baselineLabel === '任务开始时的原理图' ? '任务开始时' : baselineLabel}</button>}</div><div className="agent-proposal-zoom"><button type="button" aria-label="缩小原理图预览" disabled={zoom !== null && zoom <= .2} onClick={() => magnify(-1)}><Minus size={15}/></button><output aria-label="预览缩放">{zoom === null ? '适应窗口' : `${Math.round(zoom * 100)}%`}</output><button type="button" aria-label="放大原理图预览" disabled={zoom !== null && zoom >= 4} onClick={() => magnify(1)}><Plus size={15}/></button><button type="button" aria-label="原理图预览适应窗口" onClick={() => setZoom(null)}><Scan size={15}/></button></div></div>

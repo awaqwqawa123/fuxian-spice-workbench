@@ -34,6 +34,7 @@ async function workspace(seed: Project) {
       const projectId = new URL(url, 'http://localhost').searchParams.get('projectId')!
       return Response.json({ projectId, threadId: 'fixture-project-thread', connected: true, ready: true, desktopConnected: true, owner: 'web', busy: false, pendingOwner: null, pendingApprovals: 0, approvals: [], messages: [], error: null, updatedAt: 1 })
     }
+    if (url === '/api/model-library/browse') return Response.json({groups:[],counts:[],libraries:[],total:0,offset:0,limit:40})
     if (url === '/api/codex/status') return Response.json(codexStatusFixture)
     const source={label:'Fixture model source',url:'https://example.com/test.lib'}
     if(url==='/api/model-library/search')return new Response(JSON.stringify({candidates:[{id:'fixture-model',name:'SEARCH_D.lib',path:'Models/SEARCH_D.lib',source,matchedModels:['SEARCH_D']}],notices:[],indexedFiles:1}),{headers:{'Content-Type':'application/json'}})
@@ -186,13 +187,17 @@ test('one full-height left navigation switches and collapses panels without losi
     }
     assert.equal(ui.query('#workspace-left').querySelector('[role="tablist"]'), null, 'panel does not repeat the rail navigation')
     await ui.input('[aria-label="项目名称"]', '侧栏切换中的工程')
-    await ui.input('[aria-label="搜索器件"]', '继电器')
-    const search = ui.query<HTMLInputElement>('[aria-label="搜索器件"]')
+    assert.equal(ui.doc.querySelector('[aria-label="搜索器件"]'),null,'sidebar has only common shortcuts and one extension entrance')
+    await ui.click(ui.query('.library-extension-toggle'))
+    await ui.input('[aria-label="搜索本地器件"]', '继电器')
+    await ui.click(ui.button('关闭拓展器件'))
     await ui.click(ui.button('项目侧栏'))
     assert.equal(ui.query<HTMLElement>('#workspace-projects-panel').hidden, false)
     assert.ok(ui.doc.querySelector('.project-sidebar-entry[title="侧栏切换中的工程"]'))
     await ui.click(ui.query('#workspace-library-tab'))
-    assert.equal(search.value, '继电器', 'switching sections preserves a library search')
+    await ui.click(ui.query('.library-extension-toggle'))
+    assert.equal(ui.query<HTMLInputElement>('[aria-label="搜索本地器件"]').value,'继电器','switching sections preserves the extension search')
+    await ui.click(ui.button('关闭拓展器件'))
     await ui.click(ui.query('#workspace-projects-tab'))
     await ui.key('End', ui.query('#workspace-projects-tab'))
     assert.equal(ui.query('#workspace-library-tab').getAttribute('aria-selected'), 'true')
@@ -211,8 +216,11 @@ test('one full-height left navigation switches and collapses panels without losi
     assert.equal(ui.query<HTMLElement>('#workspace-right').hidden, true)
     assert.equal(ui.query('.workspace-shell').classList.contains('is-canvas-maximized'), false)
     assert.equal(ui.query<HTMLElement>('.workspace-canvas-host').hidden, false)
-    assert.equal(ui.doc.activeElement, search)
-    assert.equal(search.value, '')
+    const search=ui.query<HTMLInputElement>('[aria-label="搜索本地器件"]')
+    assert.ok(search.closest('[role="dialog"][aria-label="拓展器件"]'))
+    assert.equal(ui.doc.activeElement,search,'F2 opens the unified dialog and focuses its local model search')
+    assert.equal(search.value,'继电器','F2 keeps the existing local filters')
+    await ui.click(ui.button('关闭拓展器件'))
     assert.equal(ui.collection().activeId, id)
     assert.equal(ui.active().title, '侧栏切换中的工程')
     assert.equal(ui.query('.editor-canvas'), canvas)
@@ -280,7 +288,8 @@ test('right waveform groups retain coordinates, curves and cursors across collap
     const beforeRuns=ui.pending.length
     await ui.click(ui.button('收起波形'))
     assert.equal(ui.query('.single-page-workspace').getAttribute('data-workspace-mode'),'schematic')
-    await ui.click(ui.button('展开波形',ui.query('[aria-label="已收起的波形区"]')))
+    assert.equal(ui.doc.querySelector('.page-waveform-rail'),null,'collapsed results do not reserve a second full-height navigation rail')
+    await ui.click(ui.button('展开波形',ui.query('[aria-label="工作区视图"]')))
     for(const focus of ['专注波形','专注电路']){
       await ui.click(ui.button(focus));await ui.click(ui.button('恢复左右布局'))
     }

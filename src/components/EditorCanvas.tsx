@@ -1,3 +1,4 @@
+import MotionPresence from './MotionPresence'
 import {readCanvasViewPreference,saveCanvasViewPreference} from '../core/canvas-view-preferences'
 import { canProbeCurrent } from '../core/branch-currents'
 import { deviceCatalog, deviceKinds, pinsFor } from '../core/devices'
@@ -842,5 +843,5 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
         constrainMove={group?geometry=>moveCanvasDiagrams(canvasDiagrams,diagramSelection,{x:geometry.x-diagram.x,y:geometry.y-diagram.y}).find(change=>change.id===diagram.id)??geometry:undefined}
         onPreview={(id,geometry)=>setDiagramPreview(geometry&&group?{id,changes:moveCanvasDiagrams(canvasDiagrams,diagramSelection,{x:geometry.x-diagram.x,y:geometry.y-diagram.y})}:null)}/>
     })}
-  </svg>{middleZooming&&<div className="canvas-middle-zoom-hint" role="status"><strong>快速缩放</strong><span>↑ 放大　↓ 缩小</span><small>轻点中键退出 · 按住中键拖动平移</small></div>}{active&&valueDevice&&hasQuickValue(valueDevice)&&<ComponentValueEditor key={valueDevice.id} device={valueDevice} onApply={applyValue} onClose={()=>setEditingValue(null)}/>}</>
+  </svg>{middleZooming&&<div className="canvas-middle-zoom-hint" role="status"><strong>快速缩放</strong><span>↑ 放大　↓ 缩小</span><small>轻点中键退出 · 按住中键拖动平移</small></div>}<MotionPresence present={!!(active&&valueDevice&&hasQuickValue(valueDevice))}>{active&&valueDevice&&hasQuickValue(valueDevice)&&<ComponentValueEditor key={valueDevice.id} device={valueDevice} onApply={applyValue} onClose={()=>setEditingValue(null)}/>}</MotionPresence></>
 }

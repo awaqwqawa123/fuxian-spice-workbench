@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { contextMenuPosition, type CanvasContextMenuItem, type CanvasContextRequest } from '../core/context-menu'
+import { useMotionSurface } from './MotionPresence'
 export type { CanvasContextMenuItem, CanvasContextRequest } from '../core/context-menu'
 
 export interface CanvasContextMenuProps {
@@ -13,6 +14,7 @@ export interface CanvasContextMenuProps {
 
 export default function CanvasContextMenu({request,items,title='原理图菜单',onAction,onClose}:CanvasContextMenuProps){
   const menu=useRef<HTMLDivElement>(null)
+  const motion=useMotionSurface(menu,{kind:'menu'})
   const origin=useRef<Element|null>(null)
   const close=useRef(onClose);close.current=onClose
   const [at,setAt]=useState({x:request.clientX,y:request.clientY})
@@ -21,6 +23,7 @@ export default function CanvasContextMenu({request,items,title='原理图菜单'
     if(target?.isConnected)target.focus?.({preventScroll:true})
   }
   useLayoutEffect(()=>{
+    if(!motion.active)return
     const panel=menu.current;if(!panel)return
     origin.current=document.activeElement
     const rect=panel.getBoundingClientRect()
@@ -37,8 +40,9 @@ export default function CanvasContextMenu({request,items,title='原理图菜单'
       window.removeEventListener('resize',resize)
       if(panel.contains(document.activeElement)||document.activeElement===document.body)restoreFocus()
     }
-  },[request])
+  },[request,motion.active])
   function keyDown(event:KeyboardEvent<HTMLDivElement>){
+    if(!motion.active)return
     // Keep the editor's global delete/rotate shortcuts out of a focused menu.
     event.stopPropagation()
     if(event.key==='Escape'||event.key==='Tab'){
@@ -59,7 +63,7 @@ export default function CanvasContextMenu({request,items,title='原理图菜单'
     {items.map(item=><div key={item.id} role="none">
       {item.separatorBefore&&<div className="canvas-context-menu-separator" role="separator"/>}
       <button type="button" role="menuitem" tabIndex={-1} disabled={item.disabled} className={item.danger?'is-danger':undefined}
-        onClick={()=>{restoreFocus();onClose();onAction(item.id)}}>
+        onClick={()=>{if(!motion.active)return;restoreFocus();onClose();onAction(item.id)}}>
         <span>{item.label}</span>{item.shortcut&&<kbd>{item.shortcut}</kbd>}
       </button>
     </div>)}
