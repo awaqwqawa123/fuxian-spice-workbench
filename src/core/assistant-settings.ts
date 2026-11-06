@@ -5,6 +5,7 @@ import type { AcquisitionEngine } from './model-acquisition'
 
 export type AssistantApiSettings = AiProvider & { preset: AiProviderId }
 export interface AssistantSettings {
+  connectionMode: 'mcp' | 'native'
   api: AssistantApiSettings
   nativeModels: { codex: string; cursor: string }
   modelEngine: AcquisitionEngine
@@ -13,7 +14,7 @@ export interface AssistantSettings {
 }
 export const ASSISTANT_SETTINGS_KEY = 'fuxian-assistant-settings-v1'
 export const LEGACY_API_SETTINGS_KEY = 'fuxian.ai-provider.v1'
-const defaults = (): AssistantSettings => ({ api: { endpoint: 'https://api.openai.com/v1', model: '', apiKey: '', protocol: 'chat-completions', preset: 'openai' }, nativeModels: { codex: '', cursor: '' }, modelEngine: 'codex', dshSelection: null, dshStatus: null })
+const defaults = (): AssistantSettings => ({ connectionMode: 'mcp', api: { endpoint: 'https://api.openai.com/v1', model: '', apiKey: '', protocol: 'chat-completions', preset: 'openai' }, nativeModels: { codex: '', cursor: '' }, modelEngine: 'codex', dshSelection: null, dshStatus: null })
 
 /** Only allowlisted preferences are read. Secrets in older storage never migrate. */
 export function readAssistantSettings(storage?: Pick<Storage, 'getItem'> | null): AssistantSettings {
@@ -21,6 +22,7 @@ export function readAssistantSettings(storage?: Pick<Storage, 'getItem'> | null)
   if (!storage) return next
   try {
     const raw = JSON.parse(storage.getItem(ASSISTANT_SETTINGS_KEY) ?? 'null')
+    if(raw?.connectionMode==='native')next.connectionMode='native'
     const api = raw?.api ?? JSON.parse(storage.getItem(LEGACY_API_SETTINGS_KEY) ?? 'null')
     if (api && typeof api.endpoint === 'string' && typeof api.model === 'string') {
       providerUrls(api.endpoint)
@@ -39,7 +41,7 @@ export function persistAssistantSettings(value: AssistantSettings, storage?: Pic
     providerUrls(value.api.endpoint)
     const { endpoint, model, protocol, preset } = value.api
     const api = { endpoint, model, protocol, preset }
-    storage.setItem(ASSISTANT_SETTINGS_KEY, JSON.stringify({ api, nativeModels: value.nativeModels, modelEngine: value.modelEngine, dshSelection: value.dshSelection }))
+    storage.setItem(ASSISTANT_SETTINGS_KEY, JSON.stringify({ connectionMode: value.connectionMode, api, nativeModels: value.nativeModels, modelEngine: value.modelEngine, dshSelection: value.dshSelection }))
     // Keep the old allowlisted shape for clients still open on an earlier version.
     storage.setItem(LEGACY_API_SETTINGS_KEY, JSON.stringify(api))
   } catch { /* Invalid addresses and unavailable storage remain memory-only. */ }

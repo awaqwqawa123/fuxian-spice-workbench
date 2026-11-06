@@ -1,15 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { newProject, type Project } from './core/circuit'
 import { blankProject } from './core/editor'
-import { addProject, loadProjectCollection, saveProjectCollection, selectProject, updateProject } from './core/project-store'
+import { addProject, loadProjectCollection, saveProjectCollection, saveProjectSelection, selectProject, updateProject } from './core/project-store'
 import EditorWorkbench from './EditorWorkbench'
 import ProjectSidebar from './components/ProjectSidebar'
 import { applyWorkbenchRoute } from './core/workbench-route'
 import { ensureDesktopControlThread, DesktopControlRequestError } from './core/desktop-control-client'
+import { useAssistantSettings } from './core/assistant-settings'
 
 const projectStorage={getItem:(key:string)=>localStorage.getItem(key),setItem:(key:string,value:string)=>localStorage.setItem(key,value)}
 
 export default function App() {
+  const { connectionMode } = useAssistantSettings()
   const [loaded] = useState(() => applyWorkbenchRoute(loadProjectCollection(projectStorage,newProject()),window.location.search))
   const [collection,setCollection] = useState(loaded.collection)
   const [saveState,setSaveState] = useState<'saved'|'saving'|'error'>(loaded.canPersist?'saving':'error')
@@ -21,6 +23,7 @@ export default function App() {
   const currentCollection = useRef(collection)
   currentCollection.current = collection
   const lastEnsuredProject = useRef('')
+  const persistedEntries = useRef<typeof collection.entries | undefined>(undefined)
   const active=collection.entries.find(entry=>entry.id===collection.activeId)!
   const projectChanged=useCallback((project:Project)=>{
     setCollection(previous=>{
@@ -37,7 +40,11 @@ export default function App() {
   },[active.id])
   useEffect(()=>{
     if(!loaded.canPersist)return
-    try{saveProjectCollection(projectStorage,collection);setSaveState('saved');setError(loaded.warning??'')}
+    try{
+      if(persistedEntries.current===collection.entries)saveProjectSelection(projectStorage,collection)
+      else {saveProjectCollection(projectStorage,collection);persistedEntries.current=collection.entries}
+      setSaveState('saved');setError(loaded.warning??'')
+    }
     catch(cause){setSaveState('error');setError(`自动保存失败：${(cause as Error).message}。修改仍在内存，请修正参数或导出备份。`)}
   },[collection,loaded])
   useEffect(() => {
@@ -50,6 +57,7 @@ export default function App() {
     }
   }, [])
   useEffect(() => {
+    if(connectionMode==='mcp')return
     let mounted = true, retry: ReturnType<typeof setTimeout> | undefined, pending: ReturnType<typeof setTimeout> | undefined
     const projectId = collection.activeId, title = active.project.title
     const ensure = async () => {
@@ -64,7 +72,7 @@ export default function App() {
     if (lastEnsuredProject.current === projectId) pending = setTimeout(() => { void ensure() }, 350)
     else { lastEnsuredProject.current = projectId; void ensure() }
     return () => { mounted = false; if (pending) clearTimeout(pending); if (retry) clearTimeout(retry) }
-  }, [collection.activeId, active.project.title])
+  }, [collection.activeId, active.project.title, connectionMode])
   function changeExamples(open: boolean) {
     const hash = open ? '#templates' : '#editor'
     if (window.location.hash !== hash) window.history.pushState(null, '', hash)
@@ -96,10 +104,11 @@ export default function App() {
   }
   function retry(){
     if(!loaded.canPersist)return
-    try{saveProjectCollection(projectStorage,collection);setSaveState('saved');setError('')}
+    try{saveProjectCollection(projectStorage,collection);persistedEntries.current=collection.entries;setSaveState('saved');setError('')}
     catch(cause){setSaveState('error');setError((cause as Error).message)}
   }
-  const projectPanel=<ProjectSidebar embedded entries={collection.entries.map(entry=>({id:entry.id,title:entry.project.title,updatedAt:entry.updatedAt,deviceCount:entry.project.drawing?.devices.filter(part=>part.kind!=='GND').length??0}))} activeId={collection.activeId} onSelect={choose} onNew={create} onDuplicate={duplicate} onOpenFile={()=>requestProjectFile('open')} onSaveFile={()=>requestProjectFile('save')} saveState={saveState} error={error} onRetry={loaded.canPersist?retry:undefined}/>
+  const projectEntries=useMemo(()=>collection.entries.map(entry=>({id:entry.id,title:entry.project.title,updatedAt:entry.updatedAt,deviceCount:entry.project.drawing?.devices.filter(part=>part.kind!=='GND').length??0})),[collection.entries])
+  const projectPanel=<ProjectSidebar embedded entries={projectEntries} activeId={collection.activeId} onSelect={choose} onNew={create} onDuplicate={duplicate} onOpenFile={()=>requestProjectFile('open')} onSaveFile={()=>requestProjectFile('save')} saveState={saveState} error={error} onRetry={loaded.canPersist?retry:undefined}/>
   return <div className="project-shell">
     <div className="project-main">
       <EditorWorkbench key={active.id} initialLeftPanel={initialLeftPanel} projectId={active.id} initialCodexSessionId={active.id===loaded.collection.activeId?loaded.sessionId:undefined} seed={active.project} onProjectChange={projectChanged} onOpenProject={openProjectFile} fileAction={fileAction} initialProjectNotice={openedProjectNotice?.id===active.id?openedProjectNotice.message:undefined} saveState={saveState} saveError={error} onRetrySave={loaded.canPersist?retry:undefined} examplesOpen={examplesOpen} onExamplesOpenChange={changeExamples} projectPanel={projectPanel}/>

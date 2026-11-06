@@ -1,4 +1,5 @@
 import MotionRegion from './components/MotionRegion'
+import { useAssistantSettings } from './core/assistant-settings'
 import { usePanelMotion } from './components/usePanelMotion'
 import MotionPresence from './components/MotionPresence'
 import { canProbeCurrent } from './core/branch-currents'
@@ -175,14 +176,19 @@ function Field({label,value,onChange,hint,type = 'text'}:{label:string;value:str
 }
 
 export default function EditorWorkbench({seed,projectId,initialCodexSessionId,initialLeftPanel,examplesOpen,onExamplesOpenChange,onProjectChange,saveState,saveError,onRetrySave,shortcutsBlocked=false,projectPanel,onOpenProject,fileAction,initialProjectNotice}:{seed:Project;projectId?:string;initialCodexSessionId?:string;initialLeftPanel?:'projects'|'library';onBack?:()=>void;examplesOpen?:boolean;onExamplesOpenChange?:(open:boolean)=>void;onProjectChange?:(project:Project)=>void;saveState?:'saved'|'saving'|'error';saveError?:string;onRetrySave?:()=>void;shortcutsBlocked?:boolean;projectPanel?:ReactNode;onOpenProject?:(project:Project,notice?:string)=>void;fileAction?:{sequence:number;kind:'open'|'save'};initialProjectNotice?:string}) {
+  const {connectionMode}=useAssistantSettings()
   const [localExamplesOpen,setLocalExamplesOpen]=useState(false)
   const galleryOpen=examplesOpen??localExamplesOpen
   function changeExamples(open:boolean){setLocalExamplesOpen(open);onExamplesOpenChange?.(open)}
   const [timeline,setTimeline] = useState<UndoState<EditorSnapshot>>(() => ({past:[],present:initialSnapshot(seed,projectId??'standalone'),future:[]}))
   const project = timeline.present.project, drawing = project.drawing!
-  const electricalSnapshot=useRef(createElectricalViewSnapshot()).current(project)
+  const [electricalViewSnapshot]=useState(createElectricalViewSnapshot)
+  const electricalSnapshot=electricalViewSnapshot(project)
   const namingProject=useRef(project);namingProject.current=project
-  const waveformApplications=useRef<EditorCandidateUndo[]>(readCandidateUndo(projectId))
+  const waveformApplications=useRef<EditorCandidateUndo[]|null>(null)
+  // Restoring up to twelve full project snapshots is only needed by AI
+  // application/undo, never by mounting an editor or moving around its canvas.
+  function candidateApplications(){return waveformApplications.current??=readCandidateUndo(projectId)}
   const desktopCircuit = useDesktopCircuit(projectId, project)
   const [layout,dispatchLayout]=useReducer(workspaceLayoutReducer,undefined,()=>({...createWorkspaceLayout(),leftPanel:initialLeftPanel??'library'}))
   const workspaceBody=useRef<HTMLDivElement>(null)
@@ -202,6 +208,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   const [explanationMounted,setExplanationMounted]=useState(false)
   const [modelAssistantMounted,setModelAssistantMounted]=useState(false)
   const [assistantTab,setAssistantTab]=useState<'chat'|'explain'>('chat')
+  useEffect(()=>{if(connectionMode==='mcp'&&aiMounted){setAssistantTab('chat');setChatMounted(true)}},[connectionMode,aiMounted])
   const [modelAcquisitions,setModelAcquisitions]=useState<AgentModelAcquisition[]>([])
   const receiveModelAcquisitions=useCallback((items:AgentModelAcquisition[])=>{if(items.length)setModelAcquisitions(previous=>{const merged=new Map(previous.map(item=>[item.id,item]));for(const item of items)merged.set(item.id,item);return [...merged.values()].slice(-9)})},[])
   const unmountAiAfterHide=useRef(false)
@@ -456,12 +463,12 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
       const prepared=preparedProjectCommit(before,raw,replaceWaveforms)
       if(capture)committed=prepared.snapshot.project
       pendingProbeNotices.current.push(...prepared.notices)
-      if(application){waveformApplications.current.push({before,afterFingerprint:aiProjectFingerprint(prepared.snapshot.project)});if(waveformApplications.current.length>40)waveformApplications.current.shift()}
+      if(application){const applications=candidateApplications();applications.push({before,afterFingerprint:aiProjectFingerprint(prepared.snapshot.project)});if(applications.length>40)applications.shift()}
       return remember(previous,prepared.snapshot)
     })
     if(capture)flushSync(update);else update()
     if(application&&projectId)try{
-      localStorage.setItem(candidateUndoKey(projectId),JSON.stringify(waveformApplications.current.slice(-12).map(({before,afterFingerprint})=>({before:{project:before.project,waveformSetup:persistentWaveformSetup(before.waveformSetup)},afterFingerprint}))))
+      localStorage.setItem(candidateUndoKey(projectId),JSON.stringify(candidateApplications().slice(-12).map(({before,afterFingerprint})=>({before:{project:before.project,waveformSetup:persistentWaveformSetup(before.waveformSetup)},afterFingerprint}))))
     }catch{setExchangeNotice(previous=>[...previous,'浏览器未能持久保存方案撤销快照；当前页面仍可撤销，请导出工程备份。'])}
     setFailure('')
     return committed
@@ -619,7 +626,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
     try{
       if(options?.undo){
         const beforeKey=canonicalFingerprint(aiProjectFingerprint(next)),afterKey=canonicalFingerprint(aiProjectFingerprint(project))
-        const saved=[...waveformApplications.current].reverse().find(record=>canonicalFingerprint(aiProjectFingerprint(record.before.project))===beforeKey&&canonicalFingerprint(record.afterFingerprint)===afterKey)
+        const saved=[...candidateApplications()].reverse().find(record=>canonicalFingerprint(aiProjectFingerprint(record.before.project))===beforeKey&&canonicalFingerprint(record.afterFingerprint)===afterKey)
         if(saved){setTimeline(previous=>remember(previous,saved.before));resetAppliedView();setStatus('已撤销方案，原理图、探针及应用前的波形图配置已一起恢复。');return saved.before.project}
       }
       const prepared=options?.replace||options?.undo?{project:editableProject(next),notices:[]}:projectWithCandidateProbes(project,editableProject(next)),editable=prepared.project
@@ -1080,7 +1087,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
 
 
       </div></aside>}/></main>
-      {resizeHandle('ai','调整 AI 助手宽度')}{aiMounted&&<AssistantSidebar onAfterHide={afterAiHide} visible={showAi} onMinimize={()=>dispatchLayout({type:'close-ai'})} onClose={closeAi} activeTab={assistantTab} onTabChange={selectAssistantTab} explanation={projectId && explanationMounted ? <CircuitExplanationAssistant key={projectId} projectId={projectId} project={project} circuit={desktopCircuit}/> : projectId ? <div className="circuit-explanation-intro">切到“解释”后建立当前项目的专属子对话。</div> : undefined}>{chatMounted&&<AiAssistant desktopCircuit={desktopCircuit} onOpenSettings={openSettings} onModelAcquisitions={receiveModelAcquisitions} onOpenModels={()=>openModelLibrary('local')} embedded projectId={projectId} project={project} onApply={applyAi} onClose={closeAi}/>}</AssistantSidebar>}
+      {resizeHandle('ai','调整 AI 助手宽度')}{aiMounted&&<AssistantSidebar onAfterHide={afterAiHide} visible={showAi} onMinimize={()=>dispatchLayout({type:'close-ai'})} onClose={closeAi} activeTab={assistantTab} onTabChange={selectAssistantTab} explanation={connectionMode==='mcp'?undefined:projectId && explanationMounted ? <CircuitExplanationAssistant key={projectId} projectId={projectId} project={project} circuit={desktopCircuit}/> : projectId ? <div className="circuit-explanation-intro">切到“解释”后建立当前项目的专属子对话。</div> : undefined}>{chatMounted&&<AiAssistant desktopCircuit={desktopCircuit} onOpenSettings={openSettings} onModelAcquisitions={receiveModelAcquisitions} onOpenModels={()=>openModelLibrary('local')} embedded projectId={projectId} project={project} onApply={applyAi} onClose={closeAi}/>}</AssistantSidebar>}
     </div>
 
     <MotionPresence present={!!importBundle}>{importBundle&&<SimulationImportDialog entries={importBundle.entries} selectedPath={importEntryPath} fileNames={importFileNames} preview={pendingImport} error={importError} createsProject={!!onOpenProject} onSelect={path=>selectSimulationEntry(importBundle,path)} onChooseFiles={()=>fileInput.current?.click()} onApply={applySimulationImport} onCancel={closeSimulationImport}/>}</MotionPresence>

@@ -1,11 +1,12 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { mkdir, readFile, readdir, rename, stat, writeFile } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { validWorkbenchProjectId } from '../src/core/codex-workbench-link'
 import type { DesktopControlApproval, DesktopControlMessage, DesktopControlOwner, DesktopControlState } from '../src/core/desktop-control'
 import type { DesktopCircuitManager } from './desktop-circuit-manager'
 import { DesktopControlCircuit } from './desktop-control-circuit'
+import { DesktopConversationFolder } from './desktop-conversation-folder'
 
 type Data = Record<string, any>
 const object = (value: unknown): Data => value && typeof value === 'object' && !Array.isArray(value) ? value as Data : {}
@@ -45,8 +46,8 @@ export interface DesktopControlBroker {
 }
 export interface DesktopControlManagerOptions {
   directory: string; projectDirectory: string; legacyDirectory?: string
-  /** Resolve the shared Codex project directory only when starting a fresh thread. */
-  conversationDirectory?: () => Promise<string>
+  /** Resolve this project's private working directory only for a fresh thread. */
+  conversationDirectory?: (projectId: string) => Promise<string>
   brokerFactory?: () => Promise<DesktopControlBroker> | DesktopControlBroker
   circuitManager?: DesktopCircuitManager
   explanationOnly?: boolean
@@ -132,6 +133,10 @@ export class DesktopControlManager {
     if (this.brokerPromise) return this.brokerPromise
     this.brokerPromise = (async () => {
       const client: DesktopControlBroker = this.options.brokerFactory ? await this.options.brokerFactory() : new (await import(/* @vite-ignore */ pathToFileURL(join(this.options.projectDirectory, 'scripts', 'desktop-broker', 'client.mjs')).href)).DesktopControlClient()
+      // A broker factory may reconnect the same transport object. Detach the
+      // old listener before registering its replacement, so an old disposer
+      // cannot remove the newly installed callback.
+      this.unlisten?.(); this.unlisten = undefined
       const unlisten = client.listen(event => {
         if (this.circuits?.onEvent(client, event)) return
         if (event.type === 'server-request') {
@@ -147,7 +152,7 @@ export class DesktopControlManager {
         if (event.type === 'notification' && event.message?.method === 'turn/started') this.circuitErrors.delete(event.message.params?.threadId)
         if (event.type === 'disconnected' && this.broker === client) { this.broker = null; this.approvals.clear(); this.restoreAttempts.clear() }
       })
-      this.unlisten?.(); this.unlisten = unlisten
+      this.unlisten = unlisten
       try { await client.connect(); for (const b of this.bindings.values()) if (b.threadId) await this.circuits?.register(client, b.threadId); this.broker = client; return client }
       catch (error) { unlisten(); await client.close(); throw error }
     })()
@@ -263,7 +268,9 @@ export class DesktopControlManager {
   private async createFresh(projectId: string, client: DesktopControlBroker) {
     const status = await client.status()
     if (!status.connected || !status.ready || !status.desktopConnected) throw new DesktopControlError(503, '桌面共享尚未连接；连接恢复后会为此项目自动创建对话')
-    const cwd = this.options.conversationDirectory ? await this.options.conversationDirectory() : resolve(this.options.projectDirectory)
+    const cwd = this.options.conversationDirectory
+      ? await this.options.conversationDirectory(projectId)
+      : await new DesktopConversationFolder(this.options.explanationOnly ? dirname(this.options.directory) : this.options.directory).effectiveDirectory(projectId)
     // A recovered empty thread keeps its old ID in history, so never replace
     // the whole binding when creating its successor.
     const b: Binding = this.bindings.get(projectId) ?? { projectId, threadId: null, receipts: [], cache: empty(projectId) }

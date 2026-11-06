@@ -28,16 +28,19 @@ export interface ProjectSidebarProps {
   onModalChange?: (open: boolean) => void
 }
 
+// Creating ICU formatters for every project on each selection is expensive.
+const timeFormatter = new Intl.DateTimeFormat('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', { month: 'numeric', day: 'numeric' })
+const fullDateFormatter = new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short', hour12: false })
+
 function editedAt(value: number | string) {
   const date = new Date(value)
   if (!Number.isFinite(date.getTime())) return { label: '尚未保存', full: '' }
   const now = new Date()
   const today = date.toDateString() === now.toDateString()
   return {
-    label: `${today ? '今天 ' : ''}${new Intl.DateTimeFormat('zh-CN', today
-      ? { hour: '2-digit', minute: '2-digit', hour12: false }
-      : { month: 'numeric', day: 'numeric' }).format(date)}`,
-    full: new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short', hour12: false }).format(date),
+    label: `${today ? '今天 ' : ''}${(today ? timeFormatter : dateFormatter).format(date)}`,
+    full: fullDateFormatter.format(date),
   }
 }
 

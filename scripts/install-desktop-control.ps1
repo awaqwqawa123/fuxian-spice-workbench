@@ -3,7 +3,9 @@ param(
   [ValidateSet('Prepare','Activate','Restore','Repair')][string]$Mode = 'Prepare',
   [string]$InstallDirectory = (Join-Path $env:USERPROFILE '.codex/desktop-control'),
   [string]$RealCodexPath,
-  [string]$NodePath
+  [string]$NodePath,
+  # Test-only CLI seam: never passed from the web; avoids user registry writes.
+  [string]$TestEnvironmentFile
 )
 $ErrorActionPreference = 'Stop'
 # A Node process launched from PowerShell 7 can inherit its PSModulePath while
@@ -13,8 +15,25 @@ foreach ($desktopModule in @('Microsoft.PowerShell.Management','Microsoft.PowerS
 }
 $InstallDirectory = [IO.Path]::GetFullPath($InstallDirectory)
 $statePath = Join-Path $InstallDirectory 'install-state.json'
+if ($TestEnvironmentFile) { $TestEnvironmentFile = [IO.Path]::GetFullPath($TestEnvironmentFile) }
+if ($RealCodexPath) {
+  if (-not [IO.Path]::IsPathRooted($RealCodexPath) -or [IO.Path]::GetExtension($RealCodexPath) -ne '.exe' -or -not (Test-Path -LiteralPath $RealCodexPath -PathType Leaf)) { throw 'Selected Codex executable is missing or invalid; pass a complete -RealCodexPath.' }
+  $RealCodexPath = (Resolve-Path -LiteralPath $RealCodexPath).ProviderPath
+}
+function Get-CodexEntry {
+  if ($TestEnvironmentFile) {
+    if (Test-Path -LiteralPath $TestEnvironmentFile) { return [IO.File]::ReadAllText($TestEnvironmentFile).Trim() }
+    return $null
+  }
+  return [Environment]::GetEnvironmentVariable('CODEX_CLI_PATH', 'User')
+}
+function Set-CodexEntry([string]$Value) {
+  if ($TestEnvironmentFile) { [IO.File]::WriteAllText($TestEnvironmentFile, [string]$Value, [Text.UTF8Encoding]::new($false)); return }
+  [Environment]::SetEnvironmentVariable('CODEX_CLI_PATH', $Value, 'User')
+}
 function Save-State($State) { [IO.File]::WriteAllText($statePath, ($State | ConvertTo-Json -Depth 8), [Text.UTF8Encoding]::new($false)) }
 function Notify-Environment {
+  if ($TestEnvironmentFile) { return }
   if (-not ('DesktopControlEnvironment' -as [type])) {
     Add-Type 'using System; using System.Runtime.InteropServices; public static class DesktopControlEnvironment { [DllImport("user32.dll",CharSet=CharSet.Unicode,SetLastError=true)] public static extern IntPtr SendMessageTimeout(IntPtr h,uint m,UIntPtr w,string l,uint f,uint t,out UIntPtr r); }'
   }
@@ -29,7 +48,7 @@ function Is-OwnedEntry([string]$Value) {
   } catch { return $false }
 }
 if ($Mode -eq 'Repair') {
-  $current = [Environment]::GetEnvironmentVariable('CODEX_CLI_PATH', 'User')
+  $current = Get-CodexEntry
   $existing = $null
   $oldStateText = $null
   if (Test-Path -LiteralPath $statePath) {
@@ -48,11 +67,30 @@ if ($Mode -eq 'Repair') {
       $preparedIsUsable = $config.Length -eq 5 -and (Test-Path -LiteralPath $config[1]) -and (Test-Path -LiteralPath $config[2]) -and (Test-Path -LiteralPath $runtime.realCodex)
       $runtimeRoot = (Split-Path -LiteralPath $existing.launcher).TrimEnd('\','/') + '\'
       if (-not $config[1].StartsWith($runtimeRoot, [StringComparison]::OrdinalIgnoreCase)) { $preparedIsUsable = $false }
-      $currentBrokerSource = Join-Path $PSScriptRoot 'desktop-broker/broker.mjs'
-      if ((Test-Path -LiteralPath $currentBrokerSource) -and (Get-FileHash -LiteralPath $currentBrokerSource -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath $config[2] -Algorithm SHA256).Hash) { $preparedIsUsable = $false }
-      $officialRoot = Join-Path $env:LOCALAPPDATA 'OpenAI/Codex/bin'
-      $latestOfficial = Get-ChildItem -LiteralPath $officialRoot -Directory -ErrorAction SilentlyContinue | ForEach-Object { Join-Path $_.FullName 'codex.exe' } | Where-Object { Test-Path -LiteralPath $_ } | Sort-Object { (Get-Item -LiteralPath $_).LastWriteTimeUtc } -Descending | Select-Object -First 1
-      if ($latestOfficial -and $runtime.realCodex -ne $latestOfficial) { $preparedIsUsable = $false }
+      $brokerSource = Join-Path $PSScriptRoot 'desktop-broker'
+      if (-not (Test-Path -LiteralPath $brokerSource -PathType Container)) { $preparedIsUsable = $false }
+      else {
+        $sourceFiles = @(Get-ChildItem -LiteralPath $brokerSource -File)
+        if (-not $runtime.brokerSources -or @($runtime.brokerSources.PSObject.Properties).Count -ne $sourceFiles.Count) { $preparedIsUsable = $false }
+        foreach ($sourceFile in $sourceFiles) {
+          $hash = (Get-FileHash -LiteralPath $sourceFile.FullName -Algorithm SHA256).Hash
+          $installedFile = Join-Path (Split-Path -LiteralPath $existing.launcher) $sourceFile.Name
+          # launcher.cs contains an embedded runtime path after compilation.
+          # Its original source hash is retained in the manifest instead.
+          if (-not $runtime.brokerSources -or $runtime.brokerSources.($sourceFile.Name) -ne $hash -or -not (Test-Path -LiteralPath $installedFile -PathType Leaf)) { $preparedIsUsable = $false }
+          elseif ($sourceFile.Name -ne 'launcher.cs' -and (Get-FileHash -LiteralPath $installedFile -Algorithm SHA256).Hash -ne $hash) { $preparedIsUsable = $false }
+        }
+      }
+      if (-not $runtime.launcherSha256 -or (Get-FileHash -LiteralPath $existing.launcher -Algorithm SHA256).Hash -ne $runtime.launcherSha256) { $preparedIsUsable = $false }
+      if (-not $runtime.realCodexSha256 -or (Get-FileHash -LiteralPath $runtime.realCodex -Algorithm SHA256).Hash -ne $runtime.realCodexSha256) { $preparedIsUsable = $false }
+      if ($RealCodexPath) {
+        # A deliberate selection wins. Never replace it with the newest bundle.
+        if ([IO.Path]::GetFullPath($runtime.realCodex) -ne $RealCodexPath) { $preparedIsUsable = $false }
+      } else {
+        $officialRoot = Join-Path $env:LOCALAPPDATA 'OpenAI/Codex/bin'
+        $latestOfficial = Get-ChildItem -LiteralPath $officialRoot -Directory -ErrorAction SilentlyContinue | ForEach-Object { Join-Path $_.FullName 'codex.exe' } | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Sort-Object { (Get-Item -LiteralPath $_).LastWriteTimeUtc } -Descending | Select-Object -First 1
+        if ($latestOfficial -and $runtime.realCodex -ne $latestOfficial) { $preparedIsUsable = $false }
+      }
       foreach ($helper in @('codex-code-mode-host.exe','codex-windows-sandbox-setup.exe','codex-command-runner.exe')) {
         if (-not (Test-Path -LiteralPath (Join-Path (Split-Path -LiteralPath $existing.launcher) $helper))) { $preparedIsUsable = $false }
       }
@@ -66,7 +104,7 @@ if ($Mode -eq 'Repair') {
       $existing | Add-Member -NotePropertyName previousUserValue -NotePropertyValue $previous -Force
       $existing | Add-Member -NotePropertyName active -NotePropertyValue $true -Force
       Save-State $existing
-      [Environment]::SetEnvironmentVariable('CODEX_CLI_PATH', $existing.launcher, 'User'); Notify-Environment
+      Set-CodexEntry $existing.launcher; Notify-Environment
     }
     Write-Output 'Desktop sharing entry is ready. Completely quit and reopen Codex to activate it in the running app.'
     return
@@ -78,10 +116,10 @@ if ($Mode -eq 'Repair') {
   try {
     if ($existing) { $existing | Add-Member -NotePropertyName active -NotePropertyValue $false -Force; Save-State $existing }
     elseif ($oldStateText) { [IO.File]::WriteAllText($statePath, '{"version":1,"active":false}', [Text.UTF8Encoding]::new($false)) }
-    & $PSCommandPath -Mode Prepare -InstallDirectory $InstallDirectory -NodePath $NodePath -RealCodexPath $RealCodexPath
+    & $PSCommandPath -Mode Prepare -InstallDirectory $InstallDirectory -NodePath $NodePath -RealCodexPath $RealCodexPath -TestEnvironmentFile $TestEnvironmentFile
     $prepared = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json
     $prepared.previousUserValue = $previous; $prepared.active = $true; Save-State $prepared
-    [Environment]::SetEnvironmentVariable('CODEX_CLI_PATH', $prepared.launcher, 'User'); Notify-Environment
+    Set-CodexEntry $prepared.launcher; Notify-Environment
     Write-Output 'Desktop sharing installation repaired and activated. Completely quit and reopen Codex once.'
   } catch {
     if ($oldStateText -and (Test-Path -LiteralPath $InstallDirectory)) { [IO.File]::WriteAllText($statePath, $oldStateText, [Text.UTF8Encoding]::new($false)) }
@@ -92,7 +130,7 @@ if ($Mode -eq 'Repair') {
 if ($Mode -ne 'Prepare') {
   if (-not (Test-Path -LiteralPath $statePath)) { throw 'Run Prepare first; no installation state exists.' }
   $state = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json
-  $current = [Environment]::GetEnvironmentVariable('CODEX_CLI_PATH', 'User')
+  $current = Get-CodexEntry
   if ($Mode -eq 'Activate') {
     if ($state.active) {
       if ($current -ne $state.launcher) { throw 'CODEX_CLI_PATH changed after activation; refusing to overwrite it.' }
@@ -102,14 +140,14 @@ if ($Mode -ne 'Prepare') {
     $state.previousUserValue = $current
     # Save the old value before writing registry, so an interrupted activation is reversible.
     $state.active = $true; Save-State $state
-    try { [Environment]::SetEnvironmentVariable('CODEX_CLI_PATH', $state.launcher, 'User') }
+    try { Set-CodexEntry $state.launcher }
     catch { $state.active = $false; Save-State $state; throw }
     Notify-Environment
     Write-Output 'Activated for future Codex launches. Current Codex processes and conversations are unchanged.'
   } else {
     if (-not $state.active) { Write-Output 'No active override to restore.'; return }
     if ($current -ne $state.launcher -and $current -ne $state.previousUserValue) { throw 'CODEX_CLI_PATH was changed by another tool; refusing to overwrite that newer value.' }
-    [Environment]::SetEnvironmentVariable('CODEX_CLI_PATH', $state.previousUserValue, 'User')
+    Set-CodexEntry $state.previousUserValue
     $state.active = $false; Save-State $state; Notify-Environment
     Write-Output 'Previous user CODEX_CLI_PATH restored. Restart Codex when your work is saved; no running process was stopped.'
   }
@@ -149,7 +187,11 @@ $source = Join-Path $PSScriptRoot 'desktop-broker'
 if (-not (Test-Path -LiteralPath $source)) { throw 'Run Prepare from the source checkout; installed copy supports Activate and Restore.' }
 $runtime = Join-Path $InstallDirectory ('runtime-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
 New-Item -ItemType Directory -Path $runtime | Out-Null
-Get-ChildItem -LiteralPath $source -File | ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $runtime }
+$brokerSourceHashes = @{}
+Get-ChildItem -LiteralPath $source -File | ForEach-Object {
+  $brokerSourceHashes[$_.Name] = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash
+  Copy-Item -LiteralPath $_.FullName -Destination $runtime
+}
 # Codex-managed caches rotate on updates. Keep the standalone Windows Node
 # runtime alongside the launcher so its configured path survives cache cleanup.
 $stableNodePath = Join-Path $runtime 'node.exe'
@@ -179,7 +221,7 @@ foreach ($helper in @('codex-code-mode-host.exe','codex-windows-sandbox-setup.ex
   if ($sourceHash -ne $destinationHash) { throw "Runtime sibling copy verification failed: $helper" }
   $runtimeFiles += @{name=$helper; source=$sourceHelper; sha256=$sourceHash}
 }
-[IO.File]::WriteAllText((Join-Path $runtime 'runtime.json'), (@{realCodex=$RealCodexPath; realCodexSha256=(Get-FileHash -LiteralPath $RealCodexPath -Algorithm SHA256).Hash; siblings=$runtimeFiles} | ConvertTo-Json -Depth 5), [Text.UTF8Encoding]::new($false))
+[IO.File]::WriteAllText((Join-Path $runtime 'runtime.json'), (@{realCodex=$RealCodexPath; realCodexSha256=(Get-FileHash -LiteralPath $RealCodexPath -Algorithm SHA256).Hash; siblings=$runtimeFiles; brokerSources=$brokerSourceHashes; launcherSha256=(Get-FileHash -LiteralPath $launcherPath -Algorithm SHA256).Hash} | ConvertTo-Json -Depth 5), [Text.UTF8Encoding]::new($false))
 Copy-Item -LiteralPath $PSCommandPath -Destination (Join-Path $InstallDirectory 'install-desktop-control.ps1') -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'restore-desktop-control.ps1') -Destination (Join-Path $InstallDirectory 'restore-desktop-control.ps1') -Force
 Save-State ([pscustomobject]@{version=1; active=$false; launcher=$launcherPath; realCodex=$RealCodexPath; previousUserValue=$null; preparedAt=[DateTime]::UtcNow.ToString('o')})

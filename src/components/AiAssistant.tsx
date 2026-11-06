@@ -30,6 +30,26 @@ type AssistantEngine = 'codex' | 'cursor' | 'dsh'
 type DshConnection = 'api' | 'local'
 type CodexStatus = Awaited<ReturnType<typeof getCodexStatus>>
 interface AgentRunView {id:number;prompt:string;source:AssistantEngine;dshConnection?:DshConnection;baseline:Project;status:AgentTaskStatus;steps:AgentToolEvent[];startedAt:number;finishedAt?:number;engine?:string;version?:string;result?:AgentResult;error?:string;everApplied?:boolean;discarded?:boolean;proposalOnly?:boolean;lastApply?:{before:Project;after:Project}}
+// Retain project DSH work only in this browser session. The storage object
+// isolates windows/tests; no provider settings or credentials enter this cache.
+type StandaloneSession = { prompt: string; history: AiConversationMessage[]; runs: AgentRunView[]; mode: AssistantMode; dshConnection: DshConnection; selection: DshLocalSelection | null; proposal: AiProposal | null; proposalId: number | null; consumedTask: string; stopped: boolean }
+const standaloneSessions = new WeakMap<object, Map<string, StandaloneSession>>()
+function standaloneSessionCache(projectId?: string, engine?: AssistantEngine) {
+  if (!projectId) return null
+  let scope: object
+  try { scope = localStorage } catch { return null }
+  let sessions = standaloneSessions.get(scope)
+  if (!sessions) { sessions = new Map(); standaloneSessions.set(scope, sessions) }
+  const key = `${projectId}:${engine}`
+  return {
+    read: () => sessions!.get(key),
+    save(value: StandaloneSession) {
+      sessions!.delete(key); sessions!.set(key, value)
+      while (sessions!.size > 8) sessions!.delete(sessions!.keys().next().value!)
+    },
+  }
+}
+
 type CandidateState='applied'|'ready'|'mergeable'|'already-present'|'conflict'|'discarded'
 function candidateState(run:AgentRunView,project:Project):CandidateState {
   if(run.discarded)return'discarded'
@@ -97,6 +117,11 @@ interface AiAssistantProps {
 }
 
 export default function AiAssistant(props: AiAssistantProps) {
+  const { connectionMode } = useAssistantSettings()
+  if(connectionMode==='mcp'&&props.projectId)return <aside className={`ai-assistant ai-assistant-persistent${props.embedded?' ai-assistant-embedded':''}`} aria-label="AI MCP 工程助手">
+    <header className="ai-header"><div><Bot size={20}/><strong>AI 工具与方案</strong></div><button type="button" aria-label="关闭 AI 助手" onClick={props.onClose}><X size={18}/></button></header>
+    <DesktopControlAssistant key={`mcp:${props.projectId}`} connectionMode="mcp" projectId={props.projectId} project={props.project} circuit={props.desktopCircuit} onApply={props.onApply} onOpenSettings={props.onOpenSettings} onModelAcquisitions={props.onModelAcquisitions}/>
+  </aside>
   return props.projectId ? <ProjectDesktopAssistant key={props.projectId} {...props} projectId={props.projectId}/> : <StandaloneAiAssistant {...props}/>
 }
 
@@ -116,9 +141,12 @@ function ProjectDesktopAssistant(props: AiAssistantProps & { projectId: string }
 
 function StandaloneAiAssistant({ project, projectId, onModelAcquisitions, onOpenModels, onOpenSettings, externalTask, onExternalTaskConsumed, onApply, onClose, embedded = false, initialEngine = 'codex', onProjectEngineChange }: AiAssistantProps & { initialEngine?: AssistantEngine; onProjectEngineChange?: (engine: AssistantEngine) => void }) {
   const sharedSettings = useAssistantSettings()
+  const [sessionCache] = useState(() => standaloneSessionCache(projectId, initialEngine))
+  const [restored] = useState(() => sessionCache?.read())
+  const [sessionStopped, setSessionStopped] = useState(restored?.stopped ?? false)
   const [engine, setEngine] = useState<AssistantEngine>(initialEngine)
-  const [dshConnection,setDshConnection] = useState<DshConnection>('api')
-  const [localDshSelection,setDshSelection] = useState<DshLocalSelection|null>(null)
+  const [dshConnection,setDshConnection] = useState<DshConnection>(restored?.dshConnection ?? 'api')
+  const [localDshSelection,setDshSelection] = useState<DshLocalSelection|null>(restored?.selection ?? null)
   const [localDshStatus,setDshStatus] = useState<DshLocalStatus|null>(null)
   const dshSelection = onOpenSettings ? sharedSettings.dshSelection : localDshSelection
   const dshStatus = onOpenSettings ? sharedSettings.dshStatus : localDshStatus
@@ -137,20 +165,20 @@ function StandaloneAiAssistant({ project, projectId, onModelAcquisitions, onOpen
   const provider = onOpenSettings ? sharedSettings.api : localProvider
   const [settingsOpen, setSettingsOpen] = useState(() => !savedProvider().model)
   const [configTarget,setConfigTarget] = useState<'native'|'dsh-local'|'dsh-api'|null>(null)
-  const [mode, setMode] = useState<AssistantMode>('agent')
-  const [prompt, setPrompt] = useState('')
+  const [mode, setMode] = useState<AssistantMode>(restored?.mode ?? 'agent')
+  const [prompt, setPrompt] = useState(restored?.prompt ?? '')
   const promptInput = useRef<HTMLTextAreaElement | null>(null)
-  const [history, setHistory] = useState<AiConversationMessage[]>([])
+  const [history, setHistory] = useState<AiConversationMessage[]>(restored?.history ?? [])
   const updateDshSelection=useCallback((selection:DshLocalSelection|null)=>{if(onOpenSettings) updateAssistantSettings({ dshSelection: selection }); else setDshSelection(selection);setHistory([])},[onOpenSettings])
-  const [agentRuns,setAgentRuns] = useState<AgentRunView[]>([])
+  const [agentRuns,setAgentRuns] = useState<AgentRunView[]>(restored?.runs ?? [])
   useEffect(()=>{const items=agentRuns.flatMap(run=>run.result?.modelAcquisitions??[]);if(items.length)onModelAcquisitions?.(items)},[agentRuns,onModelAcquisitions])
-  const [proposalAgentId,setProposalAgentId] = useState<number|null>(null)
+  const [proposalAgentId,setProposalAgentId] = useState<number|null>(restored?.proposalId ?? null)
   const [conflictChoice,setConflictChoice] = useState<{runId:number;mode:'merge'|'replace';canvas:string;proposal:string}|null>(null)
-  const runSequence=useRef(0)
-  const [proposal, setProposal] = useState<AiProposal | null>(null)
+  const runSequence=useRef(Math.max(0, ...(restored?.runs.map(run=>run.id) ?? [])))
+  const [proposal, setProposal] = useState<AiProposal | null>(restored?.proposal ?? null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  const [notice, setNotice] = useState('')
+  const [notice, setNotice] = useState(restored?.stopped ? '上次任务因切换连接方式或关闭助手而停止，输入和已有方案已保留；不会自动重发。' : '')
   const [showKey, setShowKey] = useState(false)
   const [modelList, setModelList] = useState<AiModelInfo[]>([])
   const [configBusy, setConfigBusy] = useState<'models' | 'test' | null>(null)
@@ -162,6 +190,10 @@ function StandaloneAiAssistant({ project, projectId, onModelAcquisitions, onOpen
   let urlError = ''
   try { urls = providerUrls(provider.endpoint) } catch (reason) { urlError = (reason as Error).message }
   const pending = useRef<AbortController | null>(null)
+  const alive = useRef(true), consumedTask = useRef(restored?.consumedTask ?? '')
+  const session = useRef<StandaloneSession>(null!)
+  session.current = { prompt, history, runs: agentRuns, mode, dshConnection, selection: localDshSelection, proposal, proposalId: proposalAgentId, consumedTask: consumedTask.current, stopped: sessionStopped }
+  useEffect(() => { sessionCache?.save(session.current) })
   const settingsPanel = useRef<HTMLDetailsElement | null>(null)
   const current = useRef(project); current.current = project
   const selectedRun=agentRuns.find(run=>run.id===proposalAgentId)
@@ -176,7 +208,16 @@ function StandaloneAiAssistant({ project, projectId, onModelAcquisitions, onOpen
     const panel=configTarget==='native'?codexPanel.current:configTarget==='dsh-local'?dshPanel.current:settingsPanel.current
     if(panel){panel.scrollIntoView?.({block:'start',behavior:'smooth'});setConfigTarget(null)}
   },[configTarget,engine,dshConnection])
-  useEffect(() => () => { pending.current?.abort(); pending.current = null }, [])
+  useEffect(() => {
+    alive.current = true
+    return () => {
+      alive.current = false
+      const stopped = !!pending.current
+      pending.current?.abort(); pending.current = null
+      sessionCache?.save({ ...session.current, stopped: stopped || session.current.stopped,
+        runs: session.current.runs.map(run => run.status === 'running' ? { ...run, status: 'stopped', finishedAt: Date.now(), error: '任务因切换连接方式或关闭助手而停止，候选修改未应用。' } : run) })
+    }
+  }, [sessionCache])
   useEffect(() => {
     if (engine === 'cursor' || engine === 'codex' && !projectId) void refreshCodex()
     return () => { codexPending.current?.abort(); codexPending.current = null }
@@ -277,7 +318,7 @@ function StandaloneAiAssistant({ project, projectId, onModelAcquisitions, onOpen
     const snapshot = structuredClone(current.current), controller = new AbortController()
     pending.current = controller
     if(taskId){consumedTask.current=taskId;onExternalTaskConsumed?.(taskId)}
-    setBusy(true); setError(''); setProposal(null); setProposalAgentId(null); setNotice('')
+    setSessionStopped(false); setBusy(true); setError(''); setProposal(null); setProposalAgentId(null); setNotice('')
     const candidateId=++runSequence.current,runId=mode==='agent'?candidateId:null,startedAt=Date.now()
     setAgentRuns(previous=>{
       return runId!==null?[...previous,{id:runId,prompt,source:engine,dshConnection,baseline:snapshot,status:'running',steps:[],startedAt} as AgentRunView].slice(-6):previous
@@ -321,17 +362,17 @@ function StandaloneAiAssistant({ project, projectId, onModelAcquisitions, onOpen
         setHistory(previous => appendAiConversation(previous, prompt, `待审阅修改方案：${next.summary}`))
       } else setHistory(previous => appendAiConversation(previous, prompt, text))
     } catch (reason) {
+      if (!alive.current) return
       const message=timedOut?(mode==='agent'?`等待 ${engine==='codex'?'Codex':engine==='cursor'?'Cursor':'DSH'} 任务结果超过 ${requestTimeout/1000} 秒，未收到可验证的完整结果。执行已停止，候选修改未应用。`:'等待模型超时，请检查模型服务后重试'):controller.signal.aborted?(mode==='agent'?'任务已停止，候选修改未应用。':'请求已取消'):(reason as Error).message||'AI 请求失败'
       if(runId!==null)updateRun(run=>({...run,status:controller.signal.aborted&&!timedOut?'stopped':'error',error:message,finishedAt:Date.now()}))
       // Agent failures belong to their task record; avoid repeating the same error above it.
       if(runId===null){if(controller.signal.aborted&&!timedOut)setNotice(message);else setError(message)}
     } finally {
       clearTimeout(timer)
-      if (pending.current === controller) { pending.current = null; setBusy(false) }
+      if (pending.current === controller) { pending.current = null; if (alive.current) setBusy(false) }
     }
   }
 
-  const consumedTask=useRef('')
   useEffect(()=>{
     if(!externalTask||consumedTask.current===externalTask.id||engine==='codex'&&projectId||locked)return
     const ready=engine==='dsh'?(dshConnection==='local'?dshLocalReady:!!urls&&!!provider.model.trim()):!codexChecking&&!!codexStatus?.available&&codexStatus.authenticated!==false
@@ -433,7 +474,7 @@ function StandaloneAiAssistant({ project, projectId, onModelAcquisitions, onOpen
         <div className="ai-provider-test"><button type="button" disabled={locked || !urls || !provider.model.trim()} onClick={() => void checkProvider('test')}>{configBusy === 'test' ? '正在测试推理…' : '测试模型推理'}</button>{configBusy && <button type="button" onClick={() => pending.current?.abort()}>取消检查</button>}<small>测试会向服务发送固定短提示，可能产生 API 费用；不发送当前电路。</small></div>
         {configStatus && <p role="status" className="ai-provider-status">{configStatus}</p>}
         {configError && <p role="alert" className="ai-error">{configError}</p>}
-        <small>地址、协议和模型 ID 会记住。密钥和对话仅存在本次会话，关闭助手即清除；切换服务会开启新对话。</small>
+        <small>地址、协议和模型 ID 会记住。密钥仅保留当前面板。项目草稿、对话与候选在本次软件会话内保留；切换服务会开启新对话。</small>
       </details>}
       <div className="ai-conversation-heading"><span>当前电路 · {history.length ? `${history.length / 2} 轮对话` : '新对话'}</span><button type="button" disabled={locked || !history.length&&!agentRuns.length} onClick={() => { setHistory([]); setAgentRuns([]); setProposalAgentId(null); setProposal(null); setNotice('已开启新对话'); setError('') }}><MessageSquarePlus size={14} />新对话</button></div>
       {history.length > 0 && <section className="ai-conversation" aria-label="AI 对话记录" aria-live="polite">{history.map((item, index) => <article key={index} className={`ai-message ai-message-${item.role}`}><strong>{item.role === 'user' ? '你' : '电路助手'}</strong>{item.role==='assistant'?<AssistantMarkdown>{item.content}</AssistantMarkdown>:<div>{item.content}</div>}</article>)}</section>}

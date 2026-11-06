@@ -13,6 +13,7 @@ import { CodexRpc, CodexRuntimeError, CodexTimeoutError, CodexThreadInUseError }
 import type { CodexWorkbenchLink } from '../src/core/codex-workbench-link'
 import { openCodexModelMcp } from './codex-model-mcp'
 import { createAgentModelService } from './agent-model-service'
+import { configuredCodexExecutable } from './codex-installation'
 import type { AgentModelService } from '../src/core/agent-models'
 export { CodexRuntimeError, CodexTimeoutError } from './codex-rpc'
 
@@ -57,7 +58,13 @@ function childEnvironment(override?: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
   delete env.NODE_OPTIONS
   return env
 }
-export async function findCodexExecutable(env: NodeJS.ProcessEnv = process.env): Promise<string | null> {
+export async function findCodexExecutable(env: NodeJS.ProcessEnv = process.env, options: { ignoreConfigured?: boolean } = {}): Promise<string | null> {
+  // An explicit selection wins over automatic discovery. Never silently use a
+  // different installation when the selected executable has been moved/deleted.
+  if (!options.ignoreConfigured) {
+    const selected = await configuredCodexExecutable()
+    if (selected) return selected
+  }
   const named = env.CODEX_EXECUTABLE?.trim()
   if (named) { if (!isAbsolute(named)) return null; return access(named).then(() => named, () => null) }
   const filename = process.platform === 'win32' ? 'codex.exe' : 'codex'
@@ -79,7 +86,7 @@ function safeModel(value: unknown) { return typeof value === 'string' && /^[a-zA
 export async function openRuntime(options: CodexRuntimeOptions) {
   const env = childEnvironment(options.environment), signal = options.signal ?? AbortSignal.timeout(20000)
   if (signal.aborted) throw new CodexRuntimeError('任务已停止')
-  const executable = options.executable ?? await findCodexExecutable(env)
+  const executable = options.executable ?? await findCodexExecutable(env, { ignoreConfigured: options.environment !== undefined })
   if (!executable) throw new CodexRuntimeError('未找到本机 Codex，请安装 Codex 或设置 CODEX_EXECUTABLE 为可执行文件完整路径')
   const temporaryDirectory = await mkdtemp(join(options.temporaryRoot ?? tmpdir(), 'fuxian-codex-'))
   const directory = options.workingDirectory ?? temporaryDirectory
@@ -114,7 +121,9 @@ export function threadParameters(directory: string, mcpConfig: Record<string, { 
     ...(model ? { model } : {}), dynamicTools: circuitAgentTools.map(tool => ({ type: 'function', name: tool.name, description: tool.description, inputSchema: tool.parameters })) }
 }
 export async function getCodexStatus(options: CodexRuntimeOptions = {}): Promise<CodexStatus> {
-  const installed = Boolean(options.executable ?? await findCodexExecutable(childEnvironment(options.environment)))
+  let installed: boolean
+  try { installed = Boolean(options.executable ?? await findCodexExecutable(childEnvironment(options.environment), { ignoreConfigured: options.environment !== undefined })) }
+  catch (cause) { return { installed: false, available: false, authenticated: null, version: '', model: null, message: cause instanceof Error ? cause.message : '无法读取 Codex 安装路径设置' } }
   if (!installed) return { installed: false, available: false, authenticated: null, version: '', model: null, message: '未找到本机 Codex，请安装 Codex 或设置 CODEX_EXECUTABLE' }
   let runtime: Awaited<ReturnType<typeof openRuntime>> | undefined
   try {

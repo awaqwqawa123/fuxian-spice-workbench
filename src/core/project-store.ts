@@ -2,6 +2,7 @@ import { parseProject, type Project } from './circuit'
 import { editableProject } from './editor'
 
 export const PROJECTS_STORAGE = 'fuxian-project-library-v1'
+export const PROJECT_SELECTION_STORAGE = 'fuxian-project-selection-v1'
 const LEGACY_DRAFT = 'fuxian-free-editor-v2'
 const LEGACY_TEMPLATES = 'fuxian-projects-v1'
 
@@ -10,6 +11,24 @@ export interface ProjectCollection { version: 1; activeId: string; entries: Proj
 export interface LoadedProjectCollection { collection: ProjectCollection; warning?: string; canPersist: boolean }
 type StorageReader = Pick<Storage, 'getItem'>
 type StorageWriter = Pick<Storage, 'setItem'>
+
+// A selection may only refer to the exact library whose full write succeeded.
+// Keep the revision outside React state and bind it to the storage adapter, so a
+// failed save or another library cannot make a stale selection authoritative.
+const savedCollections = new WeakMap<StorageWriter, { entries: ProjectEntry[]; ids: Set<string>; revision: string }>()
+
+function restoreSelection(storage: StorageReader, input: unknown, collection: ProjectCollection): void {
+  const revision = (input as { selectionRevision?: unknown }).selectionRevision
+  if (typeof revision !== 'string') return
+  try {
+    const raw = storage.getItem(PROJECT_SELECTION_STORAGE)
+    if (raw === null) return
+    const selected: unknown = JSON.parse(raw)
+    if (!selected || typeof selected !== 'object') return
+    const record = selected as { version?: unknown; revision?: unknown; activeId?: unknown }
+    if (record.version === 1 && record.revision === revision && typeof record.activeId === 'string' && collection.entries.some(entry => entry.id === record.activeId)) collection.activeId = record.activeId
+  } catch { /* A missing/damaged selection must not prevent recovering the library. */ }
+}
 
 function cleanProject(project: unknown): Project {
   return editableProject(parseProject(project, { allowDraft: true }))
@@ -45,7 +64,11 @@ export function loadProjectCollection(storage: StorageReader, fallback: Project)
   try { raw = storage.getItem(PROJECTS_STORAGE) }
   catch { return { collection: initialCollection(fallback), canPersist: false, warning: '无法读取浏览器项目存储；本次修改仅保留在内存，请导出工程备份。' } }
   if (raw !== null) {
-    try { return { collection: parseCollection(JSON.parse(raw)), canPersist: true } }
+    try {
+      const input: unknown = JSON.parse(raw), collection = parseCollection(input)
+      restoreSelection(storage, input, collection)
+      return { collection, canPersist: true }
+    }
     catch { return { collection: initialCollection(fallback), canPersist: false, warning: '已保存的项目列表无法恢复，原数据已保留；自动保存已暂停，请导出本次工程备份。' } }
   }
 
@@ -75,8 +98,19 @@ export function loadProjectCollection(storage: StorageReader, fallback: Project)
 
 export function saveProjectCollection(storage: StorageWriter, collection: ProjectCollection): void {
   const clean = parseCollection(collection)
-  try { storage.setItem(PROJECTS_STORAGE, JSON.stringify(clean)) }
+  const revision = crypto.randomUUID()
+  try { storage.setItem(PROJECTS_STORAGE, JSON.stringify({ ...clean, selectionRevision: revision })) }
   catch { throw new Error('项目保存失败：浏览器存储不可用或空间不足。当前修改仍在内存，请导出工程备份。') }
+  savedCollections.set(storage, { entries: collection.entries, ids: new Set(clean.entries.map(entry => entry.id)), revision })
+}
+
+/** Persist selection only; callers must fully save edits before using this path. */
+export function saveProjectSelection(storage: StorageWriter, collection: ProjectCollection): void {
+  const saved = savedCollections.get(storage)
+  if (!saved || collection.version !== 1 || saved.entries !== collection.entries) throw new Error('请先保存项目内容，再保存当前项目选择')
+  if (!saved.ids.has(collection.activeId)) throw new Error('当前项目不存在')
+  try { storage.setItem(PROJECT_SELECTION_STORAGE, JSON.stringify({ version: 1, revision: saved.revision, activeId: collection.activeId })) }
+  catch { throw new Error('当前项目选择保存失败：浏览器存储不可用或空间不足。工程内容仍已保存，请稍后重试。') }
 }
 
 export function updateProject(collection: ProjectCollection, id: string, project: Project): ProjectCollection {

@@ -5,6 +5,8 @@ import { parseCodexRequest, type CodexRequest, type CodexStatus } from '../src/c
 import { CODEX_GATEWAY_TIMEOUT_MS } from '../src/core/agent-timeouts'
 import { CodexTimeoutError } from './codex-rpc'
 import type { runCodexAgent } from './codex-runtime'
+import { configureCodexInstallation, type CodexInstallationStore } from './codex-installation'
+import { createCodexInstallationMiddleware } from './codex-installation-middleware'
 
 const MAX_BODY = 192 * 1024
 type Run = (request: CodexRequest, options: { signal: AbortSignal; onEvent?: (event: CircuitAgentEvent) => void }) => ReturnType<typeof runCodexAgent>
@@ -119,8 +121,11 @@ export function createCodexMiddleware(options: { timeoutMs?: number; statusTimeo
 }
 
 export function codexGatewayPlugin(): Plugin {
+  let installation: CodexInstallationStore
+  const pathMiddleware = () => createCodexInstallationMiddleware({ store: installation, findAutomatic: async () => (await import('./codex-runtime')).findCodexExecutable(process.env, { ignoreConfigured: true }) })
   return { name: 'local-codex-agent-gateway',
-    configureServer(server) { server.middlewares.use(createCodexMiddleware()) },
-    configurePreviewServer(server) { server.middlewares.use(createCodexMiddleware()) },
+    configResolved(config) { installation = configureCodexInstallation(config.root) },
+    configureServer(server) { server.middlewares.use(pathMiddleware()); server.middlewares.use(createCodexMiddleware()) },
+    configurePreviewServer(server) { server.middlewares.use(pathMiddleware()); server.middlewares.use(createCodexMiddleware()) },
   }
 }

@@ -44,6 +44,7 @@ async function workspace(seed: Project) {
     return new Response(JSON.stringify({ text: '这是测试助手回复：检查二极管导通压降，并通过 ngspice 验证。' }), { status: 200, headers: { 'Content-Type': 'application/json' } })
   })
   dom.window.localStorage.setItem('fuxian-free-editor-v2', JSON.stringify(seed))
+  dom.window.localStorage.setItem('fuxian-assistant-settings-v1', JSON.stringify({connectionMode:'native'}))
   const { createRoot } = await import('react-dom/client'), { default: App } = await import('../src/App')
   const root = createRoot(dom.window.document.getElementById('root')!), doc = dom.window.document
   const query = <T extends Element = HTMLElement>(selector: string) => { const node = doc.querySelector<T>(selector); assert.ok(node, `Missing ${selector}`); return node }

@@ -1,7 +1,7 @@
 {
-  "version": "0.30.3",
-  "exportedAt": "2026-11-04T13:06:02.356Z",
-  "includedFiles": 860,
+  "version": "0.30.4",
+  "exportedAt": "2026-11-06T08:13:04.002Z",
+  "includedFiles": 888,
   "excluded": [
     "private Git history",
     "model-library/",
@@ -17,5 +17,5 @@
   "tests": "A selected regression suite using only synthetic/public inputs; historical private-fixture regressions are not included.",
   "includedFilesDefinition": "Existing tracked and non-ignored source files, including PUBLIC-SNAPSHOT.json; excludes build output, node_modules, runtime and private local state.",
   "runtimeDistribution": "The separately built Windows portable ZIP adds Node, locked dependencies and dist to this source snapshot; each component retains its own license.",
-  "sourceCommit": "74afae2d85cfbe0ea1f9006f2f87b195ec2b54d5"
+  "sourceCommit": "a4c5d6b9926a4657f7cab6c6d574be5e105f05db"
 }

@@ -6,12 +6,20 @@ const approvalMethods = new Set(['item/commandExecution/requestApproval', 'item/
 const circuitToolNames = new Set(['inspect_circuit', 'set_component_value', 'replace_candidate', 'set_measurement_probes', 'configure_waveforms', 'validate_circuit', 'simulate_circuit', 'search_spice_models', 'download_spice_model', 'import_spice_model'])
 const threadIdOf = params => params?.threadId ?? params?.thread_id ?? params?.conversationId ?? params?.conversation_id ?? params?.thread?.id ?? null
 const key = id => `${typeof id}:${id}`
+const maxQueuedDesktopTurns = 8
+const maxDesktopTurnReceipts = 64
 
 export class DesktopRouter {
   constructor({ child, desktop, broadcast, sendWeb }) {
     Object.assign(this, { child, desktop, broadcast, sendWeb })
     this.ready = false; this.desktopConnected = true; this.nextId = 1
     this.pending = new Map(); this.requests = new Map(); this.threads = new Map(); this.toolHandlers = new Map()
+    this.desktopTurns = new Map(); this.queuedDesktopTurns = new Map()
+  }
+  get desktopConnected() { return this._desktopConnected }
+  set desktopConnected(value) {
+    this._desktopConnected = value
+    if (!value && this.queuedDesktopTurns) for (const threadId of [...this.queuedDesktopTurns.keys()]) this.cancelQueuedDesktopTurn(threadId, 'Codex 桌面已断开，待发送消息未执行；重新连接后请确认再发送')
   }
   state(threadId) {
     const t = this.threads.get(threadId)
@@ -32,15 +40,62 @@ export class DesktopRouter {
       t.owner = t.pendingOwner; t.pendingOwner = null
     }
     this.changed(threadId)
+    const queued = this.queuedDesktopTurns.get(threadId)
+    if (!queued) return
+    if (!this.ready || !this.desktopConnected || !t?.loaded) return this.cancelQueuedDesktopTurn(threadId, '会话连接已失效，待发送消息未执行；请重新打开会话后发送')
+    if (queued.ownerRevision !== t.ownerRevision) return this.cancelQueuedDesktopTurn(threadId, '控制权已重新选择，原待发送消息已取消；请确认后重新发送')
+    if (t.owner !== 'desktop' || t.busy || t.pendingOwner || [...this.requests.values()].some(r => r.threadId === threadId)) return
+    this.queuedDesktopTurns.delete(threadId)
+    this.fromClient('desktop', queued.message, undefined, queued.receipt)
   }
-  handoff(threadId, owner) {
+  handoff(threadId, owner, automatic = false) {
     if (!['desktop', 'web'].includes(owner) || typeof threadId !== 'string') throw new Error('控制权参数无效')
     const t = this.threads.get(threadId)
     if (!this.ready || !this.desktopConnected || !t?.loaded) throw new Error('请先在已连接的 Codex 桌面打开这段会话，再切换控制权')
+    if (!automatic) this.cancelQueuedDesktopTurn(threadId, '控制权已手动切换，原待发送消息已取消；请确认后重新发送')
     t.ownerRevision++
     t.pendingOwner = owner === t.owner ? null : owner
     this.settle(threadId)
     return this.state(threadId)
+  }
+  cancelQueuedDesktopTurn(threadId, text) {
+    const queued = this.queuedDesktopTurns.get(threadId)
+    if (!queued) return
+    this.queuedDesktopTurns.delete(threadId)
+    const t = this.threads.get(threadId)
+    if (t?.ownerRevision === queued.ownerRevision && t.pendingOwner === 'desktop') t.pendingOwner = null
+    this.reject({ owner: 'desktop', id: queued.message.id, desktopReceipt: queued.receipt }, text, -32043)
+    this.changed(threadId)
+  }
+  desktopTurnReceipt(message) {
+    const requestKey = key(message.id), signature = JSON.stringify(message.params ?? {})
+    const previous = this.desktopTurns.get(requestKey)
+    if (previous && previous.signature === signature) {
+      if (previous.response) this.desktop({ id: message.id, ...previous.response })
+      return null
+    }
+    if (previous && !previous.response) {
+      // A reused in-flight JSON-RPC id cannot identify two different turns.
+      // Keep the first request rather than dispatching an ambiguous second one.
+      return null
+    }
+    for (const [id, receipt] of this.desktopTurns) if (this.desktopTurns.size >= maxDesktopTurnReceipts && receipt.response) this.desktopTurns.delete(id)
+    if (this.desktopTurns.size >= maxDesktopTurnReceipts) {
+      this.reject({ owner: 'desktop', id: message.id }, '桌面待处理请求过多，请等待现有任务完成', -32043)
+      return null
+    }
+    const receipt = { signature }
+    this.desktopTurns.set(requestKey, receipt)
+    return receipt
+  }
+  requestDesktopTurn(route, message) {
+    const t = this.threads.get(route.threadId)
+    if (!this.ready || !this.desktopConnected || !t?.loaded) { this.reject(route, '会话尚未由共享 Codex 服务加载，请先打开会话后发送', -32042); return }
+    if (this.queuedDesktopTurns.has(route.threadId)) { this.reject(route, '已有一条桌面消息等待交接，请等待该消息发送后再继续', -32043); return }
+    if (this.queuedDesktopTurns.size >= maxQueuedDesktopTurns) { this.reject(route, '等待交接的会话过多，请先完成现有任务', -32043); return }
+    // Register before settling: an idle thread transfers and dispatches immediately.
+    this.queuedDesktopTurns.set(route.threadId, { message: structuredClone(message), receipt: route.desktopReceipt, ownerRevision: t.ownerRevision + 1 })
+    this.handoff(route.threadId, 'desktop', true)
   }
   registerTools(client, threadId, names) {
     if (typeof threadId !== 'string' || !Array.isArray(names) || names.some(n => !circuitToolNames.has(n))) throw new Error('只能注册已知电路工具')
@@ -58,14 +113,21 @@ export class DesktopRouter {
     for (const route of this.pending.values()) if (route.client === client) route.client = null
   }
   reply(route, message) {
-    if (route.owner === 'desktop') this.desktop({ id: route.id, ...message })
+    if (route.owner === 'desktop') {
+      if (route.desktopReceipt) route.desktopReceipt.response = message
+      this.desktop({ id: route.id, ...message })
+    }
     else this.sendWeb(route.client, { type: 'response', requestId: route.id, ...message })
   }
   reject(route, text, code = -32041) { this.reply(route, { error: { code, message: text } }) }
-  fromClient(owner, message, client) {
+  fromClient(owner, message, client, desktopReceipt) {
     const route = { owner, client, id: message.id, method: message.method, threadId: threadIdOf(message.params) }
     if (message.id !== undefined && !message.method) return this.respond(owner, message.id, message, client)
     if (!message.method) return
+    if (owner === 'desktop' && message.method === 'turn/start' && message.id !== undefined) {
+      route.desktopReceipt = desktopReceipt ?? this.desktopTurnReceipt(message)
+      if (!route.desktopReceipt) return
+    }
     if (owner === 'web' && !webMethods.has(message.method)) return this.reject(route, '网页不支持此 Codex 操作', -32601)
     if (owner === 'web' && !this.ready) return this.reject(route, 'Codex 桌面尚未完成连接', -32042)
     const t = route.threadId && this.threads.get(route.threadId)
@@ -75,6 +137,7 @@ export class DesktopRouter {
     const plainResume = message.method === 'thread/resume' && Object.keys(message.params ?? {}).every(k => ['threadId', 'excludeTurns', 'initialTurnsPage'].includes(k))
     // Naming a project chat changes only sidebar metadata, not its active turn.
     const readonly = readMethods.has(message.method) || metadataMethods.has(message.method) || plainResume
+    if (owner === 'desktop' && message.method === 'turn/start' && t && (t.owner !== 'desktop' || t.pendingOwner) && message.id !== undefined) return this.requestDesktopTurn(route, message)
     if (t && t.owner !== owner && !readonly) {
       if (message.id !== undefined) this.reject(route, '此会话的控制权在另一端，请先切换控制权')
       return
@@ -123,7 +186,7 @@ export class DesktopRouter {
           if (status === 'active') t.busy = true
           if (status === 'idle' || status === 'systemError' || status === 'notLoaded') {
             t.busy = false; delete t.turnOwner; t.activityRevision++
-            if (status === 'notLoaded') { t.loaded = false; t.pendingOwner = null }
+            if (status === 'notLoaded') { t.loaded = false; t.pendingOwner = null; this.cancelQueuedDesktopTurn(threadId, '会话已卸载，待发送消息未执行；请重新打开会话后发送') }
             else this.settle(threadId)
           }
         } else if (route.method !== 'thread/read' && thread?.status?.type === 'active') t.busy = true
@@ -175,7 +238,7 @@ export class DesktopRouter {
         const status = message.params?.status?.type
         if (status === 'active') { t.busy = true; t.activityRevision++ }
         if (status === 'idle' || status === 'systemError') { t.busy = false; delete t.turnOwner; t.activityRevision++; this.settle(threadId) }
-        if (status === 'notLoaded') { t.loaded = false; t.busy = false; delete t.turnOwner; t.pendingOwner = null; t.activityRevision++ }
+        if (status === 'notLoaded') { t.loaded = false; t.busy = false; delete t.turnOwner; t.pendingOwner = null; t.activityRevision++; this.cancelQueuedDesktopTurn(threadId, '会话已卸载，待发送消息未执行；请重新打开会话后发送') }
       }
       this.changed(threadId)
     }

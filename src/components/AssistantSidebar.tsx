@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { MessageSquare, Minus, Sparkles, BookOpenText, X } from 'lucide-react'
 import { usePanelMotion } from './usePanelMotion'
+import { useAssistantSettings } from '../core/assistant-settings'
 
 /** A companion surface: drawing remains available while a task runs. */
 export default function AssistantSidebar({ visible, onMinimize, onClose, onAfterHide, children, explanation, activeTab = 'chat', onTabChange }: {
@@ -13,6 +14,7 @@ export default function AssistantSidebar({ visible, onMinimize, onClose, onAfter
   activeTab?: 'chat' | 'explain'
   onTabChange?: (tab: 'chat' | 'explain') => void
 }) {
+  const {connectionMode}=useAssistantSettings()
   const panel = useRef<HTMLElement>(null)
   const returnFocus = useRef<HTMLElement | null>(null)
   const chatPanel = useRef<HTMLDivElement>(null), explainPanel = useRef<HTMLDivElement>(null)
@@ -38,13 +40,13 @@ export default function AssistantSidebar({ visible, onMinimize, onClose, onAfter
     dismiss(onMinimize)
   }}>
     <header className="assistant-sidebar-heading">
-      <div><span className="assistant-sidebar-kicker">CIRCUIT ASSISTANT</span><h2><Sparkles size={18} />{activeTab==='explain'?'电路解释':'电路绘制'}</h2></div>
+      <div><span className="assistant-sidebar-kicker">{connectionMode==='mcp'?'MCP WORKSPACE':'CIRCUIT ASSISTANT'}</span><h2><Sparkles size={18} />{connectionMode==='mcp'?'AI 工具与方案':activeTab==='explain'?'电路解释':'电路绘制'}</h2></div>
       <div className="assistant-sidebar-controls">
         <button type="button" aria-label="收起 AI 助手" title="收起侧栏，保留会话与任务 (Esc)" onClick={() => dismiss(onMinimize)}><Minus size={17} /></button>
         <button type="button" aria-label="关闭 AI 助手侧栏" title="关闭助手面板" onClick={() => dismiss(onClose)}><X size={17} /></button>
       </div>
     </header>
-    <p className="assistant-sidebar-hint">{activeTab==='explain'?'项目子对话 · 只解释当前电路':'项目主对话 · 绘制和修改电路'}</p>
+    <p className="assistant-sidebar-hint">{connectionMode==='mcp'?'在 AI 客户端对话 · 在这里审阅与应用方案':activeTab==='explain'?'项目子对话 · 只解释当前电路':'项目主对话 · 绘制和修改电路'}</p>
     {explanation !== undefined && <div className="assistant-workspace-tabs" role="tablist" aria-label="电路对话" onKeyDown={event => {
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
       event.preventDefault(); event.stopPropagation()

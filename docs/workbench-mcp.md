@@ -1,12 +1,34 @@
-# 通过 MCP 使用伏安软件
+# 通过 MCP 使用伏线软件
 
-伏安软件提供一个标准 **stdio MCP** 入口，让支持这一传输方式的 AI 助手共用电路工具内核。网页助手和外部助手使用相同的候选方案、校验和仿真操作。MCP 服务不会启动新的 AI 对话，不要求助手使用 Codex。
+伏线提供一个标准 **stdio MCP** 入口，让支持这一传输方式的 AI 助手共用电路工具内核。默认连接方式是“设置 → AI 连接 → MCP 配置”：在 AI 客户端里对话和执行，网页用于编辑电路、查看任务并审阅候选方案。MCP 服务不会启动新的 AI 对话，也不会为了连接工具接管桌面聊天。
 
 ## 连接
 
 1. 启动伏安软件，在网页中创建或打开项目。
-2. 在设置中的 MCP 接入区域复制配置；也可以运行下面的命令导出配置。
-3. 将配置添加到你的助手的 MCP 服务设置中。不同客户端的配置文件位置和格式可能不同，按其文档填写 `command` 和 `args`。
+2. 打开“设置 → AI 连接”，连接方式保留“MCP 配置”，选择 Codex、Cursor、DSH / Harness 或其他客户端。
+3. 复制或下载对应格式，将 `fuxian` 合并到客户端已有 MCP 配置。不要覆盖其他服务。保持工作台运行，并在客户端确认已发现伏线工具。
+
+“接口已就绪”只表示本地工作台服务可用，不代表外部 AI 已完成配置。页面不会通过检测状态自动安装、登录或创建 AI 对话。需要旧的网页 CLI / 桌面共享功能时，可显式切到“高级 · 本机 CLI / 桌面共享”；API、模型偏好和已有项目会话记录会保留。
+
+### Codex
+
+选择 Codex 后导出 TOML，合并到 `~/.codex/config.toml`，Windows 默认对应用户目录下的 `.codex/config.toml`。程序提供实际绝对路径，例如：
+
+```toml
+[mcp_servers.fuxian]
+command = "C:/path/to/node.exe"
+args = ["E:/path/to/spice-workbench/scripts/workbench-mcp.mjs", "--connection", "E:/path/to/spice-workbench/.desktop-circuit/connection.json"]
+```
+
+已存在 `[mcp_servers.fuxian]` 时修改原段，不要重复添加同名表。保存后按客户端要求重新加载 MCP。
+
+### Cursor 和其他客户端
+
+Cursor 使用 `~/.cursor/mcp.json` 或项目中的 `.cursor/mcp.json`。选择 Cursor 导出 JSON，将 `fuxian` 合并到已有 `mcpServers`。其他支持此通用格式的 stdio MCP 客户端可选“其他 MCP 客户端”。
+
+DSH / Harness 导出通用 JSON 参数示例；这不是对所有 DSH 版本都可直接导入的专有配置。具体版本必须提供 stdio MCP 客户端能力，并按其文档映射 `command` 和 `args`。这里只证明工作台的 stdio 协议与导出参数，不宣称已经完成每种外部客户端的真实对话验收。
+
+也可以在终端导出通用 JSON：
 
 ```console
 node scripts/workbench-mcp.mjs --print-config
@@ -30,6 +52,10 @@ node scripts/workbench-mcp.mjs --print-config
 ```
 
 默认连接文件相对于脚本的位置为 `../.desktop-circuit/connection.json`，与启动时的工作目录无关。需要指定其他安装位置时，使用 `--connection` 加连接文件的绝对路径。
+
+### Codex 程序安装路径
+
+AI 连接页面也可以手动设置 Codex CLI 的程序完整路径，或恢复自动检测。此路径用于工作台本机检测和高级 CLI 连接；它不改变 MCP 配置中启动 Node 桥的 `command`。外部 AI 客户端自行管理自己的安装、登录与对话，工作台不会改写其账号和全局配置。工作台安装目录迁移后，应重新导出 MCP 配置中的桥路径。
 
 ```console
 node scripts/workbench-mcp.mjs --print-config --connection "E:/my-workbench/.desktop-circuit/connection.json"
@@ -146,3 +172,20 @@ node scripts/workbench-mcp.mjs --doctor --json
 新增第 11 个 SDK 场景通过真实 stdio → HTTP → 共享内核读取图分页，逐元件比较生成网表，依据图查询修改候选后运行 ngspice 并提交审阅，同时核对原工程未改变。
 
 第 12 个 SDK 场景验证工具发现后的错误回复：缺失工程、未知元件、旧版本分页，以及请求到达正在关闭的管理器时的状态错误，均保持可读取的结构化诊断。
+
+
+### 工程对话专用目录
+
+工作台通过 Codex 桌面共享创建新对话时，使用本机持久化目录下的
+`.desktop-control/workspaces/project-<工程编号的 SHA-256>` 专用工作目录。
+该路径由运行中的安装位置解析，每位用户无需使用开发者的账户或磁盘路径。
+目录在首次创建新对话之前自动创建，并检查可写。项目标题仅用于对话名称，
+不会成为文件路径。一个工程的绘制与解释对话共用工程目录。
+
+设置 → 工作区可以选择已有且可写的对话根目录。设置变更用于尚未分配目录的
+新工程；已有工程的目录分配、既有 Codex 绑定和聊天保持原位置。目录关联保存在
+本机 `project-workspaces.json` 中，记录损坏时会明确报错，不会静默重新分组。
+
+MCP 模式下，外部 AI 客户端自行管理聊天归组及工作目录。上述设置不会把外部
+客户端的聊天移动到这些目录，也不会创建外部聊天。工作台仍通过 MCP 的项目编号
+读写用户选择的电路项目。

@@ -24,6 +24,7 @@ test('App opens portable files as separate projects and sidebar save uses the la
   })
   const seed=blankProject();seed.title='原有未完成工程'
   dom.window.localStorage.setItem('fuxian-free-editor-v2',JSON.stringify(seed))
+  dom.window.localStorage.setItem('fuxian-assistant-settings-v1',JSON.stringify({connectionMode:'native'}))
   dom.window.localStorage.setItem('fuxian-codex-settings',JSON.stringify({apiKey:'PRIVATE-KEY-MUST-STAY-LOCAL',threadId:'PRIVATE-CHAT'}))
   const {createRoot}=await import('react-dom/client'),{default:App}=await import('../src/App')
   const root=createRoot(doc.getElementById('root')!)

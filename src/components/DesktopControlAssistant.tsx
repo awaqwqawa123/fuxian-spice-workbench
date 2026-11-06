@@ -88,12 +88,14 @@ function Approval({ item, disabled, onAnswer, onStop }: { item: DesktopControlSt
 
 export interface DesktopControlAssistantProps {
   projectId: string; project: Project; circuit?: DesktopCircuitConnection
+  connectionMode?: 'native' | 'mcp'; onOpenSettings?: () => void
   onApply: (project: Project, options?: { undo?: boolean; replace?: boolean }) => Project | void; onBusyChange?: (busy: boolean) => void
   onModelAcquisitions?: (items: AgentModelAcquisition[]) => void
   externalTask?: AssistantExternalTask; onExternalTaskConsumed?: (id: string) => void
 }
-export default function DesktopControlAssistant(props: DesktopControlAssistantProps) { return <ProjectDesktopControlAssistant key={props.projectId} {...props}/> }
-function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, onBusyChange, onModelAcquisitions, externalTask, onExternalTaskConsumed }: DesktopControlAssistantProps) {
+export default function DesktopControlAssistant(props: DesktopControlAssistantProps) { return <ProjectDesktopControlAssistant key={`${props.projectId}:${props.connectionMode ?? 'native'}`} {...props}/> }
+function ProjectDesktopControlAssistant({ projectId, project, circuit, connectionMode = 'native', onOpenSettings, onApply, onBusyChange, onModelAcquisitions, externalTask, onExternalTaskConsumed }: DesktopControlAssistantProps) {
+  const mcp = connectionMode === 'mcp'
   const [state, setState] = useState<DesktopControlState | null>(null)
   const [error, setError] = useState(''), [notice, setNotice] = useState('')
   const [backendOffline, setBackendOffline] = useState(false)
@@ -108,6 +110,7 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
   const [reviews, setReviews] = useState(() => readReviews(projectId))
   const [redrawOpen, setRedrawOpen] = useState<string | null>(null)
   const [conflictChoice, setConflictChoice] = useState<ConflictChoice | null>(null)
+  const [manualCopy, setManualCopy] = useState('')
   const [now, setNow] = useState(() => Date.now())
   const alive = useRef(true), operation = useRef<AbortController | null>(null), polling = useRef(false), sequence = useRef(0)
   const reconnectRequest=useRef<AbortController|null>(null)
@@ -193,19 +196,20 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
     else{retry.current={failures:0,nextAt:0};setRetryStatus(null)}
   },[])
   const refresh = useCallback(async (signal?: AbortSignal) => {
-    if (polling.current || operation.current || reconnectRequest.current) return
+    if (mcp || polling.current || operation.current || reconnectRequest.current) return
     polling.current = true; const requestSequence = sequence.current
     if(retry.current.failures)setRetryStatus(old=>old?{...old,checking:true,nextAt:0}:old)
     try { const next = await getDesktopControlState(projectId, signal); if (!signal?.aborted && requestSequence === sequence.current) accept(next) }
     catch (reason) { if (!signal?.aborted && alive.current && requestSequence === sequence.current) recordConnectionFailure(reason) }
     finally { polling.current = false; if (alive.current && !signal?.aborted) finishInitialCheck() }
-  }, [projectId, accept,recordConnectionFailure,finishInitialCheck])
+  }, [mcp, projectId, accept,recordConnectionFailure,finishInitialCheck])
   useEffect(() => {
     alive.current = true; const controller = new AbortController(); let timer: ReturnType<typeof setTimeout>
     async function poll() { await refresh(controller.signal); if (!controller.signal.aborted) timer = setTimeout(poll, retry.current.nextAt?Math.max(0,retry.current.nextAt-Date.now()):latest.current?.busy || latest.current?.pendingOwner ? 800 : 1800) }
-    void poll()
+    if (mcp) finishInitialCheck()
+    else void poll()
     return () => { alive.current = false; controller.abort(); operation.current?.abort(); reconnectRequest.current?.abort(); clearTimeout(timer) }
-  }, [refresh])
+  }, [refresh, mcp, finishInitialCheck])
   useEffect(()=>{if(reconnectCheck?.phase==='error'&&connected&&state?.ready&&state.desktopConnected&&state.threadId&&canvasReady)setReconnectCheck({phase:'success',message:'连接已自动恢复，项目对话和当前画布均已就绪。'})},[reconnectCheck?.phase,connected,state?.ready,state?.desktopConnected,state?.threadId,canvasReady])
   useEffect(() => {
     // Once the restarted desktop reports readiness, finish the same project's
@@ -213,7 +217,8 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
     if (reconnectCheck?.phase === 'waiting' && state?.connected && state.ready && state.desktopConnected) void reconnectAll()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reconnectCheck?.phase, state?.connected, state?.ready, state?.desktopConnected])
-  useEffect(() => { onBusyChange?.(operating || !!state?.busy); return () => onBusyChange?.(false) }, [operating, state?.busy, onBusyChange])
+  const taskRunning = tasks.some(task => task.status === 'running')
+  useEffect(() => { onBusyChange?.(mcp ? taskRunning : operating || !!state?.busy); return () => onBusyChange?.(false) }, [mcp, taskRunning, operating, state?.busy, onBusyChange])
   const acquisitions = JSON.stringify(tasks.flatMap(task => task.result?.modelAcquisitions ?? []))
   useEffect(() => { const values = JSON.parse(acquisitions) as AgentModelAcquisition[]; if (values.length) onModelAcquisitions?.(values) }, [acquisitions, onModelAcquisitions])
   const followLatest = useCallback(() => {
@@ -229,7 +234,7 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
     return () => observer.disconnect()
   }, [followLatest])
   async function perform(action: (signal: AbortSignal) => Promise<DesktopControlState>, reportFailure = false, reportConnectionError = true) {
-    if (operation.current) return null
+    if (mcp || operation.current) return null
     const controller = new AbortController(); operation.current = controller; sequence.current++; setOperating(true); setNotice('')
     try { const next = await action(controller.signal); if (!controller.signal.aborted && alive.current) { accept(next); return next } }
     catch (reason) { if (!controller.signal.aborted && alive.current) { if (reportConnectionError || reason instanceof LocalServiceUnavailableError) { setError((reason as Error).message); setBackendOffline(reason instanceof LocalServiceUnavailableError) } if (reportFailure) throw reason } }
@@ -237,7 +242,7 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
     return null
   }
   async function reconnectAll(){
-    if(reconnectRequest.current||operation.current)return
+    if(mcp||reconnectRequest.current||operation.current)return
     const controller=new AbortController();reconnectRequest.current=controller;sequence.current++
     setOperating(true); finishInitialCheck(); setBindingError(''); setNotice(''); setError(''); setReconnectStartedAt(Date.now()); setNow(Date.now())
     setReconnectCheck({phase:'checking',message:'正在检查并恢复 Codex 桌面共享连接和项目对话…'})
@@ -308,8 +313,26 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
   function updateReview(taskId: string, patch: Partial<CandidateReview>) {
     setReviews(previous => ({ ...previous, [taskId]: { ...previous[taskId], ...patch } }))
   }
+  async function copyMcpPrompt(text: string) {
+    setManualCopy('')
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable')
+      await navigator.clipboard.writeText(text)
+      if (alive.current) setNotice('任务提示已复制。请粘贴到已配置 MCP 的 AI 客户端；此处尚未发送任务。')
+    } catch {
+      if (alive.current) { setManualCopy(text); setNotice('浏览器无法自动复制，请手动复制下方完整提示，粘贴到已配置 MCP 的 AI 客户端。') }
+    }
+  }
+  function projectPrompt() {
+    return `请使用伏线工作台 MCP 操作工程“${project.title}”（projectId: ${projectId}）。先读取当前工程及 revision，确认项目编号和最新画布，再根据我的要求建立电路任务；完成后提交候选方案供我在网页预览和应用。不要直接覆盖未经审阅的画布。`
+  }
   async function sendRedraw(task: DesktopCircuitTask, stopCurrent = false) {
     const draft = reviews[task.id]?.redraw, text = draft?.text.trim()
+    if (mcp) {
+      if (!text || !task.result?.changed || task.status !== 'completed' || reviews[task.id]?.discarded) return
+      await copyMcpPrompt(`${projectPrompt()}\n请以待审阅候选 taskId: ${task.id} 为起点重画。具体要求：${text}\n单纯调整布局时保留器件、参数和电气连接，并重新提交候选。`)
+      return
+    }
     if (!text || draft?.pending || !task.result?.changed || task.status !== 'completed' || reviews[task.id]?.discarded || !confirmedWeb || state?.pendingApprovals || operating || !canvasReady || redrawSending.current || state?.busy && !stopCurrent) return
     redrawSending.current = true
     try {
@@ -351,7 +374,13 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
     : currentTask?.status === 'completed' ? '电路工具已完成；等待 Codex 结束本轮并给出回复。'
     : 'Codex 回合尚未结束，等待下一步或回复。'
   const reconnectBusy = reconnectCheck?.phase === 'checking' || reconnectCheck?.phase === 'syncing'
-  return <section className="desktop-control-assistant" aria-label="Codex 桌面共享会话" data-control={control} aria-busy={reconnectBusy}>
+  return <section className="desktop-control-assistant" aria-label={mcp ? 'MCP 电路任务' : 'Codex 桌面共享会话'} data-control={mcp ? 'mcp' : control} aria-busy={mcp ? taskRunning : reconnectBusy}>
+    {mcp ? <>
+      <div className="desktop-control-status"><strong><i/>MCP 电路任务</strong><button type="button" onClick={onOpenSettings} disabled={!onOpenSettings}>连接配置</button></div>
+      <p className="desktop-control-intro">在已配置 MCP 的 AI 客户端中对话和执行任务，在这里预览、应用或撤销电路方案。</p>
+      <details className="desktop-control-details"><summary>{project.title} · 当前工程</summary><small>工程编号：{projectId}</small><p>复制提示后，在 Codex、Cursor 或其他支持 MCP 的客户端中粘贴并补充要求。连接配置可查看各客户端的接入方法。</p></details>
+      <div className="ai-actions"><button type="button" onClick={() => { void copyMcpPrompt(projectPrompt()) }}>复制工程任务提示</button></div>
+    </> : <>
     <div className="desktop-control-status"><strong><i/>{(reconnectBusy||backendOffline&&retryStatus?.checking||connected && state?.busy && !state.pendingApprovals) && <LoaderCircle className="desktop-control-spinner" size={14} aria-hidden="true"/>}{reconnectBusy ? reconnectCheck.phase === 'syncing' ? '正在同步画布…' : '正在恢复桌面连接…' : reconnectCheck?.phase === 'waiting' ? reconnectCheck.restartRequired ? '配置已修复 · 等待重开 Codex' : '等待 Codex 桌面接入' : checking ? '检查桌面连接…' : handoffTarget ? `正在切到${handoffTarget === 'web' ? '网页' : '桌面'}…` : backendOffline ? retryStatus?.checking?`正在尝试连接本机后台 · 第 ${retryStatus.attempt+1} 次`:'本机工作台后台未连接' : connected && state?.pendingApprovals ? '本轮等待审批' : connected && state?.busy ? `本轮进行中 · ${state.owner === 'desktop' ? '桌面' : '网页'}控制` : control === 'web' ? `网页控制中${state?.messages.length ? ' · 本轮已结束' : ''}` : control === 'desktop' ? `桌面控制中${state?.messages.length ? ' · 本轮已结束' : ''}` : control === 'pending' ? `等待切到${state?.pendingOwner === 'web' ? '网页' : '桌面'}` : projectUnbound ? '桌面已连接 · 正在创建项目对话' : state?.threadId && state.desktopConnected ? '项目对话暂不可用' : '桌面连接未就绪'}</strong><button type="button" aria-label="重新连接桌面共享" disabled={operating||reconnectBusy} onClick={()=>{void reconnectAll()}}>{reconnectBusy ? <LoaderCircle className="desktop-control-spinner" size={14}/> : <RefreshCw size={14}/>} {reconnectBusy ? '连接中…' : '重新连接'}</button></div>
     {reconnectCheck&&<div className="desktop-control-reconnect-result" role="status" aria-live="polite" data-phase={reconnectCheck.phase}>{reconnectBusy?<LoaderCircle className="desktop-control-spinner" size={16} aria-hidden="true"/>:reconnectCheck.phase==='success'?<Check size={16} aria-hidden="true"/>:reconnectCheck.phase==='waiting'?<Monitor size={16} aria-hidden="true"/>:<CircleAlert size={16} aria-hidden="true"/>}<span>{reconnectCheck.restartRequired && <strong>配置已修复</strong>}{reconnectCheck.message}{reconnectBusy && <small>已进行 {Math.max(0,Math.floor((now-reconnectStartedAt)/1000))} 秒 · 正在处理，请稍候</small>}{reconnectCheck.phase === 'waiting' && <small>原项目对话和草稿已保留，桌面接入后会自动完成连接。</small>}</span></div>}
     {backendOffline&&retryStatus&&<div className="desktop-control-retry" role="status"><span>{retryStatus.checking?`第 ${retryStatus.attempt+1} 次连接正在进行…`:`已尝试 ${retryStatus.attempt} 次 · 上次检查 ${new Date(retryStatus.lastAt).toLocaleTimeString('zh-CN')} · ${Math.max(0,Math.ceil((retryStatus.nextAt-now)/1000))} 秒后再试`}</span></div>}
@@ -372,10 +401,13 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
       {state?.threadId ? <><p>这是此项目绑定的 Codex 对话。对话编号（Thread ID）只是定位用，切换项目或继续聊天都无需填写。</p><small>当前对话编号：{state.threadId}</small></> : <p>首次切换到此项目时会自动新建对话。桌面暂未连接时，连接恢复后会继续创建。</p>}
       <small>桌面客户端：{state?.desktopConnected ? '已连接' : '未连接'}</small>
     </details>
+    </>}
     <div className="desktop-control-canvas" role="status">{backendOffline ? '画布保留在当前页面，等待后台恢复同步。' : canvasReady ? '当前画布已同步到电路工具' : circuit?.status === 'conflict' ? '另一页面保存了不同画布，请确认使用当前画布。' : circuit?.error || '正在同步当前画布…'}{circuit?.status === 'conflict' && <button type="button" onClick={circuit.reconnect}>以当前画布连接</button>}</div>
-    <div className="desktop-control-scroll" ref={scroll} tabIndex={0} aria-label="桌面共享消息与电路任务" onWheel={event => { if (event.deltaY < 0 && scroll.current && scroll.current.scrollHeight > scroll.current.clientHeight + 48) { following.current = false; setAway(true) } }} onScroll={() => { const area = scroll.current; if (!area?.clientHeight) return; const bottom = area.scrollHeight - area.scrollTop - area.clientHeight <= 48; if (bottom) following.current = true; else if (area.scrollTop < lastTop.current - 1) following.current = false; lastTop.current = area.scrollTop; setAway(!bottom) }}><div ref={content}>
+    <div className="desktop-control-scroll" ref={scroll} tabIndex={0} aria-label={mcp ? 'MCP 电路任务记录' : '桌面共享消息与电路任务'} onWheel={event => { if (event.deltaY < 0 && scroll.current && scroll.current.scrollHeight > scroll.current.clientHeight + 48) { following.current = false; setAway(true) } }} onScroll={() => { const area = scroll.current; if (!area?.clientHeight) return; const bottom = area.scrollHeight - area.scrollTop - area.clientHeight <= 48; if (bottom) following.current = true; else if (area.scrollTop < lastTop.current - 1) following.current = false; lastTop.current = area.scrollTop; setAway(!bottom) }}><div ref={content}>
       {error && !backendOffline && <p className="ai-error" role="alert">{error}</p>}{connected && state?.error && <p className="ai-error" role="status">{state.error}</p>}{notice && <p className="ai-notice" role="status">{notice}</p>}
-      <div className="desktop-control-messages" aria-label="桌面共享对话记录" aria-live="polite">{!state?.messages.length && <p className="desktop-control-empty">连接项目对话后，在这里查看桌面消息；切到网页即可继续。</p>}{state?.messages.map(message => <article key={message.id} className={`persistent-message is-${message.role}`}><header><strong>{message.role === 'user' ? '你' : 'Codex'}</strong><time>{new Date(message.createdAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</time></header>{message.role === 'assistant' ? <AssistantMarkdown>{message.content}</AssistantMarkdown> : <p>{message.content}</p>}{message.delivery && message.delivery !== 'sent' && <small className="desktop-control-pending">{message.delivery === 'unknown' ? '送达状态待核对' : '发送失败'}</small>}</article>)}</div>
+      {manualCopy && <label>手动复制任务提示<textarea aria-label="手动复制任务提示" readOnly rows={6} value={manualCopy} onFocus={event => event.currentTarget.select()}/></label>}
+      {!mcp && <div className="desktop-control-messages" aria-label="桌面共享对话记录" aria-live="polite">{!state?.messages.length && <p className="desktop-control-empty">连接项目对话后，在这里查看桌面消息；切到网页即可继续。</p>}{state?.messages.map(message => <article key={message.id} className={`persistent-message is-${message.role}`}><header><strong>{message.role === 'user' ? '你' : 'Codex'}</strong><time>{new Date(message.createdAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</time></header>{message.role === 'assistant' ? <AssistantMarkdown>{message.content}</AssistantMarkdown> : <p>{message.content}</p>}{message.delivery && message.delivery !== 'sent' && <small className="desktop-control-pending">{message.delivery === 'unknown' ? '送达状态待核对' : '发送失败'}</small>}</article>)}</div>}
+      {mcp && !tasks.length && <p className="desktop-control-empty">暂无电路任务。请在 AI 客户端中读取当前工程并提交任务；完成的候选会显示在这里。</p>}
       {tasks.map(task => {
         const result = task.result, resolution = resolveDesktopCandidate(task, project, applications[task.id])
         const discarded = !!reviews[task.id]?.discarded
@@ -399,7 +431,7 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
           {discarded ? <div className="desktop-control-discarded"><p>此方案已舍弃，当前画布和项目对话仍保留。{state?.busy ? 'Codex 当前回合仍在运行；如需停止，请使用下方“停止本轮”。' : ''}</p><button type="button" onClick={() => updateReview(task.id, { discarded: false })}>恢复方案</button></div> : <>
           <p>{task.request}</p>
           <ol>{steps.map((step, index) => <li key={index} data-status={step.status}><strong>{toolNames[step.name] ?? step.name}</strong><span>{step.status === 'completed' ? <><Check size={12}/>完成</> : step.status === 'error' ? '失败' : task.status === 'running' ? <><LoaderCircle className="desktop-control-spinner" size={12}/>进行中</> : '已中止'}</span><p>{step.detail}</p></li>)}</ol>
-          {task.status === 'running' && !steps.some(step => step.status === 'running') && <p className="desktop-control-task-waiting"><LoaderCircle className="desktop-control-spinner" size={13} aria-hidden="true"/>工具步骤已完成，等待本轮对话结束。</p>}
+          {task.status === 'running' && !steps.some(step => step.status === 'running') && <p className="desktop-control-task-waiting"><LoaderCircle className="desktop-control-spinner" size={13} aria-hidden="true"/>{mcp ? '等待 AI 客户端提交任务结果。' : '工具步骤已完成，等待本轮对话结束。'}</p>}
           {task.error && <p className="ai-error">{task.error}</p>}
           {result && <><AssistantMarkdown>{result.summary}</AssistantMarkdown>
             {result.simulation && <p>{simulationStale ? '原候选仿真：' : ''}{result.simulation.engine} · {result.simulation.analysis.toUpperCase()} · {result.simulation.points} 个采样点{simulationStale ? ' · 合并后需重新仿真' : result.simulation.stale ? ' · 电路修改后需重新仿真' : ''}</p>}
@@ -422,16 +454,25 @@ function ProjectDesktopControlAssistant({ projectId, project, circuit, onApply, 
                 </div>}
                 <button type="button" className="desktop-control-conflict-discard" onClick={() => updateReview(task.id, { discarded: true })}>舍弃方案</button>
               </section>}
-              {canReview && redrawOpen === task.id && <form className="desktop-control-redraw" onSubmit={event => { event.preventDefault(); void sendRedraw(task) }}><label htmlFor={`redraw-${task.id}`}>告诉 Codex 怎样重画这份候选</label><textarea id={`redraw-${task.id}`} aria-label="重画要求" maxLength={7800} rows={3} value={reviews[task.id]?.redraw?.text ?? ''} onChange={event => updateReview(task.id, { redraw: { text: event.target.value, ...(reviews[task.id]?.redraw?.pending ? { pending: reviews[task.id].redraw!.pending } : {}) } })} placeholder="例如：拉开反馈回路与主电流路径，减少交叉走线"/><p>重画会从这份候选继续；单纯调整布局时保留器件、参数和连接。</p>{reviews[task.id]?.redraw?.pending && <small role="status">上次重画请求正在核对送达，要求已保留，不会重复发送。</small>}{state?.busy && <small role="status">本轮仍在进行。可停止当前回合并重画这份候选。</small>}{state?.busy ? <button type="button" disabled={!reviews[task.id]?.redraw?.text.trim() || !!reviews[task.id]?.redraw?.pending || !confirmedWeb || !!state?.pendingApprovals || operating || !canvasReady} onClick={() => { void sendRedraw(task, true) }}><Square size={13}/>停止当前回合并重画</button> : <button type="submit" disabled={!reviews[task.id]?.redraw?.text.trim() || !!reviews[task.id]?.redraw?.pending || !confirmedWeb || !!state?.pendingApprovals || operating || !canvasReady}><Send size={13}/>{operating ? '提交中…' : '按要求重画'}</button>}</form>}
+              {canReview && redrawOpen === task.id && <form className="desktop-control-redraw" onSubmit={event => { event.preventDefault(); void sendRedraw(task) }}>
+                <label htmlFor={`redraw-${task.id}`}>{mcp ? '填写重画要求并复制到 AI 客户端' : '告诉 Codex 怎样重画这份候选'}</label>
+                <textarea id={`redraw-${task.id}`} aria-label="重画要求" maxLength={7800} rows={3} value={reviews[task.id]?.redraw?.text ?? ''} onChange={event => updateReview(task.id, { redraw: { text: event.target.value, ...(reviews[task.id]?.redraw?.pending ? { pending: reviews[task.id].redraw!.pending } : {}) } })} placeholder="例如：拉开反馈回路与主电流路径，减少交叉走线"/>
+                <p>{mcp ? '复制的提示包含当前工程与候选编号。粘贴到 AI 客户端后才会开始重画。' : '重画会从这份候选继续；单纯调整布局时保留器件、参数和连接。'}</p>
+                {!mcp && reviews[task.id]?.redraw?.pending && <small role="status">上次重画请求正在核对送达，要求已保留，不会重复发送。</small>}
+                {!mcp && state?.busy && <small role="status">本轮仍在进行。可停止当前回合并重画这份候选。</small>}
+                {mcp ? <button type="submit" disabled={!reviews[task.id]?.redraw?.text.trim()}>复制重画任务提示</button>
+                  : state?.busy ? <button type="button" disabled={!reviews[task.id]?.redraw?.text.trim() || !!reviews[task.id]?.redraw?.pending || !confirmedWeb || !!state?.pendingApprovals || operating || !canvasReady} onClick={() => { void sendRedraw(task, true) }}><Square size={13}/>停止当前回合并重画</button>
+                  : <button type="submit" disabled={!reviews[task.id]?.redraw?.text.trim() || !!reviews[task.id]?.redraw?.pending || !confirmedWeb || !!state?.pendingApprovals || operating || !canvasReady}><Send size={13}/>{operating ? '提交中…' : '按要求重画'}</button>}
+              </form>}
             </>}
           </>}
           </>}</details>
       })}
     </div></div>
     {away && <button className="desktop-control-latest" type="button" onClick={() => { following.current = true; followLatest() }}><ArrowDown size={13}/>回到最新</button>}
-    {connected && state?.busy && <div className="desktop-control-run-status" role="status" aria-label="本轮运行状态" data-waiting={!!state.pendingApprovals}><div><strong><span className="desktop-control-run-icon">{state.pendingApprovals ? <CircleAlert size={18} strokeWidth={2.5} aria-hidden="true"/> : <LoaderCircle className="desktop-control-spinner" size={18} strokeWidth={2.5} aria-hidden="true"/>}</span>{state.pendingApprovals ? state.approvals.length ? '需要你确认' : '等待桌面处理' : '本轮仍在进行'}</strong>{latestUserAt > 0 && <small>{state.pendingApprovals ? '本轮开始' : '已用'} {agentElapsedLabel(latestUserAt, now)}{state.pendingApprovals ? '前' : ''}</small>}</div><p>{runDetail}{Number.isFinite(lastToolAt) && <span>最近工具更新：{agentElapsedLabel(lastToolAt, now)}前</span>}</p></div>}
-    {!!state?.approvals.length && <section className="desktop-control-approval-dock" aria-label="待处理的 Codex 请求"><strong>Codex 等待你确认 · {state.approvals.length} 项</strong>{state.approvals.map(item => <Approval key={item.id} item={item} disabled={!webOwner || operating} onAnswer={(decision, answers) => { void perform(signal => approveDesktopControlRequest(projectId, item.id, decision, answers, signal)) }} onStop={() => { void perform(signal => cancelDesktopControlTurn(projectId, signal)) }}/>)}</section>}
-    {!checking && <Composer key={state?.threadId ?? 'unbound'} projectId={projectId} state={state} canSend={confirmedWeb && !state?.busy && !state?.pendingApprovals && !operating && !!canvasReady} operating={operating} externalTask={externalTask} onExternalTaskConsumed={onExternalTaskConsumed} onSend={(message, requestId) => perform(signal => sendDesktopControlMessage(projectId, message, requestId, signal), true)} onRefresh={() => void refresh()} onStop={() => { void perform(signal => cancelDesktopControlTurn(projectId, signal)) }} canStop={webOwner && !!state?.busy && !operating}/>}
+    {!mcp && connected && state?.busy && <div className="desktop-control-run-status" role="status" aria-label="本轮运行状态" data-waiting={!!state.pendingApprovals}><div><strong><span className="desktop-control-run-icon">{state.pendingApprovals ? <CircleAlert size={18} strokeWidth={2.5} aria-hidden="true"/> : <LoaderCircle className="desktop-control-spinner" size={18} strokeWidth={2.5} aria-hidden="true"/>}</span>{state.pendingApprovals ? state.approvals.length ? '需要你确认' : '等待桌面处理' : '本轮仍在进行'}</strong>{latestUserAt > 0 && <small>{state.pendingApprovals ? '本轮开始' : '已用'} {agentElapsedLabel(latestUserAt, now)}{state.pendingApprovals ? '前' : ''}</small>}</div><p>{runDetail}{Number.isFinite(lastToolAt) && <span>最近工具更新：{agentElapsedLabel(lastToolAt, now)}前</span>}</p></div>}
+    {!mcp && !!state?.approvals.length && <section className="desktop-control-approval-dock" aria-label="待处理的 Codex 请求"><strong>Codex 等待你确认 · {state.approvals.length} 项</strong>{state.approvals.map(item => <Approval key={item.id} item={item} disabled={!webOwner || operating} onAnswer={(decision, answers) => { void perform(signal => approveDesktopControlRequest(projectId, item.id, decision, answers, signal)) }} onStop={() => { void perform(signal => cancelDesktopControlTurn(projectId, signal)) }}/>)}</section>}
+    {!mcp && !checking && <Composer key={state?.threadId ?? 'unbound'} projectId={projectId} state={state} canSend={confirmedWeb && !state?.busy && !state?.pendingApprovals && !operating && !!canvasReady} operating={operating} externalTask={externalTask} onExternalTaskConsumed={onExternalTaskConsumed} onSend={(message, requestId) => perform(signal => sendDesktopControlMessage(projectId, message, requestId, signal), true)} onRefresh={() => void refresh()} onStop={() => { void perform(signal => cancelDesktopControlTurn(projectId, signal)) }} canStop={webOwner && !!state?.busy && !operating}/>}
   </section>
 }
 function Composer({ projectId, state, canSend, operating, externalTask, onExternalTaskConsumed, onSend, onRefresh, onStop, canStop }: { projectId: string; state: DesktopControlState | null; canSend: boolean; operating: boolean; externalTask?: AssistantExternalTask; onExternalTaskConsumed?: (id: string) => void; onSend: (message: string, requestId: string) => Promise<DesktopControlState | null>; onRefresh: () => void; onStop: () => void; canStop: boolean }) {

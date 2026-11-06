@@ -4,6 +4,7 @@ import type { Plugin } from 'vite'
 import { DESKTOP_CONTROL_API } from '../src/core/desktop-control'
 import { DesktopControlError, DesktopControlManager, desktopControlFailure, type DesktopControlManagerOptions } from './desktop-control-manager'
 import { changeDesktopControlSetup, readDesktopControlSetup, type DesktopControlSetupAction, type DesktopControlSetupStage } from './desktop-control-setup'
+import { CodexInstallationError } from './codex-installation'
 import { DesktopConversationFolder } from './desktop-conversation-folder'
 import type { DesktopCircuitManager } from './desktop-circuit-manager'
 import { validWorkbenchProjectId } from '../src/core/codex-workbench-link'
@@ -30,9 +31,9 @@ function readBody(req: IncomingMessage, timeout: number): Promise<unknown> { ret
   if (Number(req.headers['content-length']) > 128 * 1024) { fail(new DesktopControlError(413, '请求内容过大')); return }
   req.on('data', data); req.once('end', end); req.once('error', fail); req.once('aborted', abort)
 }) }
-export function createDesktopControlMiddleware(options: DesktopControlManagerOptions & { manager?: DesktopControlManager; bodyTimeoutMs?: number; setupAction?: (action: DesktopControlSetupAction) => Promise<{ stage: DesktopControlSetupStage }> }) {
-  const folder = new DesktopConversationFolder(options.directory, options.projectDirectory)
-  const managerOptions = { ...options, conversationDirectory: options.conversationDirectory ?? (() => folder.effectiveDirectory()) }
+export function createDesktopControlMiddleware(options: DesktopControlManagerOptions & { manager?: DesktopControlManager; bodyTimeoutMs?: number; setupDirectory?: string; setupAction?: (action: DesktopControlSetupAction) => Promise<{ stage: DesktopControlSetupStage }> }) {
+  const folder = new DesktopConversationFolder(options.directory)
+  const managerOptions = { ...options, conversationDirectory: options.conversationDirectory ?? ((projectId: string) => folder.effectiveDirectory(projectId)) }
   const manager = options.manager ?? new DesktopControlManager(managerOptions)
   let explanationManager: DesktopControlManager | null = null
   const explain = () => explanationManager ??= new DesktopControlManager({ ...managerOptions, explanationOnly: true, directory: join(options.directory, 'explanation') })
@@ -72,6 +73,11 @@ export function createDesktopControlMiddleware(options: DesktopControlManagerOpt
         }
         let control: { connected: boolean; ready: boolean; desktopConnected: boolean } | null = null
         try { control = await target.reconnectTransport() } catch { /* A lost launcher requires installation repair, not another writer. */ }
+        // A running broker keeps its original executable and code. Updating the
+        // stored path must not claim that live process already uses the new one.
+        if (control?.connected && (await readDesktopControlSetup(options.setupDirectory, options.projectDirectory)).stage === 'broken') {
+          reply(200, { stage: 'restart-required', connected: false, state: await currentState(), setupStage: 'broken', restartRequired: true, message: '已保存的 Codex 路径或共享程序与当前桌面不一致。请先保存当前任务并退出 Codex，再点击连接更新启动入口后重新打开；现有进程没有被停止。' }); return
+        }
         if (control?.connected && control.desktopConnected && control.ready) {
           try {
             const state = await connectProject()
@@ -89,7 +95,7 @@ export function createDesktopControlMiddleware(options: DesktopControlManagerOpt
         try { setupStage = (await repair()).stage }
         catch (error) {
           const reason = (error as Error).message
-          const message = reason === 'entry-changed' ? 'Codex 启动入口已被其他程序配置，自动修复没有覆盖它。请在设置中处理启动入口。' : reason === 'codex-missing' ? '未找到官方 Codex 程序，请先安装并打开 Codex。' : reason === 'windows-only' ? '自动配置桌面共享目前支持 Windows。' : reason === 'timeout' ? '连接配置超时，请稍后再次点击连接；已有项目和对话已保留。' : error instanceof DesktopControlError ? error.message : '桌面共享配置未完成，请在设置中查看配置状态。'
+          const message = reason === 'entry-changed' ? 'Codex 启动入口已被其他程序配置，自动修复没有覆盖它。请在设置中处理启动入口。' : reason === 'codex-missing' ? '未找到官方 Codex 程序，请先安装并打开 Codex。' : reason === 'windows-only' ? '自动配置桌面共享目前支持 Windows。' : reason === 'timeout' ? '连接配置超时，请稍后再次点击连接；已有项目和对话已保留。' : error instanceof DesktopControlError || error instanceof CodexInstallationError ? error.message : '桌面共享配置未完成，请在设置中查看配置状态。'
           reply(200, { stage: 'failed', connected: false, state: await currentState(), restartRequired: false, message }); return
         }
         // The desktop may have restarted while configuration was being repaired.
@@ -117,7 +123,7 @@ export function createDesktopControlMiddleware(options: DesktopControlManagerOpt
       if (action === 'setup') {
         if (req.method !== 'GET') throw new DesktopControlError(405, '安装状态查询使用 GET')
         if (url.search) throw new DesktopControlError(400, '安装状态查询不接受参数')
-        reply(200, await readDesktopControlSetup()); return
+        reply(200, await readDesktopControlSetup(options.setupDirectory, options.projectDirectory)); return
       }
       if (['setup/prepare', 'setup/activate', 'setup/restore'].includes(action)) {
         if (req.method !== 'POST') throw new DesktopControlError(405, '桌面共享配置使用 POST')
@@ -127,8 +133,14 @@ export function createDesktopControlMiddleware(options: DesktopControlManagerOpt
         setupBusy = true
         try {
           const operation = action.slice('setup/'.length) as DesktopControlSetupAction
+          if (operation !== 'restore') {
+            let live = false
+            try { live = !!(await target.reconnectTransport()).connected } catch { /* No live broker to preserve. */ }
+            if (live) throw new DesktopControlError(409, 'Codex 桌面共享仍在运行。请先保存当前任务并退出 Codex，再准备或启用更新的启动入口；当前进程没有被停止。')
+          }
           reply(200, await (options.setupAction ?? (step => changeDesktopControlSetup(step, options.projectDirectory)))(operation))
         } catch (error) {
+          if (error instanceof DesktopControlError) throw error
           const reason = (error as Error).message
           const messages: Record<string, string> = {
             'windows-only': '当前版本的桌面共享向导只支持 Windows',
@@ -138,7 +150,7 @@ export function createDesktopControlMiddleware(options: DesktopControlManagerOpt
             timeout: '配置步骤超时，请刷新安装状态后再决定是否重试',
             'installer-failed': '配置步骤未完成，请查看工作台后台日志或使用项目中的安装脚本检查原因',
           }
-          throw new DesktopControlError(503, messages[reason] ?? messages['installer-failed'])
+          throw new DesktopControlError(error instanceof CodexInstallationError ? error.status : 503, error instanceof CodexInstallationError ? error.message : messages[reason] ?? messages['installer-failed'])
         } finally { setupBusy = false }
         return
       }
