@@ -96,7 +96,12 @@ if (!(Test-Path -LiteralPath $hostScript -PathType Leaf)) { throw "Service host 
 $NodeExecutable = Resolve-ServiceNode $NodeExecutable
 $serviceId = [Guid]::NewGuid().ToString()
 $runConfig = Join-Path $serviceDirectory "$serviceId.json"
-@{ directory = $serviceDirectory; projectDirectory = $ProjectDirectory; port = $Port; serviceId = $serviceId; nodeExecutable = $NodeExecutable } |
+$runtimeConfig = @{ directory = $serviceDirectory; projectDirectory = $ProjectDirectory; port = $Port; serviceId = $serviceId; nodeExecutable = $NodeExecutable }
+# WMI starts a separate process with its own environment. Forward only these
+# explicit local run options; do not copy the launching process's environment.
+if ($env:FUXIAN_DATA_DIR) { $runtimeConfig.dataDirectory = $env:FUXIAN_DATA_DIR }
+if ($env:FUXIAN_MODE) { $runtimeConfig.mode = $env:FUXIAN_MODE }
+$runtimeConfig |
     ConvertTo-Json | Set-Content -LiteralPath $runConfig -Encoding UTF8
 # Win32_Process.Create starts the host under WMI, outside the caller's Windows Job.
 # Start-Process / Node detached would still inherit an editor Job with KillOnClose.

@@ -10,12 +10,20 @@
 .project-sidebar-icon { display:grid; place-items:center; width:30px; height:32px; padding:0; flex-shrink:0; border-radius:5px; color:#6b8169; }
 .project-sidebar-icon:hover { background:#e6edde; }
 .project-sidebar-heading>.project-sidebar-icon { align-self:flex-start; margin-top:4px; }
-.project-sidebar-actions { display:grid; gap:6px; padding:0 14px 22px; }
-.project-sidebar-actions button { display:flex; align-items:center; justify-content:center; gap:7px; padding:9px 7px; font-size:11px; border-radius:5px; }
-.project-sidebar-actions .project-sidebar-new { background:#28694f; color:#fff; box-shadow:0 2px 4px #1b513414; }
-.project-sidebar-actions .project-sidebar-new:not(:disabled):hover { background:#1b553d; color:#fff; }
-.project-sidebar-actions .project-sidebar-copy { border:1px solid #d8e2ce; background:#fbfcf7; color:#58704f; }
-.project-sidebar-actions .project-sidebar-copy:not(:disabled):hover { background:#eef3e7; }
+.project-sidebar-actions { display:grid; grid-template-columns: minmax(0,1fr) auto; gap:6px; padding:0 14px 12px; }
+.project-sidebar .project-sidebar-actions button { display:flex; align-items:center; justify-content:center; gap:6px; min-width:0; min-height:34px; padding:5px 8px; border:1px solid var(--ui-border,#d8e2ce); border-radius:6px; background:var(--ui-panel,#fbfcf7); color:var(--ui-ink,#375846); font-size:12px; white-space:nowrap; }
+.project-sidebar-actions button svg { flex:none; }
+.project-sidebar .project-sidebar-actions .project-sidebar-open { background:var(--ui-accent-soft,#e7efdf); color:var(--ui-accent-ink,#285d3f); border-color:var(--ui-accent,#43815a); font-weight:650; }
+.project-sidebar .project-sidebar-actions button:hover { background:var(--ui-hover,#e6edde); }
+.project-sidebar-actions:has(.project-sidebar-new:only-child) { grid-template-columns:minmax(0,1fr); }
+.project-sidebar-menu { position:relative; flex:none; margin-left:auto; }
+.project-sidebar-menu summary { display:grid; place-items:center; width:30px; min-height:32px; list-style:none; border-radius:6px; color:var(--ui-muted,#6b8169); cursor:pointer; }
+.project-sidebar-menu summary::-webkit-details-marker { display:none; }
+.project-sidebar-menu[open] summary,.project-sidebar-menu summary:hover { background:var(--ui-hover,#e6edde); color:var(--ui-ink,#375846); }
+.project-sidebar-menu > div { position:absolute; z-index:2; inset:calc(100% + 3px) 0 auto auto; display:grid; min-width:132px; padding:4px; border:1px solid var(--ui-border,#d8e2ce); border-radius:7px; background:var(--ui-raised,#fbfcf7); box-shadow:0 4px 12px var(--ui-shadow,#203f2d22); }
+.project-sidebar-menu button { display:flex; align-items:center; gap:6px; min-height:34px; padding:5px 7px; border-radius:4px; text-align:left; color:var(--ui-ink,#375846); font-size:12px; white-space:nowrap; }
+.project-sidebar-menu button:hover { background:var(--ui-hover,#e6edde); }
+.project-sidebar :is(.project-sidebar-actions button,.project-sidebar-menu summary,.project-sidebar-menu button):focus-visible { outline:2px solid var(--ui-accent,#43815a); outline-offset:2px; }
 .project-sidebar-section { display:flex; justify-content:space-between; align-items:center; padding:0 18px 9px; font-size:10px; color:#81907a; }
 .project-sidebar-section>span:last-child { font:10px var(--mono); }
 .project-sidebar-list { flex:1; min-height:80px; overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; padding:0 9px 15px; }
@@ -46,7 +54,3 @@
 .project-sidebar-sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .project-sidebar.is-compact .project-sidebar-panel { position:fixed; top:0; bottom:0; left:0; height:100dvh; width:min(260px,calc(100vw - 44px)); z-index:91; border-right:1px solid #bdcdb5; box-shadow:8px 0 32px #203f2d22; }
 .project-sidebar-backdrop { position:fixed; inset:0; z-index:90; background:#16322a44; }
-
-.project-sidebar-file-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; padding:0 10px 10px; }
-.project-sidebar-file-actions button { display:flex; align-items:center; justify-content:center; gap:4px; min-width:0; min-height:30px; padding:4px; border:1px solid var(--ui-border,#d8e2ce); border-radius:4px; color:var(--ui-muted,#58704f); background:var(--ui-panel,#fbfcf7); font-size:10px; }
-.project-sidebar-file-actions button:hover:not(:disabled) { background:var(--ui-hover,#eef3e7); color:var(--ui-ink,#345b3e); }

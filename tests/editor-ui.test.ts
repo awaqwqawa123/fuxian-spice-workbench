@@ -160,7 +160,8 @@ test('DOM workflow: place, rotate, connect, probe, solve, move, undo, edit and e
     await click(byText('运行仿真'));await act(async()=>{await Promise.all(pending)})
     assertDcOutput(4)
     await pointer(query('.editor-device[aria-label^="R2 "]'),'pointerdown',820,320);await pointer(canvas(),'pointerup',820,320)
-    await click(byText('保存工程文件'))
+    await click(byText('导出工程文件'))
+    await click(byText('下载 .fuxian'))
     assert.match(filename,/\.fuxian$/)
     assert.ok(exported)
     const archive=exported as Blob

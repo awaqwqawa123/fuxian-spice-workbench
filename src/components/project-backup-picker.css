@@ -1,0 +1,21 @@
+.workbench-window.project-backup-window{width:min(620px,calc(100vw - 24px));max-width:none;max-height:calc(100dvh - 24px);overflow:auto;color:var(--ui-ink);background:var(--ui-panel);border-color:var(--ui-border)}
+.project-backup-window .project-backup-heading,.project-backup-window .project-backup-footer{display:flex;align-items:center;gap:12px;padding:14px 16px}
+.project-backup-window .project-backup-heading{border-bottom:1px solid var(--ui-border)}
+.project-backup-heading>svg{color:var(--ui-accent);flex:none}
+.project-backup-window .project-backup-heading div{flex:1;min-width:0}
+.project-backup-window h2,.project-backup-window p{margin:0}
+.project-backup-window h2{font-size:17px}
+.project-backup-window p,.project-backup-window select{font-size:12px;line-height:1.55}
+.project-backup-window p{color:var(--ui-muted)}
+.project-backup-window .project-backup-content{display:grid;gap:12px;padding:14px 16px}
+.project-backup-window .project-backup-tools{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}
+.project-backup-window .project-backup-select{display:grid;min-width:0;gap:6px;font-size:12px}
+.project-backup-window select,.project-backup-window button{min-width:0;min-height:32px;color:var(--ui-ink);background:var(--ui-panel);border:1px solid var(--ui-border);border-radius:5px;padding:5px 9px}
+.project-backup-window button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:12px}
+.project-backup-window button:hover:not(:disabled){background:var(--ui-hover,var(--ui-panel))}
+.project-backup-window .project-backup-primary{background:var(--ui-accent);border-color:var(--ui-accent);color:#fff}
+.project-backup-window .project-backup-primary:hover:not(:disabled){background:var(--ui-accent);filter:brightness(1.12)}
+.project-backup-window .project-backup-error{color:var(--ui-danger,#c64040);overflow-wrap:anywhere}
+.project-backup-window .project-backup-footer{justify-content:flex-end;flex-wrap:wrap;border-top:1px solid var(--ui-border)}
+.project-backup-window .project-backup-footer p{flex:1 1 176px}
+.project-backup-window select:focus-visible,.project-backup-window button:focus-visible{outline:2px solid var(--ui-accent);outline-offset:2px}

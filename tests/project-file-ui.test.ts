@@ -9,12 +9,13 @@ import { initialSimulationProfiles, saveSimulationProfiles } from '../src/core/s
 import { saveCanvasWaveforms } from '../src/core/canvas-waveform-store'
 import ProjectSidebar from '../src/components/ProjectSidebar'
 
-async function editor() {
+async function editor(change?:(project:Project)=>void) {
   const dom=new JSDOM('<!doctype html><div id="root"></div>',{url:'http://localhost:3032/#editor'}),doc=dom.window.document
   const previous=new Map<string,PropertyDescriptor|undefined>()
   const install=(key:string,value:unknown)=>{previous.set(key,Object.getOwnPropertyDescriptor(globalThis,key));Object.defineProperty(globalThis,key,{configurable:true,writable:true,value})}
   const downloads:{name:string;blob:Blob}[]=[],opened:{project:Project;notice?:string}[]=[],blobs=new Map<string,Blob>()
-  let fileClicks=0,blobId=0,current:Project|undefined
+  let blobId=0,current:Project|undefined
+  const fileClicks:HTMLInputElement[]=[]
   class TestURL extends URL {
     static createObjectURL(blob:Blob){const url=`blob:project-${++blobId}`;blobs.set(url,blob);return url}
     static revokeObjectURL(){}
@@ -23,8 +24,8 @@ async function editor() {
   for(const [key,value] of Object.entries({window:dom.window,document:doc,HTMLElement:dom.window.HTMLElement,SVGElement:dom.window.SVGElement,localStorage:dom.window.localStorage,IS_REACT_ACT_ENVIRONMENT:true,Worker:WorkerFixture,URL:TestURL,fetch:async()=>Response.json({installed:false,available:false,authenticated:false,message:'UI fixture'}),DOMPoint:class{constructor(public x:number,public y:number){}matrixTransform(){return{x:this.x,y:this.y}}}}))install(key,value)
   Object.assign(dom.window.SVGElement.prototype,{getScreenCTM:()=>({inverse:()=>({a:1,d:1})}),setPointerCapture(){},releasePointerCapture(){},hasPointerCapture:()=>false})
   dom.window.HTMLAnchorElement.prototype.click=function(){downloads.push({name:this.download,blob:blobs.get(this.href)!})}
-  dom.window.HTMLInputElement.prototype.click=function(){if(this.type==='file')fileClicks++}
-  const baseline=editorTemplate('rc-lowpass');baseline.title='可分享的 RC 工程'
+  dom.window.HTMLInputElement.prototype.click=function(){if(this.type==='file')fileClicks.push(this)}
+  const baseline=editorTemplate('rc-lowpass');baseline.title='可分享的 RC 工程';change?.(baseline)
   const legacy=initialSimulationProfiles(baseline);legacy.profiles[0].name='迁移前 AC';saveSimulationProfiles(dom.window.localStorage,'standalone',legacy)
   saveCanvasWaveforms(dom.window.localStorage,'standalone',[{id:'shared-chart',title:'输出响应',profileId:legacy.activeId,x:180,y:600,width:480,height:280}])
   const {createRoot}=await import('react-dom/client'),{default:Editor}=await import('../src/EditorWorkbench'),root=createRoot(doc.getElementById('root')!)
@@ -34,9 +35,13 @@ async function editor() {
   await render()
   const get=<T extends Element=HTMLElement>(selector:string)=>{const node=doc.querySelector<T>(selector);assert.ok(node,selector);return node}
   const click=async(label:string)=>act(async()=>get<HTMLButtonElement>(`button[aria-label="${label}"]`).click())
+  const dialogAction=async(label:string)=>act(async()=>{
+    const button=[...get('[role="dialog"].project-share-window').querySelectorAll('button')].find(button=>button.textContent?.trim()===label)
+    assert.ok(button,label);button.click()
+  })
   const key=async(key:string,target:Element=doc.body)=>act(async()=>target.dispatchEvent(new dom.window.KeyboardEvent('keydown',{bubbles:true,cancelable:true,key,ctrlKey:true})))
   const open=async(file:unknown)=>act(async()=>{const input=get<HTMLInputElement>('input[type=file][accept*=".fuxian"]');Object.defineProperty(input,'files',{configurable:true,value:[file]});input.dispatchEvent(new dom.window.Event('change',{bubbles:true}));await new Promise(resolve=>setTimeout(resolve,0))})
-  return{dom,doc,get,click,key,open,render,baseline,downloads,opened,get current(){return current!},get fileClicks(){return fileClicks},async close(){await act(async()=>root.unmount());dom.window.close();for(const[key,descriptor]of previous)if(descriptor)Object.defineProperty(globalThis,key,descriptor);else Reflect.deleteProperty(globalThis,key)}}
+  return{dom,doc,get,click,dialogAction,key,open,render,baseline,downloads,opened,get current(){return current!},fileClicks,async close(){await act(async()=>root.unmount());dom.window.close();for(const[key,descriptor]of previous)if(descriptor)Object.defineProperty(globalThis,key,descriptor);else Reflect.deleteProperty(globalThis,key)}}
 }
 const inputFile=(name:string,bytes:Uint8Array)=>({name,size:bytes.byteLength,arrayBuffer:async()=>new Uint8Array(bytes).buffer,text:async()=>new TextDecoder().decode(bytes)})
 
@@ -47,7 +52,10 @@ test('project file menu, shortcut and sidebar requests export latest edit plus m
     await act(async()=>ui.get('.editor-device[aria-label^="R1 "]').dispatchEvent(new ui.dom.window.KeyboardEvent('keydown',{key:'Enter',bubbles:true})))
     const value=ui.get<HTMLInputElement>('.device-value-fields input')
     await act(async()=>{Object.getOwnPropertyDescriptor(ui.dom.window.HTMLInputElement.prototype,'value')!.set!.call(value,'2.2k');value.dispatchEvent(new ui.dom.window.Event('input',{bubbles:true}))})
-    await ui.click('保存工程文件')
+    await ui.click('导出工程文件')
+    assert.equal(ui.downloads.length,0,'review happens before a download')
+    assert.match(ui.get('.project-share-window').textContent!,/迁移前 AC/)
+    await ui.dialogAction('下载 .fuxian')
     assert.equal(ui.downloads.length,1)
     assert.match(ui.downloads[0].name,/\.fuxian$/)
     const unpacked=await readProjectFile(inputFile(ui.downloads[0].name,new Uint8Array(await ui.downloads[0].blob.arrayBuffer())))
@@ -59,14 +67,82 @@ test('project file menu, shortcut and sidebar requests export latest edit plus m
     await ui.key('s',value)
     assert.equal(ui.downloads.length,2,'editing inputs retains normal shortcut protection')
     await ui.render({fileAction:{sequence:1,kind:'save'}})
+    assert.equal(ui.downloads.length,2)
+    await ui.dialogAction('下载 .fuxian')
     assert.equal(ui.downloads.length,3)
     await ui.render({fileAction:{sequence:1,kind:'save'}})
     assert.equal(ui.downloads.length,3,'a repeated render never repeats the save request')
     await ui.render({fileAction:{sequence:2,kind:'open'}})
-    assert.equal(ui.fileClicks,1)
+    assert.deepEqual(ui.fileClicks,[ui.get('input[aria-label="选择工程文件"]')])
     await ui.click('导出旧版 JSON')
     assert.match(ui.downloads.at(-1)!.name,/\.json$/)
     assert.equal(JSON.parse(await ui.downloads.at(-1)!.blob.text()).waveformSetup.diagrams[0].title,'输出响应')
+  }finally{await ui.close()}
+})
+
+test('the top bar opens a portable project from a closed sidebar and the simulator uses its own picker',async()=>{
+  const ui=await editor()
+  try{
+    const projectInput=ui.get<HTMLInputElement>('input[aria-label="选择工程文件"]')
+    const simulationInput=ui.get<HTMLInputElement>('input[aria-label="选择仿真文件和依赖"]')
+    const pickerRef={current:null as HTMLInputElement|null}
+    await ui.render({projectFileInputRef:pickerRef})
+    assert.equal(pickerRef.current,projectInput)
+    assert.equal(projectInput.multiple,false)
+    assert.equal(projectInput.accept,'.fuxian,.json')
+    assert.equal(simulationInput.multiple,true)
+    assert.match(simulationInput.accept,/\.asc/)
+    assert.doesNotMatch(simulationInput.accept,/\.fuxian/)
+    assert.equal(ui.get<HTMLElement>('#workspace-left').hidden,true)
+    await ui.click('打开工程')
+    await ui.key('o',ui.get('.editor-canvas'))
+    await ui.click('导入 LTspice / PSpice')
+    assert.deepEqual(ui.fileClicks,[projectInput,projectInput,simulationInput])
+    await ui.open(inputFile('第三方电路.asc',new TextEncoder().encode('Version 4')))
+    assert.match(ui.get('.exchange-notice').textContent!,/请在“打开工程”中选择/)
+    assert.equal(ui.opened.length,0)
+  }finally{await ui.close()}
+})
+
+test('Ctrl+S and Save Current Project save locally, while Export Project File still downloads an archive',async()=>{
+  const ui=await editor()
+  try{
+    let saves=0
+    await ui.render({onRequestProjectSave:()=>saves++})
+    await ui.key('s',ui.get('.editor-canvas'))
+    await ui.click('保存当前工程')
+    assert.equal(saves,2)
+    assert.equal(ui.downloads.length,0)
+    await ui.click('导出工程文件')
+    await ui.dialogAction('下载 .fuxian')
+    assert.equal(saves,2)
+    assert.match(ui.downloads[0].name,/\.fuxian$/)
+  }finally{await ui.close()}
+})
+
+test('preflight leaves editing and downloads unchanged on cancel, and incomplete circuits can be downloaded only as drafts',async()=>{
+  const ui=await editor(project=>{
+    project.drawing!.devices=project.drawing!.devices.map(device=>device.id==='R1'
+      ? {...device,kind:'X',pins:['IN','OUT'],value:'MISSING_AMPLIFIER',id:'X1'}
+      : device)
+    project.drawing!.wires=project.drawing!.wires.map(wire=>({
+      ...wire,
+      from:'device' in wire.from && wire.from.device==='R1'?{...wire.from,device:'X1'}:wire.from,
+      to:'device' in wire.to && wire.to.device==='R1'?{...wire.to,device:'X1'}:wire.to,
+    }))
+  })
+  try{
+    await ui.click('导出工程文件')
+    const dialog=ui.get('.project-share-window')
+    assert.equal(dialog.querySelector('[data-status]')?.getAttribute('data-status'),'draft')
+    assert.match(dialog.textContent!,/MISSING_AMPLIFIER/)
+    assert.doesNotMatch(dialog.textContent!,/下载 \.fuxian/)
+    await ui.dialogAction('取消')
+    assert.equal(ui.downloads.length,0)
+    await ui.click('导出工程文件')
+    await ui.dialogAction('下载草稿')
+    assert.match(ui.downloads[0].name,/\.draft\.fuxian$/)
+    assert.equal(ui.current.drawing!.devices.find(device=>device.id==='X1')!.value,'MISSING_AMPLIFIER')
   }finally{await ui.close()}
 })
 
@@ -102,17 +178,31 @@ test('an import pending during unmount cannot open or overwrite the next project
   assert.equal(ui.opened.length,0)
 })
 
-test('project sidebar offers explicit portable open and save callbacks',async()=>{
+test('project sidebar prioritizes Open and New; duplicate and export are available in its overflow',async()=>{
   const dom=new JSDOM('<!doctype html><div id="root"></div>'),previous=new Map<string,PropertyDescriptor|undefined>()
   for(const[key,value]of Object.entries({window:dom.window,document:dom.window.document,HTMLElement:dom.window.HTMLElement,IS_REACT_ACT_ENVIRONMENT:true})){previous.set(key,Object.getOwnPropertyDescriptor(globalThis,key));Object.defineProperty(globalThis,key,{configurable:true,writable:true,value})}
   const {createRoot}=await import('react-dom/client'),root=createRoot(dom.window.document.getElementById('root')!)
-  let opened=0,saved=0
+  let opened=0,saved=0,created=0,duplicated=0
   try{
-    await act(async()=>root.render(createElement(ProjectSidebar,{embedded:true,entries:[{id:'a',title:'分享工程',updatedAt:1,deviceCount:5}],activeId:'a',onSelect:()=>{},onNew:()=>{},onDuplicate:()=>{},saveState:'saved',onOpenFile:()=>opened++,onSaveFile:()=>saved++})))
-    const buttons=dom.window.document.querySelectorAll<HTMLButtonElement>('[aria-label="独立工程文件"] button')
-    assert.equal(buttons.length,2)
-    await act(async()=>{buttons[0].click();buttons[1].click()})
-    assert.equal(opened,1);assert.equal(saved,1)
+    await act(async()=>root.render(createElement(ProjectSidebar,{embedded:true,entries:[{id:'a',title:'分享工程',updatedAt:1,deviceCount:5}],activeId:'a',onSelect:()=>{},onNew:()=>created++,onDuplicate:()=>duplicated++,saveState:'saved',onOpenFile:()=>opened++,onSaveFile:()=>saved++})))
+    const doc=dom.window.document
+    const primary=[...doc.querySelectorAll<HTMLButtonElement>('.project-sidebar-actions button')]
+    assert.deepEqual(primary.map(button=>button.textContent?.trim()),['打开工程','新建'])
+    await act(async()=>{primary[0].click();primary[1].click()})
+    assert.equal(opened,1);assert.equal(created,1)
+    const menu=doc.querySelector<HTMLDetailsElement>('.project-sidebar-menu')!,summary=menu.querySelector('summary')!
+    const [copy,save]=[...menu.querySelectorAll<HTMLButtonElement>('button')]
+    assert.equal(menu.open,false)
+    assert.deepEqual([copy,save].map(button=>button.textContent?.trim()),['复制为新工程','导出工程文件'])
+    await act(async()=>summary.click())
+    assert.equal(menu.open,true)
+    await act(async()=>copy.dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true})))
+    assert.equal(menu.open,false)
+    assert.equal(doc.activeElement,summary)
+    await act(async()=>{summary.click();copy.click()})
+    assert.equal(menu.open,false);assert.equal(duplicated,1)
+    await act(async()=>{summary.click();save.click()})
+    assert.equal(menu.open,false);assert.equal(saved,1)
     assert.match(dom.window.document.body.textContent!,/\.fuxian/)
   }finally{await act(async()=>root.unmount());dom.window.close();for(const[key,descriptor]of previous)if(descriptor)Object.defineProperty(globalThis,key,descriptor);else Reflect.deleteProperty(globalThis,key)}
 })

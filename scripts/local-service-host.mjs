@@ -57,7 +57,12 @@ function startChild() {
   const stdout = openSync(stdoutPath, 'a'), stderr = openSync(stderrPath, 'a')
   const running = spawn(process.execPath, [join(projectDirectory, 'scripts', 'serve-local.mjs')], {
     cwd: projectDirectory, windowsHide: true,
-    env: { ...process.env, FUXIAN_PORT: String(port) }, stdio: ['ignore', stdout, stderr, 'ipc'],
+    env: {
+      ...process.env,
+      FUXIAN_PORT: String(port), FUXIAN_SERVICE_DIRECTORY: directory,
+      ...(typeof config.dataDirectory === 'string' ? { FUXIAN_DATA_DIR: config.dataDirectory } : {}),
+      ...(typeof config.mode === 'string' ? { FUXIAN_MODE: config.mode } : {}),
+    }, stdio: ['ignore', stdout, stderr, 'ipc'],
   })
   closeSync(stdout); closeSync(stderr)
   child = running; status = 'starting'; void publish()

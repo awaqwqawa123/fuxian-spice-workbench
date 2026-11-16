@@ -1,6 +1,6 @@
 import {hasDatasheetPartEvidence} from '../src/core/datasheet-model-identity'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import type { Plugin } from 'vite'
+import type { Plugin, PreviewServer, ViteDevServer } from 'vite'
 import { parseProject } from '../src/core/circuit'
 import { parseAiHistory } from '../src/core/ai'
 import { parseAiProvider } from '../src/core/ai-provider'
@@ -359,5 +359,9 @@ export function createModelAcquisitionMiddleware(options: { run?: typeof runMode
   }
 }
 export function modelAcquisitionPlugin(): Plugin {
-  return { name: 'dedicated-model-acquisition-assistant', configureServer(server) { server.middlewares.use(createModelAcquisitionMiddleware()) }, configurePreviewServer(server) { server.middlewares.use(createModelAcquisitionMiddleware()) } }
+  const install = (server: PreviewServer | ViteDevServer) => {
+    // Match the library browser's installation, even if the launcher uses a different working directory.
+    server.middlewares.use(createModelAcquisitionMiddleware({ libraryStore: new UserLibraryStore(join(server.config.root, '.desktop-circuit')) }))
+  }
+  return { name: 'dedicated-model-acquisition-assistant', configureServer: install, configurePreviewServer: install }
 }

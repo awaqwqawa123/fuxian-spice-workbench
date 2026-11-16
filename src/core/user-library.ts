@@ -5,8 +5,10 @@ import { isOwnedPspiceSource } from './installed-model-source'
 
 export const USER_LIBRARY_KEY = 'fuxian-user-library-v1'
 export const USER_LIBRARY_EVENT = 'fuxian-user-library-change'
+export const USER_LIBRARY_BACKUP_MAX_BYTES = 64 * 1024 * 1024
 export interface UserLibraryEntry { id: string; name: string; model: ImportedSpiceModel; createdAt: string }
 export interface UserLibraryDocument { schemaVersion: 1; entries: UserLibraryEntry[] }
+export interface UserLibraryBackupAction { source: string; target: string; kind: 'add' | 'keep-both' | 'skip' | 'update' }
 type LibraryStorage = Pick<Storage, 'getItem' | 'setItem'>
 const limit = 256
 
@@ -54,7 +56,7 @@ export function renameLibraryModel(model: ImportedSpiceModel, name: string): Imp
   if (id === checked.id) return checked
   const escaped=checked.id.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')
   const text = checked.kind==='X'
-    ? checked.spice.replace(new RegExp(`(^\\.subckt\\s+)${escaped}(?=\\s)`, 'im'),(_,prefix:string)=>`${prefix}${id}`).replace(new RegExp(`(^\\.ends\\s+)${escaped}(?=\\s|$)`,'im'),(_,prefix:string)=>`${prefix}${id}`)
+    ? checked.spice.replace(new RegExp(`(^[ \\t]*\\.subckt[ \\t]+)${escaped}(?=\\s)`, 'im'),(_,prefix:string)=>`${prefix}${id}`).replace(new RegExp(`(^[ \\t]*\\.ends[ \\t]+)${escaped}(?=\\s|$)`,'im'),(_,prefix:string)=>`${prefix}${id}`)
     : checked.spice.replace(/^(\.model\s+)\S+/i, (_, prefix: string) => `${prefix}${id}`)
   const preview = parseSpiceLibrary(text, checked.source), errors = preview.diagnostics.filter(item => item.severity === 'error')
   const renamed=preview.models.find(item=>item.id===id)
@@ -95,6 +97,61 @@ export function importUserLibrary(text: string, storage: LibraryStorage = window
   return result
 }
 export function exportUserLibrary(document: UserLibraryDocument): string { return JSON.stringify(parseUserLibrary(document), null, 2) }
+
+export function parseUserLibraryBackup(text: string): UserLibraryDocument {
+  if (new TextEncoder().encode(text).length > USER_LIBRARY_BACKUP_MAX_BYTES) throw new Error('自建库备份文件最多支持 64 MB')
+  let value: unknown
+  try { value = JSON.parse(text.replace(/^\uFEFF/, '')) } catch { throw new Error('请选择有效的自建库 JSON 备份。') }
+  return parseUserLibrary(value)
+}
+
+/** Backup recovery alone can assign a new portable SPICE name to a conflicting definition. */
+export function planUserLibraryBackup(existing: UserLibraryDocument, incoming: UserLibraryDocument) {
+  const original = parseUserLibrary(existing), next = parseUserLibrary(incoming)
+  const entries = new Map(original.entries.map(entry => [entry.id, entry]))
+  const reserved = new Set(next.entries.map(entry => entry.id))
+  const actions: UserLibraryBackupAction[] = []
+  let added = 0, keptBoth = 0, skipped = 0, updated = 0
+  for (const entry of next.entries) {
+    const old = entries.get(entry.id)
+    let target = entry
+    if (old && !sameEntry(old, entry)) {
+      let available = '', match: UserLibraryEntry | undefined
+      const dependencyIds = new Set([...entry.model.spice.matchAll(/^[ \t]*\.subckt[ \t]+(\S+)/gmi)].map(item => item[1].toLowerCase()))
+      // Keep vendor-qualified and long names usable as SPICE identifiers.
+      for (let version = 2; version <= limit * 2 + 2; version++) {
+        const suffix = `_backup${version}`
+        const modelId = entry.model.id.replaceAll('/', '_').slice(0, 40 - suffix.length) + suffix
+        if (dependencyIds.has(modelId.toLowerCase())) continue
+        const id = `user-${modelId.toLowerCase()}`
+        const occupied = entries.get(id)
+        if (occupied) {
+          if (occupied.name !== entry.name || occupied.model.kind !== entry.model.kind) continue
+          const candidate = { ...entry, id, model: renameLibraryModel(entry.model, modelId) }
+          if (sameEntry(candidate, occupied)) { match = candidate; break }
+        } else if (!available && !reserved.has(id)) available = modelId
+      }
+      if (!match && !available) throw new Error('同名备份模型暂无可用名称，自建库未修改。')
+      target = match ?? { ...entry, id: `user-${available.toLowerCase()}`, model: renameLibraryModel(entry.model, available) }
+    }
+    const duplicate = entries.get(target.id)
+    let kind: UserLibraryBackupAction['kind']
+    if (duplicate) {
+      if (!duplicate.model.assessment && target.model.assessment) {
+        entries.set(target.id, { ...duplicate, model: { ...duplicate.model, assessment: target.model.assessment } })
+        kind = 'update'; updated++
+      } else { kind = 'skip'; skipped++ }
+    } else {
+      entries.set(target.id, target)
+      kind = target.id === entry.id ? 'add' : 'keep-both'
+      added++
+      if (kind === 'keep-both') keptBoth++
+    }
+    actions.push({ source: entry.model.id, target: target.model.id, kind })
+  }
+  const document = parseUserLibrary({ schemaVersion: 1, entries: [...entries.values()] })
+  return { document, actions, added, keptBoth, skipped, updated }
+}
 
 /** Resolve a library placement before changing the current project. */
 function sameImportedLayout(a:ModelSymbol|undefined,b:ModelSymbol|undefined):boolean {

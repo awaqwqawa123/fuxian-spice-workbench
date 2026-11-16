@@ -1,5 +1,5 @@
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto'
-import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, realpath, rename, unlink, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { parseProject, projectKey, validateProject, type Project } from '../src/core/circuit'
 import { layoutElectricallyEquivalent } from '../src/core/layout-electrical-equivalence'
@@ -21,6 +21,8 @@ import { workbenchMcpCapabilities, workbenchMcpLimits, workbenchTaskStatuses } f
 import { parseCircuitGraphQuery, readCircuitSemanticGraph } from '../src/core/circuit-semantic-graph'
 import { parseCandidateEditOperations } from '../src/core/candidate-edit'
 import { readCandidateDiff } from '../src/core/candidate-diff'
+import { bridgeBinding, bridgeHasAssets, bridgePaths, publishBridgeFile, workbenchBridgeDirectory, workspaceIdentity } from '../scripts/workbench-bridge-store.mjs'
+import { installWorkbenchBridge, WorkbenchBridgeInstallError } from '../scripts/workbench-bridge-install.mjs'
 
 export class DesktopCircuitError extends Error {
   constructor(readonly status: number, message: string) { super(message) }
@@ -28,6 +30,7 @@ export class DesktopCircuitError extends Error {
 export interface DesktopCircuitManagerOptions {
   directory: string
   projectDirectory: string
+  mcpBridgeDirectory?: string
   simulate?: (project: Project, signal: AbortSignal) => Promise<Result>
   modelService?: AgentModelService
   modelLibraryCache?: PersistentDeviceLibraryOptions
@@ -66,6 +69,7 @@ export class DesktopCircuitManager {
   private readonly ready: Promise<void>
   private writes: Promise<void> = Promise.resolve()
   private closed = false
+  workspaceId?: string
 
   constructor(private readonly options: DesktopCircuitManagerOptions) {
     this.cliPath = resolve(options.projectDirectory, 'scripts/desktop-circuit.mjs')
@@ -130,7 +134,9 @@ export class DesktopCircuitManager {
     await this.ready
     const parsed = new URL(url)
     if (parsed.protocol !== 'http:' || !['127.0.0.1','[::1]'].includes(parsed.hostname) || !parsed.port || parsed.username || parsed.password || parsed.pathname !== '/' || parsed.search || parsed.hash) throw new DesktopCircuitError(500, '电路工具只能发布本机监听地址')
-    await writeFile(join(this.options.directory, 'connection.json'), JSON.stringify({ version: 1, url: parsed.origin, token: this.token }), { mode: 0o600 })
+    const workspaceId = await workspaceIdentity(this.options.directory)
+    await publishBridgeFile(join(this.options.directory, 'connection.json'), { version: 1, url: parsed.origin, token: this.token, workspaceId }, false)
+    this.workspaceId = workspaceId
   }
   authenticates(header: string | undefined): boolean {
     const got = Buffer.from(header ?? ''), expected = Buffer.from(`Bearer ${this.token}`)
@@ -262,12 +268,46 @@ export class DesktopCircuitManager {
     return { projectId, revision, synchronizedAt, baselineRevision, candidateRevision: task ? task.candidateRevision ?? 1 : null, taskId: task?.id ?? null,
       taskStatus, source: task ? 'candidate' as const : 'synchronized' as const, graphKey, graph }
   }
-  mcpConnectionInfo(toolCount: number) {
-    return { ready: true, protocol: 'MCP', transport: 'stdio',
-      config: { mcpServers: { fuxian: { command: process.execPath,
-        args: [resolve(this.options.projectDirectory, 'scripts/workbench-mcp.mjs'), '--connection', resolve(this.options.directory, 'connection.json')] } } },
+  async mcpConnectionInfo(toolCount: number) {
+    const connection = resolve(this.options.directory, 'connection.json')
+    const workspaceId = this.workspaceId
+    let bridgeStatus: 'linked' | 'unlinked' | 'relink-required' = 'unlinked'
+    let command = process.execPath
+    let args = [resolve(this.options.projectDirectory, 'scripts/workbench-mcp.mjs'), '--connection', connection,
+      ...(workspaceId ? ['--workspace', workspaceId] : [])]
+    if (workspaceId) {
+      try {
+        const root = this.options.mcpBridgeDirectory ?? workbenchBridgeDirectory()
+        const binding = await bridgeBinding(root, workspaceId)
+        bridgeStatus = 'relink-required'
+        if (await bridgeHasAssets(root)) {
+          const paths = bridgePaths(root)
+          command = paths.command
+          args = [paths.script, '--workspace', workspaceId]
+          if (binding.connection === await realpath(connection)) bridgeStatus = 'linked'
+        }
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') bridgeStatus = 'relink-required'
+      }
+    }
+    return { ready: Boolean(workspaceId), protocol: 'MCP', transport: 'stdio',
+      config: { mcpServers: { fuxian: { command, args } } },
+      workspaceId: workspaceId ?? null, bridgeStatus,
       toolCount, capabilities: [...workbenchMcpCapabilities],
-      applicationMode: 'review', message: '外部助手完成的电路方案会进入工作台审阅，可应用、合并或撤销。' }
+      applicationMode: 'review', message: workspaceId ? '外部助手完成的电路方案会进入工作台审阅，可应用、合并或撤销。' : '工作区连接尚未准备好，请重新检测。' }
+  }
+  async activateMcpBridge() {
+    await this.accessible()
+    if (!this.workspaceId) throw new DesktopCircuitError(503, '工作区连接尚未准备好，请重新检测。')
+    try {
+      await installWorkbenchBridge({
+        connection: resolve(this.options.directory, 'connection.json'), expectedWorkspace: this.workspaceId,
+        root: this.options.mcpBridgeDirectory, sourceDirectory: resolve(this.options.projectDirectory, 'scripts'),
+      })
+    } catch (error) {
+      if (error instanceof WorkbenchBridgeInstallError) throw new DesktopCircuitError(error.status, error.message)
+      throw new DesktopCircuitError(503, '无法启用本机 MCP 固定入口，请检查用户数据目录是否可写。')
+    }
   }
   private snapshot(projectId: string): DesktopCircuitSnapshot {
     id(projectId, 'projectId')

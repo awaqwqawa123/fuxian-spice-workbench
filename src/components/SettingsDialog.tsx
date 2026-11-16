@@ -4,6 +4,7 @@ import { aiProviderPresets, listAiModels, parseAiProvider, providerUrls, testAiC
 import { getCodexStatus, type CodexStatus } from '../core/codex-client'
 import { changeDesktopControlSetup, getDesktopControlSetup, getDesktopControlState, reconnectDesktopControl, type DesktopControlSetupAction, type DesktopControlSetupStage } from '../core/desktop-control-client'
 import { getDesktopConversationFolder, setDesktopConversationFolder } from '../core/desktop-conversation-folder-client'
+import type { DesktopCircuitConnection } from '../core/desktop-circuit-client'
 import { getCursorStatus } from '../core/cursor-client'
 import { updateAssistantSettings, useAssistantSettings, type AssistantApiSettings } from '../core/assistant-settings'
 import type { AcquisitionEngine } from '../core/model-acquisition'
@@ -16,8 +17,8 @@ import WorkbenchMcpSettings from './WorkbenchMcpSettings'
 import CodexInstallationSettings from './CodexInstallationSettings'
 
 type Section = 'connections' | 'api' | 'sources' | 'workspace' | 'integrations'
-interface Props { onClose: () => void; onOpenAppearance: () => void; onOpenSimulation?: () => void; onOpenDesktopChat?: () => void; projectId?: string; initialSection?: Section }
-export default function SettingsDialog({ onClose, onOpenAppearance, onOpenSimulation, onOpenDesktopChat, projectId, initialSection = 'connections' }: Props) {
+interface Props { onClose: () => void; onOpenAppearance: () => void; onOpenSimulation?: () => void; onOpenDesktopChat?: () => void; projectId?: string; desktopCircuit?: Pick<DesktopCircuitConnection, 'state' | 'status' | 'error'>; initialSection?: Section }
+export default function SettingsDialog({ onClose, onOpenAppearance, onOpenSimulation, onOpenDesktopChat, projectId, desktopCircuit, initialSection = 'connections' }: Props) {
   const shared = useAssistantSettings()
   const [section, setSection] = useState<Section>(initialSection==='integrations'?'connections':initialSection)
   const [api, setApi] = useState<AssistantApiSettings>(() => ({ ...shared.api }))
@@ -156,7 +157,8 @@ export default function SettingsDialog({ onClose, onOpenAppearance, onOpenSimula
       <header className="workbench-window-heading"><div><span className="workbench-window-kicker">WORKBENCH SETTINGS</span><h2><Settings2 size={21}/>工作台设置</h2><p>连接、模型与画布偏好，集中在这里管理。</p></div><button type="button" aria-label="关闭工作台设置" onClick={onClose}><X size={18}/></button></header>
       <div className="settings-layout"><nav className="settings-navigation" aria-label="设置分类">{([{ id: 'connections', label: 'AI 连接', Icon: Plug }, { id: 'api', label: '模型 API', Icon: KeyRound }, { id: 'sources', label: '资料来源', Icon: Globe2 }, { id: 'workspace', label: '工作区', Icon: SlidersHorizontal }] as const).map(item => <button type="button" key={item.id} aria-current={section === item.id ? 'page' : undefined} onClick={() => setSection(item.id)}><item.Icon size={17}/>{item.label}</button>)}<small>MCP 配置连接外部 AI，网页操作电路与审阅方案。</small></nav>
         <div className="settings-content">
-          {section === 'connections' && <><section className="settings-connection-card" aria-label="助手连接方式设置"><label>连接方式<select aria-label="助手连接方式" value={shared.connectionMode} onChange={event=>chooseConnectionMode(event.target.value as 'mcp'|'native')}><option value="mcp">MCP 配置 · 外部 AI 客户端</option><option value="native">高级 · 本机 CLI / 桌面共享</option></select></label><small>连接方式立即保存；API、模型偏好与已有项目对话保持保留。</small></section><CodexInstallationSettings onChanged={()=>setRefresh(value=>value+1)}/>{shared.connectionMode==='mcp'?<WorkbenchMcpSettings/>:<><div className="settings-section-title"><div><h3>本机连接 · 高级模式</h3><p>桌面共享和独立 CLI 任务分别检测，配置结果互不代替。</p></div></div>
+          {section === 'connections' && <><section className="settings-connection-card" aria-label="助手连接方式设置"><label>连接方式<select aria-label="助手连接方式" value={shared.connectionMode} onChange={event=>chooseConnectionMode(event.target.value as 'mcp'|'native')}><option value="mcp">MCP 配置 · 外部 AI 客户端</option><option value="native">高级 · 本机 CLI / 桌面共享</option></select></label></section>{shared.connectionMode==='mcp'?<WorkbenchMcpSettings projectId={projectId} desktopCircuit={desktopCircuit}/>:<><div className="settings-section-title"><div><h3>本机连接 · 高级模式</h3><p>在伏线里连接本机助手。可在此指定 Codex CLI 的安装位置。</p></div></div>
+            <CodexInstallationSettings onChanged={()=>setRefresh(value=>value+1)}/>
             <DesktopConnectionGuide codex={native.codex} stage={sharing.stage} connected={sharing.connected} threadId={sharing.threadId} checking={checking} statusError={[connectionErrors.codex, sharing.error].filter(Boolean).join('；')} actionError={setupError} autoStatus={autoStatus} busy={setupBusy} onAutoConnect={() => { void autoConnect() }} onAction={action => { void runSetupAction(action) }} onRefresh={() => setRefresh(value => value + 1)} onOpenChat={onOpenDesktopChat}/>
             <section className="settings-connection-card" aria-label="模型搜索运行方式设置"><div className="settings-connection-title"><strong>模型搜索与建模</strong></div><label>运行方式<select aria-label="设置模型搜索运行方式" value={modelEngine} onChange={event => setModelEngine(event.target.value as AcquisitionEngine)}><option value="codex">Codex 本机登录</option><option value="cursor">Cursor 本机登录</option><option value="dsh-local">DSH 本机登录</option><option value="dsh-api">模型 API · DSH 工具循环</option></select></label><small>保存后用于所有项目的器件模型任务；当前任务记录会保留。</small></section>
             <div className="settings-section-title"><div><h3>独立任务连接</h3><p>这里的 CLI 只供临时电路与模型任务使用，不代表桌面共享已连接。</p></div><button type="button" disabled={checking || !!setupBusy} onClick={() => setRefresh(value => value + 1)}><RefreshCw size={14}/>{checking ? '正在检测' : '刷新状态'}</button></div>

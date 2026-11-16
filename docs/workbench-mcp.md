@@ -4,9 +4,19 @@
 
 ## 连接
 
-1. 启动伏安软件，在网页中创建或打开项目。
+1. 启动伏线软件，在网页中创建或打开项目。
 2. 打开“设置 → AI 连接”，连接方式保留“MCP 配置”，选择 Codex、Cursor、DSH / Harness 或其他客户端。
-3. 复制或下载对应格式，将 `fuxian` 合并到客户端已有 MCP 配置。不要覆盖其他服务。保持工作台运行，并在客户端确认已发现伏线工具。
+3. 点击“启用固定入口”，再复制或下载对应格式，将 `fuxian` 合并到客户端已有 MCP 配置。保持工作台运行，并在客户端确认已发现伏线工具。
+
+固定入口保存在当前 Windows 用户的 `%LOCALAPPDATA%\Fuxian\mcp-bridge`。其他系统默认使用其本机用户数据目录；有需要时可为服务和首次关联工具共同指定绝对路径 `FUXIAN_MCP_BRIDGE_DIR`。启用只安装本机桥并关联当前工作区。不同工作区有各自的随机标识，配置里面只写入口路径和标识；两个工作区可在客户端配置中用不同服务名同时存在。
+
+移动软件之后，如果原关联已不可用，保留原工作区的 `.desktop-circuit`（包含 `workspace-identity.json`），在新目录启动伏线，然后从新安装目录执行：
+
+```powershell
+./runtime/node.exe scripts/workbench-bridge-install.mjs --relink --workspace 原工作区标识 --connection "E:/新的安装目录/.desktop-circuit/connection.json"
+```
+
+源码安装可将 `./runtime/node.exe` 换为 `node`。工作区标识可以在设置页的“如何重新关联”中查看。重新关联成功后，原固定入口配置继续使用。若原工作区数据未保留，新的空工作区会有不同标识，需要启用自己的入口并导出一份新的配置。
 
 “接口已就绪”只表示本地工作台服务可用，不代表外部 AI 已完成配置。页面不会通过检测状态自动安装、登录或创建 AI 对话。需要旧的网页 CLI / 桌面共享功能时，可显式切到“高级 · 本机 CLI / 桌面共享”；API、模型偏好和已有项目会话记录会保留。
 
@@ -16,8 +26,8 @@
 
 ```toml
 [mcp_servers.fuxian]
-command = "C:/path/to/node.exe"
-args = ["E:/path/to/spice-workbench/scripts/workbench-mcp.mjs", "--connection", "E:/path/to/spice-workbench/.desktop-circuit/connection.json"]
+command = "C:/Users/your-user/AppData/Local/Fuxian/mcp-bridge/bin-v1/node.exe"
+args = ["C:/Users/your-user/AppData/Local/Fuxian/mcp-bridge/bin-v1/workbench-mcp.mjs", "--workspace", "11111111-1111-4111-8111-111111111111"]
 ```
 
 已存在 `[mcp_servers.fuxian]` 时修改原段，不要重复添加同名表。保存后按客户端要求重新加载 MCP。
@@ -28,10 +38,10 @@ Cursor 使用 `~/.cursor/mcp.json` 或项目中的 `.cursor/mcp.json`。选择 C
 
 DSH / Harness 导出通用 JSON 参数示例；这不是对所有 DSH 版本都可直接导入的专有配置。具体版本必须提供 stdio MCP 客户端能力，并按其文档映射 `command` 和 `args`。这里只证明工作台的 stdio 协议与导出参数，不宣称已经完成每种外部客户端的真实对话验收。
 
-也可以在终端导出通用 JSON：
+也可以在终端启用固定入口并导出通用 JSON。在目标工作台已启动时执行：
 
 ```console
-node scripts/workbench-mcp.mjs --print-config
+node scripts/workbench-bridge-install.mjs --link --connection "E:/my-workbench/.desktop-circuit/connection.json"
 ```
 
 导出的内容类似下面的示例。程序会使用实际的 Node 可执行文件和绝对路径，不包含本地凭据。
@@ -40,22 +50,22 @@ node scripts/workbench-mcp.mjs --print-config
 {
   "mcpServers": {
     "fuxian": {
-      "command": "C:/path/to/node.exe",
+      "command": "C:/Users/your-user/AppData/Local/Fuxian/mcp-bridge/bin-v1/node.exe",
       "args": [
-        "E:/path/to/spice-workbench/scripts/workbench-mcp.mjs",
-        "--connection",
-        "E:/path/to/spice-workbench/.desktop-circuit/connection.json"
+        "C:/Users/your-user/AppData/Local/Fuxian/mcp-bridge/bin-v1/workbench-mcp.mjs",
+        "--workspace",
+        "11111111-1111-4111-8111-111111111111"
       ]
     }
   }
 }
 ```
 
-默认连接文件相对于脚本的位置为 `../.desktop-circuit/connection.json`，与启动时的工作目录无关。需要指定其他安装位置时，使用 `--connection` 加连接文件的绝对路径。
+也能在当前安装目录临时使用直接连接：启动工作台后运行 `node scripts/workbench-mcp.mjs --print-config`。此命令默认读取脚本相对位置 `../.desktop-circuit/connection.json`；可以使用 `--connection` 指定绝对路径。直接导出的配置也会固定工作区标识，但其中的安装路径需要随移动更新。
 
 ### Codex 程序安装路径
 
-AI 连接页面也可以手动设置 Codex CLI 的程序完整路径，或恢复自动检测。此路径用于工作台本机检测和高级 CLI 连接；它不改变 MCP 配置中启动 Node 桥的 `command`。外部 AI 客户端自行管理自己的安装、登录与对话，工作台不会改写其账号和全局配置。工作台安装目录迁移后，应重新导出 MCP 配置中的桥路径。
+AI 连接页面也可以手动设置 Codex CLI 的程序完整路径，或恢复自动检测。此路径用于工作台本机检测和高级 CLI 连接；它不改变 MCP 配置中启动 Node 桥的 `command`。外部 AI 客户端自行管理自己的安装、登录与对话，工作台不会改写其账号和全局配置。
 
 ```console
 node scripts/workbench-mcp.mjs --print-config --connection "E:/my-workbench/.desktop-circuit/connection.json"
@@ -147,6 +157,7 @@ node scripts/workbench-mcp.mjs --doctor --json
 | 5 | `auth_failed` | 凭据被服务拒绝 |
 | 6 | `protocol_failed` | 协议响应或必需的只读工具不符合约定 |
 | 7 | `project_sync_required` | 接口可用，但尚无同步工程；打开并保存工程后重试 |
+| 8 | `workspace_mismatch` | 未能确认固定入口和运行中的工作区相符；启动原工作区或显式重新关联 |
 
 `ready` 表示服务及工程发现可用，不表示某个 AI 客户端已经连接，也不证明电气设计通过验收。`get_workbench_status` 另提供版本化结构和最近保存修订：`schemaVersion: 1`、本地 stdio 传输、候选审阅模式、能力、执行限制、工程摘要及任务状态计数。运行中与重启中断的任务分别统计；中断任务需从当前工程显式重新开始，不能当作已经恢复执行。
 

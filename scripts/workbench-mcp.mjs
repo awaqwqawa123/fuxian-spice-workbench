@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // MCP stdio adapter for the already running local workbench. Never starts a GUI.
-import { readFile, stat } from 'node:fs/promises'
 import { dirname, isAbsolute, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { bridgeBinding, readLocalWorkbenchConnection, verifyWorkspaceEndpoint, workbenchRequestHeaders, workspaceIdIsValid } from './workbench-bridge-store.mjs'
 
 const script = fileURLToPath(import.meta.url)
 const MAX_REQUEST = 2 * 1024 * 1024
@@ -10,25 +10,29 @@ const MAX_RESPONSE = 16 * 1024 * 1024
 const secrets = new Set()
 const pending = new Set()
 const controllers = new Set()
+let verifiedEndpoint
 const HELP = `伏安软件 MCP — connect a compatible stdio MCP client to the running workbench.
 
-node scripts/workbench-mcp.mjs [--connection ABSOLUTE_PATH]
+node scripts/workbench-mcp.mjs [--connection ABSOLUTE_PATH] [--workspace ID]
 node scripts/workbench-mcp.mjs --print-config [--connection ABSOLUTE_PATH]
 node scripts/workbench-mcp.mjs --doctor [--json] [--connection ABSOLUTE_PATH]
 node scripts/workbench-mcp.mjs --help
 
 Default connection: ../.desktop-circuit/connection.json relative to this script.
+The installed bridge uses --workspace ID to locate an explicitly linked workspace.
+When paired with --connection, --workspace verifies that an explicit path still belongs to that workspace.
 Start the workbench first. This adapter does not start a service or window.
 Normal mode uses newline-delimited JSON-RPC on stdin/stdout only.
 --print-config prints client configuration without the local credential.
 --doctor checks the connection, MCP handshake, tools and synchronized project count.
 It is read-only, has a total 10-second deadline and prints no project names or credentials.
 Doctor exit codes: 0 ready; 2 missing connection; 3 invalid connection;
-4 unavailable service; 5 authorization failed; 6 invalid protocol; 7 project sync required.
+4 unavailable service; 5 authorization failed; 6 invalid protocol; 7 project sync required;
+8 workspace link or identity needs attention.
 `
 
 function options(argv) {
-  const result = { connection: resolve(dirname(script), '../.desktop-circuit/connection.json') }
+  const result = {}
   const seen = new Set()
   for (let i = 0; i < argv.length; i += 1) {
     const flag = argv[i]
@@ -42,10 +46,15 @@ function options(argv) {
       const path = argv[++i]
       if (!path || !isAbsolute(path)) throw new Error('--connection requires an absolute file path.')
       result.connection = resolve(path)
+    } else if (flag === '--workspace') {
+      const value = argv[++i]
+      if (!workspaceIdIsValid(value)) throw new Error('--workspace requires a valid workspace ID.')
+      result.workspaceId = value
     } else throw new Error('Unknown option. See --help.')
   }
   if (result.help && argv.length !== 1) throw new Error('--help does not accept other options.')
   if (result.json && !result.doctor || result.doctor && result.print) throw new Error('Invalid option combination. See --help.')
+  if (!result.connection && !result.workspaceId) result.connection = resolve(dirname(script), '../.desktop-circuit/connection.json')
   return result
 }
 
@@ -61,23 +70,32 @@ function redact(text) {
 function reply(value) { process.stdout.write(`${redact(JSON.stringify(value))}\n`) }
 function fault(id, code, message) { reply({ jsonrpc: '2.0', id, error: { code, message } }) }
 
-async function connection(path) {
+async function connection(args, signal) {
+  let path = args.connection
+  if (!path) {
+    try { path = (await bridgeBinding(resolve(dirname(script), '..'), args.workspaceId)).connection }
+    catch { throw diagnosticFailure('workspace_mismatch') }
+  }
+  let config
   try {
-    const info = await stat(path)
-    if (!info.isFile() || info.size > 65536) throw new Error()
-    const config = JSON.parse((await readFile(path, 'utf8')).replace(/^\uFEFF/, ''))
-    if (config?.version !== 1 || typeof config.url !== 'string' || typeof config.token !== 'string') throw new Error()
-    const url = new URL(config.url)
-    if (!/^http:\/\/(?:127\.0\.0\.1|\[::1\]):[0-9]+\/?$/.test(config.url)
-      || !url.port || url.username || url.password || url.pathname !== '/' || url.search || url.hash
-      || !/^[\x21-\x7e]{24,4096}$/.test(config.token)) throw new Error()
-    secrets.add(config.token)
-    return { origin: url.origin, token: config.token }
+    config = await readLocalWorkbenchConnection(path)
   } catch (cause) {
+    if (args.workspaceId && !args.connection && cause.code === 'ENOENT') throw diagnosticFailure('workspace_mismatch')
     const error = new Error('Cannot read a valid local connection. Start the workbench and check the connection file.')
     error.diagnosticStatus = cause.code === 'ENOENT' ? 'connection_missing' : 'connection_invalid'
     throw error
   }
+  const expected = args.workspaceId
+  if (expected) {
+    if (config.workspaceId !== expected) throw diagnosticFailure('workspace_mismatch')
+    if (verifiedEndpoint?.origin !== config.origin || verifiedEndpoint.token !== config.token || verifiedEndpoint.workspaceId !== expected) {
+      try { await verifyWorkspaceEndpoint(config, expected, signal) }
+      catch (error) { throw diagnosticFailure(error instanceof TypeError || signal.aborted ? 'service_unavailable' : 'workspace_mismatch') }
+      verifiedEndpoint = config
+    }
+  }
+  secrets.add(config.token)
+  return config
 }
 
 const doctorOutcomes = {
@@ -88,36 +106,37 @@ const doctorOutcomes = {
   auth_failed: [5, 'Local service rejected authorization. Refresh the workbench connection.'],
   protocol_failed: [6, 'MCP response or required read-only tools invalid. Check service compatibility.'],
   project_sync_required: [7, 'MCP service ready; open a project in the workbench to synchronize it.'],
+  workspace_mismatch: [8, 'Local workspace link or identity could not be verified. Start the linked workbench or re-link the same workspace explicitly.'],
 }
 const isObject = value => !!value && typeof value === 'object' && !Array.isArray(value)
 function diagnosticFailure(status) {
-  const error = new Error()
+  const error = new Error(doctorOutcomes[status]?.[1] ?? 'Workbench connection failed.')
   error.diagnosticStatus = status
   return error
 }
 
 // Separate read-only flow: never emit server-controlled text into diagnostic output.
-async function doctor(path) {
+async function doctor(args) {
   let phase = 'connection'
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), 10000)
   const fail = status => { throw diagnosticFailure(status) }
   try {
-    await connection(path)
+    await connection(args, controller.signal)
     async function call(request) {
-      let config = await connection(path)
+      let config = await connection(args, controller.signal)
       let response
       for (let attempt = 0; attempt < 2; attempt += 1) {
         try {
           response = await fetch(`${config.origin}/api/desktop-circuit/mcp`, {
             method: 'POST', redirect: 'error',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.token}` },
+            headers: workbenchRequestHeaders(config, args.workspaceId),
             body: JSON.stringify(request), signal: controller.signal,
           })
         } catch { fail('service_unavailable') }
         if (response.status !== 403 || attempt !== 0) break
         await response.body?.cancel()
-        const refreshed = await connection(path)
+        const refreshed = await connection(args, controller.signal)
         if (refreshed.origin === config.origin && refreshed.token === config.token) fail('auth_failed')
         config = refreshed
       }
@@ -185,19 +204,19 @@ async function responseText(response) {
   return Buffer.concat(chunks).toString('utf8')
 }
 
-async function forward(request, path) {
+async function forward(request, args) {
   const hasId = Object.hasOwn(request, 'id')
   const controller = new AbortController()
   controllers.add(controller)
   const timer = setTimeout(() => controller.abort(), 120000)
   try {
-    let config = await connection(path)
+    let config = await connection(args, controller.signal)
     let response
     for (let attempt = 0; attempt < 2; attempt += 1) {
       try {
         response = await fetch(`${config.origin}/api/desktop-circuit/mcp`, {
           method: 'POST', redirect: 'error',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.token}` },
+          headers: workbenchRequestHeaders(config, args.workspaceId),
           body: JSON.stringify(request), signal: controller.signal,
         })
       } catch {
@@ -206,7 +225,7 @@ async function forward(request, path) {
       // Only a definite authorization rejection is safe to retry after rotation.
       if (response.status !== 403 || attempt !== 0) break
       await response.body?.cancel()
-      const refreshed = await connection(path)
+      const refreshed = await connection(args, controller.signal)
       if (refreshed.origin === config.origin && refreshed.token === config.token) {
         if (hasId) fault(request.id, -32000, 'Workbench rejected the request (HTTP 403).')
         return
@@ -253,7 +272,7 @@ function dispatch(line, path) {
   void work.finally(() => pending.delete(work))
 }
 
-async function serve(path) {
+async function serve(args) {
   const stop = () => {
     for (const controller of controllers) controller.abort()
     process.stdin.destroy()
@@ -278,7 +297,7 @@ async function serve(path) {
       }
       if (!oversized) parts.push(part)
       if (newline >= 0) {
-        if (!oversized) dispatch(Buffer.concat(parts, size), path)
+        if (!oversized) dispatch(Buffer.concat(parts, size), args)
         parts = []; size = 0; oversized = false
       }
       start = end + 1
@@ -286,7 +305,7 @@ async function serve(path) {
   } } catch (error) {
     if (!process.stdin.destroyed) throw error
   }
-  if (size && !oversized) dispatch(Buffer.concat(parts, size), path)
+  if (size && !oversized) dispatch(Buffer.concat(parts, size), args)
   // Each request has its own bounded timeout; EOF drains outstanding work.
   await Promise.allSettled([...pending])
 }
@@ -295,15 +314,27 @@ try {
   const args = options(process.argv.slice(2))
   if (args.help) process.stdout.write(HELP)
   else if (args.doctor) {
-    const result = await doctor(args.connection)
+    const result = await doctor(args)
     const [code, message] = doctorOutcomes[result.status]
     process.stdout.write(args.json ? `${JSON.stringify({ ...result, message })}\n` : `${result.status}: ${message}${result.ready ? ` Tools: ${result.toolCount}. Projects: ${result.projectCount}.` : ''}\n`)
     process.exitCode = code
   }
-  else if (args.print) process.stdout.write(`${JSON.stringify({ mcpServers: { fuxian: {
-    command: process.execPath, args: [script, '--connection', args.connection],
-  } } }, null, 2)}\n`)
-  else await serve(args.connection)
+  else if (args.print) {
+    // Existing unpinned invocations still work, but new configurations require
+    // an identity so replacement of a connection file cannot retarget them.
+    let workspace = args.workspaceId
+    if (!workspace && args.connection) {
+      try { workspace = (await readLocalWorkbenchConnection(args.connection)).workspaceId } catch { /* A missing connection has no identity to pin. */ }
+    }
+    if (!workspace) {
+      process.stderr.write('Start the target workbench before exporting configuration so its workspace identity can be verified.\n')
+      process.exitCode = 8
+    } else {
+      process.stdout.write(`${JSON.stringify({ mcpServers: { fuxian: {
+        command: process.execPath, args: [script, ...(args.connection ? ['--connection', args.connection] : []), '--workspace', workspace],
+      } } }, null, 2)}\n`)
+    }
+  } else await serve(args)
 } catch {
   process.stderr.write('MCP adapter could not start. Check arguments with --help.\n')
   process.exitCode = 1

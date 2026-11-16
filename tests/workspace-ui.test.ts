@@ -238,21 +238,24 @@ test('one full-height left navigation switches and collapses panels without losi
   } finally { await ui.close() }
 })
 
-test('file actions remain available in the top menu and close on Escape or an action', { timeout: 30000 }, async () => {
+test('Open Project stays visible while secondary top-bar actions close on Escape or selection', { timeout: 30000 }, async () => {
   const ui = await workspace(exampleProject('diode-sweep'))
   try {
     const project = structuredClone(ui.active()), menu = ui.query<HTMLDetailsElement>('.workspace-file-menu'), summary = ui.query('.workspace-file-menu > summary')
     assert.equal(menu.open, false)
+    const open=ui.button('打开工程', ui.query('.workspace-topbar'))
+    assert.equal(open.textContent?.trim(), '打开工程')
+    assert.equal(menu.contains(open), false)
     await ui.click(summary)
     assert.equal(menu.open, true)
-    for (const label of ['空白画布', '打开工程文件', '保存工程文件', '导出原理图 SVG', '导出 LTspice .asc', '导出 SPICE .cir']) {
+    for (const label of ['空白画布', '导出工程文件', '导入 LTspice / PSpice', '导出原理图 SVG', '导出 LTspice .asc', '导出 SPICE .cir']) {
       assert.ok(menu.contains(ui.button(label)))
     }
-    await ui.key('Escape', ui.button('打开工程文件'))
+    await ui.key('Escape', ui.button('导入 LTspice / PSpice'))
     assert.equal(menu.open, false)
     assert.equal(ui.doc.activeElement, summary)
     await ui.click(summary)
-    await ui.click(ui.button('打开工程文件'))
+    await ui.click(ui.button('导入 LTspice / PSpice'))
     assert.equal(menu.open, false)
     assert.equal(projectKey(ui.active()), projectKey(project))
   } finally { await ui.close() }

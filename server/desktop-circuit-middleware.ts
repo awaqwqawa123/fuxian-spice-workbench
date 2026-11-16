@@ -4,6 +4,7 @@ import type { Plugin, PreviewServer, ViteDevServer } from 'vite'
 import { DESKTOP_CIRCUIT_API, type DesktopCircuitStart, type DesktopCircuitSync } from '../src/core/desktop-circuit'
 import { DesktopCircuitError, DesktopCircuitManager, type DesktopCircuitManagerOptions } from './desktop-circuit-manager'
 import { handleWorkbenchMcp, workbenchMcpTools, workbenchMcpVersions } from './workbench-mcp'
+import { WORKSPACE_HEADER } from '../scripts/workbench-bridge-store.mjs'
 
 const prefix = `${DESKTOP_CIRCUIT_API}/`
 const MAX_BODY = 2 * 1024 * 1024
@@ -42,20 +43,35 @@ export function createDesktopCircuitMiddleware(options: DesktopCircuitManagerOpt
     const reply = (status: number, value: unknown) => { if (!res.destroyed) { if (!req.complete) res.setHeader('Connection', 'close'); res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' }); res.end(JSON.stringify(value)) } }
     try {
       const url = new URL(req.url ?? '/', 'http://localhost'), action = url.pathname.slice(prefix.length)
-      const agent = action.startsWith('agent/') || action === 'mcp'
+      const agent = action.startsWith('agent/') || action === 'mcp' || action === 'mcp-identity'
       if (agent) {
         // Agents use a local capability file, never browser Origin/cookies or an exposed token.
         if (!isLoopback(req) || req.headers.origin !== undefined || req.headers['sec-fetch-site'] !== undefined || !manager.authenticates(req.headers.authorization)) throw new DesktopCircuitError(403, '电路工具只接受本机 Agent 凭证请求')
       } else if (!browserRequest(req)) throw new DesktopCircuitError(403, '画布同步只接受本机同源请求')
-      if (action === 'mcp-info') {
-        if (req.method !== 'GET') throw new DesktopCircuitError(405, 'MCP 连接信息使用 GET')
-        if (url.search) throw new DesktopCircuitError(400, 'MCP 连接信息不接受 URL 参数')
+      if (action === 'mcp-info' || action === 'mcp-bridge') {
+        if (url.search) throw new DesktopCircuitError(400, 'MCP 连接管理不接受 URL 参数')
+        if (action === 'mcp-info') {
+          if (req.method !== 'GET') throw new DesktopCircuitError(405, 'MCP 连接信息使用 GET')
+        } else {
+          if (req.method !== 'POST') throw new DesktopCircuitError(405, 'MCP 固定入口使用 POST 启用')
+          if (req.headers['x-fuxian-desktop'] !== '1') throw new DesktopCircuitError(403, '请从当前工作台设置启用固定入口')
+          if (req.headers['content-type']?.split(';')[0]?.trim().toLowerCase() !== 'application/json') throw new DesktopCircuitError(415, 'MCP 固定入口请求必须使用 application/json')
+          object(await readBody(req, options.bodyTimeoutMs ?? 10000), [])
+          await manager.activateMcpBridge()
+        }
         const status = await manager.workbenchStatus() // Await restoration; ready describes the interface, even with no projects.
-        reply(200, { ...manager.mcpConnectionInfo(workbenchMcpTools.length),
+        reply(200, { ...await manager.mcpConnectionInfo(workbenchMcpTools.length),
           synchronizedProjectCount: status.projects.count,
           runningTaskCount: status.tasks.byStatus.running,
           interruptedTaskCount: status.tasks.byStatus.interrupted,
         }); return
+      }
+      if (action === 'mcp-identity' || action === 'mcp' && req.headers[WORKSPACE_HEADER] !== undefined) {
+        if (!manager.workspaceId || req.headers[WORKSPACE_HEADER] !== manager.workspaceId) throw new DesktopCircuitError(409, 'MCP 工作区不匹配；请重新关联原工作区')
+        if (action === 'mcp-identity') {
+          if (req.method !== 'GET' || url.search) throw new DesktopCircuitError(400, '检查 MCP 工作区使用不带参数的 GET')
+          res.setHeader(WORKSPACE_HEADER, manager.workspaceId); res.writeHead(204).end(); return
+        }
       }
       if (action === 'mcp') {
         if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); throw new DesktopCircuitError(405, 'MCP 使用 POST JSON；此服务不提供 SSE 流') }

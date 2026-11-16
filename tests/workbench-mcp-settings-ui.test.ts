@@ -5,6 +5,8 @@ import { JSDOM } from 'jsdom'
 import SettingsDialog from '../src/components/SettingsDialog'
 import { getWorkbenchMcpInfo } from '../src/core/workbench-mcp-client'
 import { workbenchMcpConfiguration } from '../src/core/workbench-mcp-config'
+import type { DesktopCircuitConnection } from '../src/core/desktop-circuit-client'
+import type { Project } from '../src/core/circuit'
 
 const info = { ready: true, protocol: 'MCP', transport: 'stdio', applicationMode: 'review', message: '伏安工具接口已就绪', toolCount: 17, capabilities: ['projects', 'workbench-status', 'simulation'], config: { mcpServers: { fuxian: { command: 'C:/Runtime/node.exe', args: ['E:/伏安/scripts/workbench-mcp.mjs', '--connection', 'E:/伏安/.desktop-circuit/connection.json'] } } } }
 
@@ -13,13 +15,23 @@ test('MCP settings expose ready status and copy/export configuration without mod
   const doc = dom.window.document, previous = new Map<string, PropertyDescriptor | undefined>()
   const requests: string[] = [], copied: string[] = [], downloads: string[] = []
   let rejectRead = false, rejectClipboard = false, exported: Blob | null = null
+  const workspaceId = '11111111-1111-4111-8111-111111111111'
+  let bridgeStatus: 'unlinked' | 'linked' | 'relink-required' | undefined
+  const linked = { mcpServers: { fuxian: { command: 'C:/User/Fuxian/node.exe', args: ['C:/User/Fuxian/workbench-mcp.mjs', '--workspace', workspaceId] } } }
   let counts = { synchronizedProjectCount: 0, runningTaskCount: 0, interruptedTaskCount: 0 }
   const fetch = async (path: unknown, init?: RequestInit) => {
     requests.push(String(path))
+    if (path === '/api/desktop-circuit/mcp-bridge') {
+      assert.equal(init?.method, 'POST')
+      assert.equal(init?.body, '{}')
+      assert.equal((init?.headers as Record<string, string>)['x-fuxian-desktop'], '1')
+      bridgeStatus = 'linked'
+      return Response.json({ ...info, ...counts, config: linked, workspaceId, bridgeStatus })
+    }
     if(path==='/api/codex/installation')return Response.json({configuredPath:null,effectivePath:'C:/Codex/codex.exe',source:'automatic',available:true,message:'已找到程序文件'})
     if (path !== '/api/desktop-circuit/mcp-info') return Response.json({ stage: 'unprepared', directory: null, defaultDirectory: 'E:/伏安', connected: false, installed: false, available: false, message: '未连接', providers: [] })
     assert.equal((init?.headers as Record<string, string>)['x-fuxian-desktop'], '1')
-    return rejectRead ? Response.json({ error: '接口正在重启，请重试' }, { status: 503 }) : Response.json({ ...info, ...counts })
+    return rejectRead ? Response.json({ error: '接口正在重启，请重试' }, { status: 503 }) : Response.json({ ...info, ...counts, ...(bridgeStatus ? { workspaceId, bridgeStatus } : {}) })
   }
   for (const [key, value] of Object.entries({ window: dom.window, document: doc, localStorage: dom.window.localStorage, navigator: { userAgent: dom.window.navigator.userAgent, clipboard: { writeText: async (value: string) => { if (rejectClipboard) throw new Error('denied'); copied.push(value) } } }, HTMLElement: dom.window.HTMLElement, IS_REACT_ACT_ENVIRONMENT: true, fetch })) {
     previous.set(key, Object.getOwnPropertyDescriptor(globalThis, key)); Object.defineProperty(globalThis, key, { configurable: true, writable: true, value })
@@ -32,20 +44,36 @@ test('MCP settings expose ready status and copy/export configuration without mod
     const button = [...doc.querySelectorAll<HTMLButtonElement>('button')].find(item => item.textContent === label)
     assert.ok(button, label); button.click()
   })
+  const snapshot = { projectId: 'selected-project', project: { title: '当前工程测试' } as Project, revision: 9, updatedAt: '2026-11-16T09:00:00Z' }
+  const readyPublisher = { state: { snapshot, tasks: [], cliPath: '' }, status: 'ready', error: '' } satisfies Pick<DesktopCircuitConnection, 'state' | 'status' | 'error'>
+  const render = (desktopCircuit?: typeof readyPublisher | Pick<DesktopCircuitConnection, 'state' | 'status' | 'error'>) => act(async () => root.render(createElement(SettingsDialog, {
+    projectId: 'selected-project', desktopCircuit, onClose() {}, onOpenAppearance() {},
+  })))
   try {
-    await act(async () => root.render(createElement(SettingsDialog, { onClose() {}, onOpenAppearance() {} })))
-    assert.deepEqual(new Set(requests),new Set(['/api/codex/installation','/api/desktop-circuit/mcp-info']),'default connection page only reads MCP and program-path metadata')
+    await render({ ...readyPublisher, state: { ...readyPublisher.state, snapshot: { ...snapshot, projectId: 'other-project' } } })
+    assert.deepEqual(requests, ['/api/desktop-circuit/mcp-info'], 'MCP discovery needs no installation or duplicate project snapshot request')
     assert.equal(doc.querySelector<HTMLSelectElement>('[aria-label="助手连接方式"]')!.value,'mcp')
-    assert.ok(doc.querySelector('[aria-label="Codex CLI 安装路径"]'))
+    assert.equal(doc.querySelector('[aria-label="Codex CLI 安装路径"]'), null)
     assert.equal(doc.querySelector('[aria-label="Codex 桌面连接向导"]'),null)
     assert.equal([...doc.querySelectorAll('.settings-navigation button')].filter(button=>button.textContent?.includes('外部助手')).length,0,'one AI connection navigation entry replaces duplicate settings')
     assert.match(doc.body.textContent!, /接口已就绪/)
     assert.doesNotMatch(doc.body.textContent!, /助手已连接/)
+    assert.match(doc.body.textContent!, /配置已准备/)
+    assert.match(doc.body.textContent!, /在客户端确认/)
+    assert.match(doc.body.textContent!, /当前工程待确认/)
+    assert.doesNotMatch(doc.body.textContent!, /当前工程已同步|当前工程测试/)
+    await render(readyPublisher)
+    assert.match(doc.body.textContent!, /当前工程已同步/)
+    assert.match(doc.querySelector('[aria-label="当前工程同步状态"]')!.textContent!, /当前工程测试 · 修订 9/)
+    await render({ ...readyPublisher, status: 'conflict', error: '画布版本冲突' })
+    assert.match(doc.querySelector('[aria-label="当前工程同步状态"]')!.textContent!, /画布版本冲突/)
+    assert.doesNotMatch(doc.body.textContent!, /当前工程已同步/)
     assert.match(doc.body.textContent!, /尚无已同步项目。请先打开并保存电路项目/)
     assert.match(doc.body.textContent!, /正在运行的任务：0 个/)
     assert.match(doc.querySelector('[aria-label="可调用的能力"]')!.textContent!, /工作台状态/)
     assert.doesNotMatch(doc.body.textContent!, /保留了 .*中断任务/)
-    assert.ok(doc.querySelector('textarea'),'selected client configuration is visible directly')
+    assert.equal(doc.querySelector('.workbench-mcp-config details[open]'), null, 'manual configuration is initially collapsed')
+    assert.ok(doc.querySelector('textarea'), 'selected client has a manual configuration fallback')
     await click('复制接入配置')
     assert.equal(copied[0],workbenchMcpConfiguration(info as Awaited<ReturnType<typeof getWorkbenchMcpInfo>>,'codex').text)
     assert.match(copied[0],/^\[mcp_servers\.fuxian\]/)
@@ -59,6 +87,7 @@ test('MCP settings expose ready status and copy/export configuration without mod
     assert.deepEqual(downloads, ['fuxian-cursor-mcp.json']); assert.ok(exported)
     assert.deepEqual(JSON.parse(await (exported as Blob).text()), info.config)
     rejectClipboard = true; await click('复制接入配置')
+    assert.ok(doc.querySelector('.workbench-mcp-config details[open]'), 'clipboard refusal opens the manual configuration')
     assert.equal(doc.activeElement, doc.querySelector('textarea'))
     assert.equal((doc.querySelector('textarea') as HTMLTextAreaElement).selectionEnd, JSON.stringify(info.config, null, 2).length+1)
     await act(async()=>{client.value='dsh';client.dispatchEvent(new dom.window.Event('change',{bubbles:true}))})
@@ -66,6 +95,7 @@ test('MCP settings expose ready status and copy/export configuration without mod
     counts = { synchronizedProjectCount: 2, runningTaskCount: 1, interruptedTaskCount: 3 }
     await click('重新检测')
     assert.match(doc.body.textContent!, /已同步 2 个项目/)
+    assert.doesNotMatch(doc.body.textContent!, /当前工程已同步/, 'total project count cannot verify the selected project')
     assert.match(doc.body.textContent!, /正在运行的任务：1 个/)
     assert.match(doc.body.textContent!, /保留了 3 个中断任务.*重新发起任务/)
     assert.doesNotMatch(doc.body.textContent!, /尚无已同步项目|助手已连接/)
@@ -79,6 +109,16 @@ test('MCP settings expose ready status and copy/export configuration without mod
     assert.match(doc.body.textContent!, /接口已就绪/)
     assert.match(doc.body.textContent!, /尚无已同步项目/)
     assert.equal(requests.filter(path=>path==='/api/desktop-circuit/mcp-info').length, 4)
+    bridgeStatus = 'unlinked'
+    await click('重新检测')
+    assert.ok(!requests.includes('/api/desktop-circuit/mcp-bridge'), 'refresh never activates the bridge')
+    await click('启用固定入口')
+    assert.match(doc.body.textContent!, /固定入口已关联此工作区/)
+    assert.deepEqual(JSON.parse(doc.querySelector<HTMLTextAreaElement>('[aria-label="MCP 接入配置"]')!.value), linked)
+    bridgeStatus = 'relink-required'
+    await click('重新检测')
+    assert.equal(doc.querySelector('[aria-label="MCP 接入配置"]'), null)
+    assert.match(doc.querySelector<HTMLTextAreaElement>('[aria-label="重新关联命令"]')!.value, new RegExp(workspaceId))
     assert.ok(!requests.some(path=>path.startsWith('/api/desktop-control/')||path==='/api/codex/status'||path==='/api/cursor/status'),'MCP settings never connect to native chat services')
     const navigate = async (label:string) => act(async()=>{
       const button=[...doc.querySelectorAll<HTMLButtonElement>('.settings-navigation button')].find(item=>item.textContent===label)
@@ -96,6 +136,8 @@ test('MCP settings expose ready status and copy/export configuration without mod
       mode.value='native';mode.dispatchEvent(new dom.window.Event('change',{bubbles:true}))
     })
     assert.ok(requests.includes('/api/codex/status'),'native status checks only start after explicitly choosing advanced mode')
+    assert.ok(requests.includes('/api/codex/installation'),'CLI program path is only read for advanced mode')
+    assert.ok(doc.querySelector('[aria-label="Codex CLI 安装路径"]'))
     assert.ok(doc.querySelector('[aria-label="Codex 桌面连接向导"]'))
     await act(async()=>{
       const mode=doc.querySelector<HTMLSelectElement>('[aria-label="助手连接方式"]')!

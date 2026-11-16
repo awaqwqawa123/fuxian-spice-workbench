@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto'
 import { mkdir, open, readFile, rename, unlink } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { mergeUserLibrary, parseUserLibrary, type UserLibraryDocument } from '../src/core/user-library'
+import { isDeepStrictEqual } from 'node:util'
+import { mergeUserLibrary, parseUserLibrary, planUserLibraryBackup, type UserLibraryDocument } from '../src/core/user-library'
+import { spiceModelName } from '../src/core/spice-model-name'
 
 const empty = (): UserLibraryDocument => ({ schemaVersion: 1, entries: [] })
 const queues = new Map<string, Promise<unknown>>()
@@ -47,9 +49,18 @@ export class UserLibraryStore {
       return result
     })
   }
+  restoreBackup(incoming: unknown, expectedActions: unknown) {
+    return this.serial(async () => {
+      const previous = await this.read()
+      const { actions, ...result } = planUserLibraryBackup(previous, parseUserLibrary(incoming))
+      if (!isDeepStrictEqual(actions, expectedActions)) throw new Error('本机自建库在预览后已有变化；未写入。请核对更新后的预览再确认。')
+      if (result.added || result.updated) await this.write(result.document, previous)
+      return result
+    })
+  }
   remove(id: string): Promise<{ document: UserLibraryDocument; removed: boolean }> {
     return this.serial(async () => {
-      if (typeof id !== 'string' || !/^user-[a-z0-9_.$+-]+$/i.test(id) || id.length > 80) throw new Error('自建库器件标识不正确')
+      if (typeof id !== 'string' || !id.startsWith('user-') || !spiceModelName.test(id.slice(5))) throw new Error('自建库器件标识不正确')
       const previous = await this.read(), entries = previous.entries.filter(entry => entry.id !== id)
       const removed = entries.length !== previous.entries.length, document = parseUserLibrary({ schemaVersion: 1, entries })
       if (removed) await this.write(document, previous)

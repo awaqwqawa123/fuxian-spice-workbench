@@ -1,9 +1,9 @@
 import type { ImportedSpiceModel } from './spice-models'
-import { createUserLibraryEntry, loadUserLibrary, parseUserLibrary, USER_LIBRARY_EVENT, USER_LIBRARY_KEY, type UserLibraryDocument } from './user-library'
+import { createUserLibraryEntry, loadUserLibrary, parseUserLibrary, USER_LIBRARY_EVENT, USER_LIBRARY_KEY, type UserLibraryBackupAction, type UserLibraryDocument } from './user-library'
 
 export const USER_LIBRARY_API = '/api/user-library'
 export const USER_LIBRARY_MIGRATION_KEY = 'fuxian-user-library-disk-migrated-v1'
-type MergeResult = { document: UserLibraryDocument; added: number; skipped: number; updated: number }
+type MergeResult = { document: UserLibraryDocument; added: number; skipped: number; updated: number; keptBoth: number }
 type RemoveResult = { document: UserLibraryDocument; removed: boolean }
 export interface PersistentUserLibraryOptions { storage?: Pick<Storage, 'getItem' | 'setItem'>; fetcher?: typeof fetch }
 let pending: Promise<unknown> = Promise.resolve()
@@ -16,17 +16,17 @@ function serialize<T>(action: () => Promise<T>): Promise<T> {
   pending = operation
   return operation
 }
-async function request(action: '' | 'merge' | 'remove', value: unknown, options: PersistentUserLibraryOptions): Promise<MergeResult & RemoveResult> {
+async function request(action: '' | 'merge' | 'remove' | 'restore-backup', value: unknown, options: PersistentUserLibraryOptions): Promise<MergeResult & RemoveResult> {
   const response = await (options.fetcher ?? fetch)(`${USER_LIBRARY_API}${action ? `/${action}` : ''}`, {
     method: action ? 'POST' : 'GET', headers: { 'X-Fuxian-User-Library': '1', ...(action ? { 'Content-Type': 'application/json' } : {}) },
     ...(action ? { body: JSON.stringify(value) } : {}), signal: AbortSignal.timeout(20000),
-  }).catch(() => { throw new Error('无法连接本机自建库服务，尚未确认保存。请保持伏线服务运行后重试；原模型仍保留。') })
+  }).catch(() => { throw new Error(action ? '无法连接本机自建库服务，尚未确认保存。请保持伏线服务运行后重试；原模型仍保留。' : '无法连接本机自建库服务。请保持伏线服务运行后重新读取。') })
   let raw: Record<string, unknown>
   try { raw = await response.json() as Record<string, unknown> }
-  catch { throw new Error('本机自建库服务尚未就绪，尚未确认保存。请重启伏线服务后重试；原模型仍保留。') }
+  catch { throw new Error(action ? '本机自建库服务尚未就绪，尚未确认保存。请重启伏线服务后重试；原模型仍保留。' : '本机自建库服务尚未就绪。请确认伏线服务已启动后重新读取。') }
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('本机自建库服务返回无效数据，尚未确认保存；原模型仍保留。')
   if (!response.ok) throw new Error(typeof raw.error === 'string' ? raw.error : '本机自建库操作失败，原数据已保留。')
-  return { document: parseUserLibrary(raw.document), added: Number(raw.added ?? 0), skipped: Number(raw.skipped ?? 0), updated: Number(raw.updated ?? 0), removed: raw.removed === true }
+  return { document: parseUserLibrary(raw.document), added: Number(raw.added ?? 0), skipped: Number(raw.skipped ?? 0), updated: Number(raw.updated ?? 0), keptBoth: Number(raw.keptBoth ?? 0), removed: raw.removed === true }
 }
 function storageFor(options: PersistentUserLibraryOptions) {
   if (options.storage) return options.storage
@@ -62,12 +62,10 @@ export function addModelToPersistentUserLibrary(model: ImportedSpiceModel, name 
     cache(result.document, options); return result
   })
 }
-export function importPersistentUserLibrary(text: string, options: PersistentUserLibraryOptions = {}): Promise<MergeResult> {
+export function restorePersistentUserLibraryBackup(document: UserLibraryDocument, actions: UserLibraryBackupAction[], options: PersistentUserLibraryOptions = {}): Promise<MergeResult> {
   return serialize(async () => {
-    if (new TextEncoder().encode(text).length > 4 * 1024 * 1024) throw new Error('自建库备份文件最多支持 4 MB')
-    const document = parseUserLibrary(JSON.parse(text))
     await migrate(options)
-    const result = await request('merge', { document }, options)
+    const result = await request('restore-backup', { document, actions }, options)
     cache(result.document, options); return result
   })
 }

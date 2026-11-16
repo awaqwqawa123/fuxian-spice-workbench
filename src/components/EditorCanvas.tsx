@@ -11,6 +11,7 @@ import type {GroundStyle} from '../core/drawing'
 import {clampCanvasZoom} from '../core/canvas-zoom'
 import { addDevice, CANVAS, clampCoordinate, compileDrawing, createDrawingRenderCache, connect, joinAtWire, nextId, pinPosition, sameTerminal, snap, terminal, terminalKey, terminalPosition, wirePath, wirePoints, type Device, type DeviceKind, type Drawing, type Pin, type Rotation, type Terminal, type Wire, type XY } from '../core/drawing'
 import { moveWireCorner, moveWireSegment, nearestWireSegment } from '../core/wire-edit'
+import { applySeriesInsertion, findSeriesInsertion, type SeriesResult } from '../core/series-insertion'
 import { fitView, fitViewBounds, moveSelection, positionClipboard, rectangle, selectRectangle, selectionBounds, type Bounds } from '../core/selection'
 import { inspectNet } from '../core/net-tools'
 import { nearestProbeTarget, nearestWireProbeTarget, probePoint, projectOnWire, wireProbeAngle, type ProbeTarget, type WireAnchor } from '../core/probe-placement'
@@ -46,6 +47,7 @@ interface Props {
   drawing:Drawing; drawingCache?:ReturnType<typeof createDrawingRenderCache>; selection:string[]; onSelect:(ids:string[])=>void
   tool:EditorTool; onTool:(tool:EditorTool)=>void; rotation:Rotation
   onChange:(drawing:Drawing,preserveConnections?:boolean)=>void; onStatus:(message:string)=>void
+  onSeriesInsert?:(result:SeriesResult)=>void
   onEditDevice?:(id:string)=>void
   zoom:number; onZoom:(zoom:number)=>void; resetView:number; fitSelection:number
   viewKey?:string; fitMode?:'auto'|'manual'; onFitModeChange?:(mode:'auto'|'manual')=>void
@@ -115,7 +117,7 @@ export default function EditorCanvas(props:Props) {
   return <MemoCanvasScene {...stable}/>
 }
 const MemoCanvasScene=memo(EditorCanvasScene)
-function EditorCanvasScene({active=true,drawing,drawingCache,selection,onSelect,tool,onTool,rotation,onChange,onStatus,zoom,onZoom,resetView,fitSelection,fitMode='manual',onFitModeChange,viewKey,showNodes,dcVoltages,biasMeasurements,biasPrefs,biasSelectedId,onBiasMove,onBiasSelect,onBiasPin,onBiasUndo,onBiasRedo,placingBiasWire,onBiasWire,onCancelBiasWire,onLabel,wireBend,onWireBendChange,clipboard,clipboardModels=NO_IMPORTED_MODELS,onPaste,highlightedNet,onInspectNet,onProbe,onProbeDevice,onProbeWire,onReverseProbe,onProbePair,onMoveProbeLabel,onRelocateProbe,onSelectProbe,probeMode='voltage',probeMarkers:givenProbeMarkers,showProbeMarkers=true,pendingProbe,placementValue,placementParams,placementGroundStyle,networkSymbol,onPlaceNetworkSymbol,importedModels=NO_IMPORTED_MODELS,onContextMenu,onEditDevice,canvasDiagrams=NO_CANVAS_DIAGRAMS,onDiagramChange,onDiagramExpand,selectedDiagramId,selectedDiagramIds,onDiagramSelect,onSheetSelect,onDiagramGroupChange,gridSize=20}:Props) {
+function EditorCanvasScene({active=true,drawing,drawingCache,selection,onSelect,tool,onTool,rotation,onChange,onSeriesInsert,onStatus,zoom,onZoom,resetView,fitSelection,fitMode='manual',onFitModeChange,viewKey,showNodes,dcVoltages,biasMeasurements,biasPrefs,biasSelectedId,onBiasMove,onBiasSelect,onBiasPin,onBiasUndo,onBiasRedo,placingBiasWire,onBiasWire,onCancelBiasWire,onLabel,wireBend,onWireBendChange,clipboard,clipboardModels=NO_IMPORTED_MODELS,onPaste,highlightedNet,onInspectNet,onProbe,onProbeDevice,onProbeWire,onReverseProbe,onProbePair,onMoveProbeLabel,onRelocateProbe,onSelectProbe,probeMode='voltage',probeMarkers:givenProbeMarkers,showProbeMarkers=true,pendingProbe,placementValue,placementParams,placementGroundStyle,networkSymbol,onPlaceNetworkSymbol,importedModels=NO_IMPORTED_MODELS,onContextMenu,onEditDevice,canvasDiagrams=NO_CANVAS_DIAGRAMS,onDiagramChange,onDiagramExpand,selectedDiagramId,selectedDiagramIds,onDiagramSelect,onSheetSelect,onDiagramGroupChange,gridSize=20}:Props) {
   const svg=useRef<SVGSVGElement>(null)
   const itemActions=useRef<CanvasItemActions>(null!)
   const deviceViewCache=useRef(new WeakMap<Device,CanvasDeviceView>())
@@ -407,13 +409,25 @@ function EditorCanvasScene({active=true,drawing,drawingCache,selection,onSelect,
       else if(deviceId)onStatus('在右侧属性栏编辑器件数值或模型。')
     })
   }
-  function place(kind:DeviceKind,point:XY,angle?:Rotation,value=placementValue,params:Record<string,string>|null=placementParams??null,groundStyle=placementGroundStyle){
+  function pointNearDevice(point:XY,raw:XY,grid:XY):XY{return {x:point.x+raw.x-grid.x,y:point.y+raw.y-grid.y}}
+  function trySeriesInsert(placed:Drawing,part:Device,aim:XY):boolean {
+    if(!onSeriesInsert)return false
+    const target=findSeriesInsertion(drawing,wireIndex,part,aim,navigation.paintedZoom())
+    if(!target)return false
+    if(target.kind==='blocked')throw new Error(`无法串入：${target.reason}`)
+    const result=applySeriesInsertion(drawingGeometry,placed,target.plan)
+    try{onSeriesInsert(result)}catch(error){const message=(error as Error).message;throw new Error(message.startsWith('无法串入：')?message:`无法串入：${message}`)}
+    onStatus(`已将 ${part.id} 串入 ${result.original.id}；器件两脚之间的原导线已断开。Ctrl+Z 可撤销。`)
+    return true
+  }
+  function place(kind:DeviceKind,point:XY,angle?:Rotation,value=placementValue,params:Record<string,string>|null=placementParams??null,groundStyle=placementGroundStyle,aim:XY=point){
     const added=addDevice(drawing,kind,point,angle)
     const subcircuit=kind==='X'?importedModels.find(model=>model.kind==='X'&&model.id.toLowerCase()===value?.toLowerCase()):undefined
     if(kind==='X'&&!subcircuit)throw new Error('请先从模型库选择可导入的子电路，再放置到画布')
     if(value!==undefined||params||subcircuit||kind==='GND'&&groundStyle)added.drawing={...added.drawing,devices:added.drawing.devices.map(d=>d.id===added.id?{...d,...(value!==undefined?{value}:{}),...(params?{params:{...params}}:{}),...(kind==='GND'&&groundStyle?{groundStyle}:{}),...(subcircuit?{pins:[...subcircuit.pins],...(subcircuit.symbol?.shape==='ltspice'?{pinPositions:subcircuit.symbol.pins.map(pin=>({x:pin.x!,y:pin.y!}))}:{})}:{})}:d)}
-    onChange(added.drawing);onSelect([added.id]);onTool('select')
-    onStatus(`已放置 ${added.id}。Shift 点击多选；拖空白处框选；点击引脚开始接线。`)
+    const inserted=trySeriesInsert(added.drawing,added.drawing.devices.at(-1)!,aim)
+    if(!inserted){onChange(added.drawing);onStatus(`已放置 ${added.id}。Shift 点击多选；拖空白处框选；点击引脚开始接线。`)}
+    onSelect([added.id]);onTool('select')
   }
   function placeNetworkAt(preset:NetworkSymbolPreset,point:XY,element?:Element,angle:Rotation=preset.rotation){
     if(!onPlaceNetworkSymbol)return
@@ -494,7 +508,7 @@ function EditorCanvasScene({active=true,drawing,drawingCache,selection,onSelect,
     }
     if(e.button===0&&(tool==='paste'||isDeviceTool(tool))){
       e.preventDefault();e.stopPropagation();svg.current?.focus()
-      safe(()=>{const p=position(e.clientX,e.clientY);if(tool==='paste')onPaste(p);else if(isDeviceTool(tool))place(tool,p,rotation)})
+      safe(()=>{const p=position(e.clientX,e.clientY);if(tool==='paste')onPaste(p);else if(isDeviceTool(tool))place(tool,p,rotation,undefined,undefined,undefined,rawPosition(e.clientX,e.clientY))})
     }
   }
   function connectDraft(base:Drawing,from:Terminal,to:Terminal) {
@@ -653,7 +667,7 @@ function EditorCanvasScene({active=true,drawing,drawingCache,selection,onSelect,
       if(tool==='wire')updateWireHover(raw)
       else if(tool==='paste'||isDeviceTool(tool)||tool==='probe'||tool==='label'&&networkSymbol||probeDrag.current){
         const element=tool==='probe'||probeDrag.current?pointerElement(e):null
-        queueHoverPreview(()=>{setHoverPoint(at);if(element)setProbeHover(pointedProbeTarget(raw,element,tool==='probe'&&probeMode==='current'))})
+        queueHoverPreview(()=>{setHoverPoint(isDeviceTool(tool)?canvasPoint(raw):at);if(element)setProbeHover(pointedProbeTarget(raw,element,tool==='probe'&&probeMode==='current'))})
       }
       if(probeDrag.current)return
       if(dragRef.current){const base=dragRef.current,delta={x:at.x-base.start.x,y:at.y-base.start.y};queueInteractionPreview(()=>{if(dragRef.current!==base||delta.x===base.delta.x&&delta.y===base.delta.y)return;const state={...base,delta,preview:moveSelection(drawing,base.ids,delta)};dragRef.current=state;setDrag(state)})}
@@ -716,7 +730,13 @@ function EditorCanvasScene({active=true,drawing,drawingCache,selection,onSelect,
       cancelGesture();if(e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId);return
     }
     const state=dragRef.current,box=marqueeRef.current
-    if(state&&state.base===drawing)safe(()=>{const end=position(e.clientX,e.clientY),next=moveSelection(drawing,state.ids,{x:end.x-state.start.x,y:end.y-state.start.y});if(next!==drawing){onChange(next,true);onStatus(`已移动选区，连接保持不变；Ctrl+Z 可撤销。`)}else if(state.label&&Math.hypot(e.clientX-state.client.x,e.clientY-state.client.y)<5)onLabel?.(state.label)})
+    if(state&&state.base===drawing)safe(()=>{
+      const end=position(e.clientX,e.clientY),next=moveSelection(drawing,state.ids,{x:end.x-state.start.x,y:end.y-state.start.y})
+      if(next===drawing){if(state.label&&Math.hypot(e.clientX-state.client.x,e.clientY-state.client.y)<5)onLabel?.(state.label);return}
+      const part=state.ids.length===1?next.devices.find(item=>item.id===state.ids[0]):undefined
+      if(part&&trySeriesInsert(next,part,pointNearDevice(part,rawPosition(e.clientX,e.clientY),end)))return
+      onChange(next,true);onStatus('已移动选区，连接保持不变；Ctrl+Z 可撤销。')
+    })
     if(box){
       const end=position(e.clientX,e.clientY),isClick=box.start.x===end.x&&box.start.y===end.y,area=rectangle(box.start,end)
       const ids=isClick?[]:selectRectangle(drawingGeometry,area,box.intersect),frames=isClick?[]:selectCanvasDiagrams(canvasDiagrams,area,box.intersect)
@@ -727,10 +747,17 @@ function EditorCanvasScene({active=true,drawing,drawingCache,selection,onSelect,
     }
     cancelGesture();if(e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId)
   }
-  function drop(e:DragEvent<SVGSVGElement>){e.preventDefault();const preset=networkSymbolPresets.find(item=>item.id===e.dataTransfer.getData('application/x-fuxian-net-symbol'));if(preset){safe(()=>placeNetworkAt(preset,rawPosition(e.clientX,e.clientY),e.target as Element));return}const kind=e.dataTransfer.getData('application/x-fuxian-device') as DeviceKind;if(isDeviceTool(kind))safe(()=>{const id=e.dataTransfer.getData('application/x-fuxian-library-part'),part=libraryPartById(id);if(id&&(!part||part.kind!==kind))throw new Error('器件预设无效，请从器件库重新拖入');const value=e.dataTransfer.types.includes('application/x-fuxian-value')?e.dataTransfer.getData('application/x-fuxian-value'):undefined;place(kind,position(e.clientX,e.clientY),undefined,part?.value??value??deviceCatalog[kind].value,part?.params??null,part?.kind==='GND'?part.groundStyle??'earth':undefined)})}
+  function drop(e:DragEvent<SVGSVGElement>){e.preventDefault();const preset=networkSymbolPresets.find(item=>item.id===e.dataTransfer.getData('application/x-fuxian-net-symbol'));if(preset){safe(()=>placeNetworkAt(preset,rawPosition(e.clientX,e.clientY),e.target as Element));return}const kind=e.dataTransfer.getData('application/x-fuxian-device') as DeviceKind;if(isDeviceTool(kind))safe(()=>{const id=e.dataTransfer.getData('application/x-fuxian-library-part'),part=libraryPartById(id);if(id&&(!part||part.kind!==kind))throw new Error('器件预设无效，请从器件库重新拖入');const value=e.dataTransfer.types.includes('application/x-fuxian-value')?e.dataTransfer.getData('application/x-fuxian-value'):undefined;place(kind,position(e.clientX,e.clientY),undefined,part?.value??value??deviceCatalog[kind].value,part?.params??null,part?.kind==='GND'?part.groundStyle??'earth':undefined,rawPosition(e.clientX,e.clientY))})}
   const probe=visible.output?terminalPosition(visible,visible.output):null
   const source=visible.devices.find(p=>p.id===visible.sourceId),input=source?pinPosition(source,0):null
-  const ghost=hover&&isDeviceTool(tool)?{id:'preview',kind:tool,value:placementValue??deviceCatalog[tool].value,params:placementParams,groundStyle:placementGroundStyle,...hover,rotation} as Device:null
+  const ghost=hover&&isDeviceTool(tool)?{id:'preview',kind:tool,value:placementValue??deviceCatalog[tool].value,params:placementParams,groundStyle:placementGroundStyle,...wireGridPoint(hover),rotation} as Device:null
+  if(ghost?.kind==='X'){
+    const model=modelLookup.get(`X:${ghost.value.toLowerCase()}`)
+    ghost.pins=model?.pins
+    if(model?.symbol?.shape==='ltspice')ghost.pinPositions=model.symbol.pins.map(pin=>({x:pin.x!,y:pin.y!}))
+  }
+  const draggedPart=drag?.ids.length===1&&(drag.delta.x||drag.delta.y)?drag.preview.devices.find(item=>item.id===drag.ids[0]):undefined
+  const seriesPreview=onSeriesInsert&&(ghost||draggedPart)?findSeriesInsertion(drawing,wireIndex,(ghost??draggedPart)!,ghost?hover!:draggedPart!,screenScale):null
   const pasted=clipboard&&tool==='paste'?positionClipboard(clipboard,hover??center):null
   const groupBounds=useMemo(()=>selected.size>1?selectionBounds(visible,[...selected]):null,[visible,selected])
   const route=(from:XY,to:XY)=>{
@@ -839,6 +866,10 @@ function EditorCanvasScene({active=true,drawing,drawingCache,selection,onSelect,
       <g transform={`translate(${wireTarget.point.x} ${wireTarget.point.y}) scale(${1/screenScale})`}><circle className="wire-snap-ring" r="5.5"/><circle className="wire-snap-dot" r="1.8"/><text x="11" y="-10">{wireTarget.terminal?'device'in wireTarget.terminal?`${wireTarget.terminal.device} · ${wireTarget.terminal.pin+1}`:wireTarget.terminal.junction:'分支'}</text></g>
     </g>}
     {tool==='label'&&networkSymbol&&hover&&<g className="ghost-device network-symbol-preview" pointerEvents="none" transform={(() => {const at=nearestWireTarget(wireIndex,hover,screenScale)?.point??wireGridPoint(hover);return `translate(${at.x} ${at.y})`})()}><NetSymbolGraphic name={networkSymbol.netName} style={networkSymbol.style} rotation={rotation}/></g>}
+    {seriesPreview?.kind==='ready'&&<g className="wire-snap-preview series-insert-preview" pointerEvents="none" aria-label="将器件串入导线">
+      {[seriesPreview.plan.first.point,seriesPreview.plan.second.point].map(({x,y})=><g key={`${x}:${y}`} transform={`translate(${x} ${y}) scale(${1/screenScale})`}><circle className="wire-snap-ring" r="5.5"/><circle className="wire-snap-dot" r="1.8"/></g>)}
+      <g transform={`translate(${(ghost??draggedPart)!.x} ${(ghost??draggedPart)!.y}) scale(${1/screenScale})`}><text x="0" y="-27" textAnchor="middle">串入导线</text></g>
+    </g>}
     {ghost&&<g className="ghost-device" transform={`translate(${ghost.x} ${ghost.y})`} pointerEvents="none"><DeviceSymbol device={ghost} modelType={importedModels.find(m=>m.kind===ghost.kind&&m.id.toLowerCase()===ghost.value.toLowerCase())?.type} symbol={(()=>{const model=importedModels.find(m=>m.kind===ghost.kind&&m.id.toLowerCase()===ghost.value.toLowerCase());return model?presentedModelSymbol(model,ghost):undefined})()}/></g>}
     {pasted&&<g className="paste-preview" pointerEvents="none">{pasted.wires.map(w=><path key={w.id} d={wirePath(pasted,w)}/>)}{pasted.devices.map(p=><g key={p.id} transform={`translate(${p.x} ${p.y})`}><DeviceSymbol device={p} modelType={pasteModelLookup.get(`${p.kind}:${p.value.toLowerCase()}`)?.type} symbol={(()=>{const model=pasteModelLookup.get(`${p.kind}:${p.value.toLowerCase()}`);return model?presentedModelSymbol(model,p):undefined})()}/></g>)}{pasted.junctions.map(j=><circle key={j.id} cx={j.x} cy={j.y} r="4"/>)}{placeNetLabels(pasted).map(({label,point,x,y,width})=><g key={label.id} transform={`translate(${point.x} ${point.y})`}>{label.style&&label.style!=='text'?<NetSymbolGraphic name={label.name} style={label.style} rotation={label.rotation}/>:<><path d={`M 0 0 V ${y-11} H ${x}`}/><rect x={x} y={y-22} width={width} height="21" rx="4"/><text x={x+7} y={y-7}>{label.name}</text></>}</g>)}</g>}
     {marquee&&<rect className={`selection-marquee ${marquee.intersect?'intersect':''}`} x={Math.min(marquee.start.x,marquee.at.x)} y={Math.min(marquee.start.y,marquee.at.y)} width={Math.abs(marquee.start.x-marquee.at.x)} height={Math.abs(marquee.start.y-marquee.at.y)} pointerEvents="none"/>}

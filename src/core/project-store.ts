@@ -59,7 +59,7 @@ function parseCollection(input: unknown): ProjectCollection {
 }
 
 /** Never overwrite a damaged collection automatically; the caller keeps canPersist until recovery. */
-export function loadProjectCollection(storage: StorageReader, fallback: Project): LoadedProjectCollection {
+export function loadProjectCollection(storage: StorageReader, fallback: Project, migrationOnly = false): LoadedProjectCollection {
   let raw: string | null
   try { raw = storage.getItem(PROJECTS_STORAGE) }
   catch { return { collection: initialCollection(fallback), canPersist: false, warning: '无法读取浏览器项目存储；本次修改仅保留在内存，请导出工程备份。' } }
@@ -92,8 +92,30 @@ export function loadProjectCollection(storage: StorageReader, fallback: Project)
       if (skipped) warnings.push(`${skipped} 个历史工程无法恢复，原数据已保留。`)
     } catch { warnings.push('历史模板工程无法恢复，原数据已保留。') }
   }
-  if (!entries.length) entries.push(createEntry(fallback))
+  if (!entries.length && !migrationOnly) entries.push(createEntry(fallback))
+  if (!entries.length) return { collection: { version: 1, activeId: '', entries }, canPersist: false, warning: warnings.join(' ') }
   return { collection: { version: 1, activeId: entries[0].id, entries }, canPersist: true, ...(warnings.length ? { warning: warnings.join(' ') } : {}) }
+}
+
+/** Detect stored material without turning the welcome example into a migration. */
+export function hasBrowserProjects(storage: StorageReader): boolean {
+  try { return [PROJECTS_STORAGE, LEGACY_DRAFT, LEGACY_TEMPLATES].some(key => storage.getItem(key) !== null) }
+  catch { return true }
+}
+
+export async function readBrowserProjectsForMigration(storage: StorageReader, fallback: Project) {
+  if (!hasBrowserProjects(storage)) return undefined
+  const result = loadProjectCollection(storage, fallback, true)
+  if (!result.canPersist) return result
+  if (storage.getItem(PROJECTS_STORAGE) !== null) return result
+  // Pre-library drafts did not have IDs. Give each old document a repeatable
+  // identity without changing the original browser data.
+  const entries = await Promise.all(result.collection.entries.map(async (entry, index) => {
+    const bytes = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(entry.project)))
+    const digest = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, '0')).join('')
+    return { ...entry, id: `legacy-${index}-${digest}` }
+  }))
+  return { ...result, collection: { ...result.collection, entries, activeId: entries[0].id } }
 }
 
 export function saveProjectCollection(storage: StorageWriter, collection: ProjectCollection): void {

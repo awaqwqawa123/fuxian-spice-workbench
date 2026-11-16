@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readFile, readdir, rm, stat, truncate, utimes, writeFile } from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 
@@ -55,5 +55,88 @@ foreach($kind in @('unready','badport','error')){
   }finally{
     const within=relative(resolve(tmpdir()),resolve(temporary));assert.ok(within&&!isAbsolute(within)&&!within.startsWith('..'))
     await rm(temporary,{recursive:true,force:true})
+  }
+})
+
+test('native shell route stages only the selected project and registers Open With without altering the default', {skip:process.platform!=='win32',timeout:40000},async()=>{
+  const temporary=await mkdtemp(join(tmpdir(),'fuxian-native-project-'))
+  const root=join(temporary,"设备 中文 & 文件夹")
+  const service=join(root,'service')
+  const inbox=join(service,'open-project-inbox')
+  await mkdir(inbox,{recursive:true})
+  const executable=join(root,'Fuxian.exe'),helper=join(root,'helper.ps1'),project=join(root,'测试 工程 & 配置.FUXIAN')
+  const shell=join(process.env.SystemRoot!,'System32/WindowsPowerShell/v1.0/powershell.exe')
+  const testRegistryKey='Software\\FuxianIntegrationTest-'+temporary.split(/[\\/]/).pop()
+  const fakeProject=Buffer.from('synthetic model and schematic · 中文')
+  const expired='0123456789abcdef'.repeat(2)+'.fuxian'
+  const ignored='not-an-inbox-file.fuxian'
+  await writeFile(join(inbox,expired),'expired')
+  await utimes(join(inbox,expired),new Date(0),new Date(0))
+  await writeFile(join(inbox,ignored),'unrelated')
+  const tooLarge=join(root,'large.fuxian')
+  await writeFile(tooLarge,'')
+  await truncate(tooLarge,32*1024*1024+1)
+  try{
+    await run(shell,['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',resolve('scripts/build-launcher.ps1'),'-OutputPath',executable],{windowsHide:true,timeout:20000})
+    await writeFile(project,fakeProject)
+    await writeFile(helper,`param([int]$Port,[int]$TimeoutSeconds)
+[Console]::OutputEncoding=[Text.UTF8Encoding]::new($false)
+'call' | Add-Content -LiteralPath (Join-Path $PSScriptRoot 'calls.txt')
+@{ready=$true;port=$Port;url="http://localhost:$Port/";serviceDirectory=(Join-Path $PSScriptRoot 'service')} | ConvertTo-Json -Compress
+`)
+    const script=`
+$ErrorActionPreference='Stop'
+[Console]::OutputEncoding=[Text.UTF8Encoding]::new($false)
+$assembly=[Reflection.Assembly]::LoadFile(${quote(executable)})
+$parsed=$assembly.GetType('FuxianLauncher.LauncherOptions').GetMethod('Parse').Invoke($null,@(,[string[]]@('--port','34568',${quote(project)})))
+$start=$assembly.GetType('FuxianLauncher.ServiceLauncher').GetMethod('StartProject')
+$url=$start.Invoke($null,@(${quote(helper)},$parsed.Port,$parsed.Timeout,$parsed.ProjectPath))
+$failures=@{}
+foreach($path in @('relative.fuxian',${quote(tooLarge)},${quote(join(root,'missing.fuxian'))})){
+ try{$null=$start.Invoke($null,@(${quote(helper)},34568,3,$path));throw 'Unexpected success'}
+ catch{$failures[[IO.Path]::GetFileName($path)]=$_.Exception.InnerException.Message}
+}
+$sandbox=[Microsoft.Win32.Registry]::CurrentUser.CreateSubKey(${quote(testRegistryKey)})
+try{
+ $extension=$sandbox.CreateSubKey('Software\\Classes\\.fuxian')
+ try{$extension.SetValue('', 'Already.Chosen')}finally{$extension.Dispose()}
+ $setting=$assembly.GetType('FuxianLauncher.ProjectFileAssociation').GetMethod('Register').Invoke($null,@($sandbox,${quote(executable)}))
+ function Get-RegistryValue($path,$name){
+  $key=$sandbox.OpenSubKey($path)
+  try {$key.GetValue($name)} finally {$key.Dispose()}
+ }
+ @{
+  url=$url; failures=$failures; setting=$setting;
+  command=Get-RegistryValue 'Software\\Classes\\Fuxian.Project\\shell\\open\\command' '';
+  existing=Get-RegistryValue 'Software\\Classes\\.fuxian' '';
+  openWith=Get-RegistryValue 'Software\\Classes\\.fuxian\\OpenWithProgids' 'Fuxian.Project';
+  registered=Get-RegistryValue 'Software\\RegisteredApplications' '伏线 Fuxian';
+  association=Get-RegistryValue 'Software\\Fuxian\\Capabilities\\FileAssociations' '.fuxian'
+ } | ConvertTo-Json -Compress
+}finally{
+ $sandbox.Dispose()
+ [Microsoft.Win32.Registry]::CurrentUser.DeleteSubKeyTree(${quote(testRegistryKey)},$false)
+}
+`
+    const {stdout}=await run(shell,['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-EncodedCommand',Buffer.from(script,'utf16le').toString('base64')],{windowsHide:true,timeout:20000})
+    const result=JSON.parse(stdout.trim())
+    assert.match(result.url,/^http:\/\/localhost:34568\/#openFuxian=[0-9a-f]{32}$/)
+    const token=new URL(result.url).hash.slice('#openFuxian='.length)
+    assert.deepEqual(await readFile(join(inbox,token+'.fuxian')),fakeProject)
+    assert.deepEqual(await readFile(project),fakeProject)
+    assert.ok(Date.now()-(await stat(join(inbox,token+'.fuxian'))).mtimeMs<60_000)
+    assert.deepEqual((await readdir(inbox)).sort(),[token+'.fuxian',ignored].sort(),'no old token or partial file remains')
+    assert.match(result.failures['relative.fuxian'],/完整路径/)
+    assert.match(result.failures['large.fuxian'],/32 MB/)
+    assert.match(result.failures['missing.fuxian'],/找不到/)
+    assert.equal((await readFile(join(root,'calls.txt'),'utf8')).trim(),'call','bad files never start the service')
+    assert.equal(result.setting,'ms-settings:defaultapps?registeredAppUser='+encodeURIComponent('伏线 Fuxian'))
+    assert.equal(result.command,`"${executable}" "%1"`)
+    assert.equal(result.existing,'Already.Chosen')
+    assert.equal(result.registered,'Software\\Fuxian\\Capabilities')
+    assert.equal(result.association,'Fuxian.Project')
+  }finally{
+    const within=relative(resolve(tmpdir()),resolve(temporary));assert.ok(within&&!isAbsolute(within)&&!within.startsWith('..'))
+    await rm(temporary,{recursive:true,force:true,maxRetries:10,retryDelay:200})
   }
 })

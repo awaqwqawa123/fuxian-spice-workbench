@@ -3,6 +3,9 @@
 :root[data-workbench-theme] .workspace-shell .free-header.workspace-topbar { background:var(--ui-raised)!important; }
 .workspace-shell .workspace-topbar .free-brand { order:0; padding-right:16px; border-right:1px solid var(--ui-border); }
 .workspace-shell .workspace-topbar .free-brand strong { font-size:21px; font-weight:750; letter-spacing:-.5px; }
+.workspace-shell .workspace-topbar .workspace-open-project { display:inline-flex; order:0; flex:none; align-items:center; justify-content:center; gap:5px; min-height:34px; padding:5px 9px; border:1px solid var(--ui-accent); border-radius:7px; color:var(--ui-accent-ink); background:var(--ui-accent-soft); font-size:12px; font-weight:650; white-space:nowrap; }
+.workspace-shell .workspace-topbar .workspace-open-project:hover { background:var(--ui-hover); }
+.workspace-shell .workspace-topbar .workspace-open-project > svg { flex:none; }
 .workspace-shell .workspace-topbar-title { order:1; flex:1 1 280px; min-width:190px; max-width:400px; gap:6px; }
 .workspace-shell .workspace-topbar .project-title-input { width:100%; min-width:100px; padding:7px 8px; font-size:15px; font-weight:600; line-height:1.4; }
 :root[data-workbench-theme] .workspace-shell .workspace-topbar .project-title-input { background:transparent!important; border-color:transparent!important; }

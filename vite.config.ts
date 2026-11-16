@@ -16,13 +16,15 @@ import { hapiGatewayPlugin } from './server/hapi-middleware'
 import { privateLocalFilesPlugin, PRIVATE_LOCAL_DENY } from './server/private-local-files'
 import { userLibraryPlugin } from './server/user-library-middleware'
 import { runtimeCachePlugin } from './server/runtime-cache'
+import { projectOpenHandoffPlugin } from './server/project-open-handoff'
+import { projectRepositoryPlugin } from './server/project-repository-middleware'
 
 let circuitManager: DesktopCircuitManager | undefined
-export default defineConfig({
+export default defineConfig(({ isPreview }) => ({
   // Test HTML has dedicated servers and may import test-only virtual modules.
   // Scan the application entry on startup; other pages remain available on demand.
   optimizeDeps: { entries: ['index.html'] },
-  plugins: [runtimeCachePlugin(), privateLocalFilesPlugin(), userLibraryPlugin(), desktopCircuitPlugin({ onManager(manager) { circuitManager = manager } }), desktopControlPlugin({ getCircuitManager: () => circuitManager }), hapiGatewayPlugin(), modelAcquisitionPlugin(), aiGatewayPlugin(), modelLibraryPlugin(), ltspiceSymbolPlugin(), modelSearchPlugin(), agentGatewayPlugin(), codexGatewayPlugin(), cursorGatewayPlugin(), dshLocalGatewayPlugin(), codexSessionPlugin()],
+  plugins: [runtimeCachePlugin(), privateLocalFilesPlugin(), ...(isPreview || process.env.FUXIAN_MODE === 'production' || process.env.FUXIAN_DATA_DIR ? [projectRepositoryPlugin(), projectOpenHandoffPlugin()] : []), userLibraryPlugin(), desktopCircuitPlugin({ onManager(manager) { circuitManager = manager } }), desktopControlPlugin({ getCircuitManager: () => circuitManager }), hapiGatewayPlugin(), modelAcquisitionPlugin(), aiGatewayPlugin(), modelLibraryPlugin(), ltspiceSymbolPlugin(), modelSearchPlugin(), agentGatewayPlugin(), codexGatewayPlugin(), cursorGatewayPlugin(), dshLocalGatewayPlugin(), codexSessionPlugin()],
   server: {
     fs: { deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', ...PRIVATE_LOCAL_DENY] },
     // Local model archives and generated reports are data, not source modules.
@@ -32,4 +34,4 @@ export default defineConfig({
   },
   worker: { format: 'es' },
   build: { target: 'es2022', chunkSizeWarningLimit: 22000 },
-})
+}))
