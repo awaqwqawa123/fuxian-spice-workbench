@@ -11,7 +11,7 @@ import type {GroundStyle} from '../core/drawing'
 import {clampCanvasZoom} from '../core/canvas-zoom'
 import { addDevice, CANVAS, clampCoordinate, compileDrawing, createDrawingRenderCache, connect, joinAtWire, nextId, pinPosition, sameTerminal, snap, terminal, terminalKey, terminalPosition, wirePath, wirePoints, type Device, type DeviceKind, type Drawing, type Pin, type Rotation, type Terminal, type Wire, type XY } from '../core/drawing'
 import { moveWireCorner, moveWireSegment, nearestWireSegment } from '../core/wire-edit'
-import { fitView, moveSelection, positionClipboard, rectangle, selectRectangle, selectionBounds } from '../core/selection'
+import { fitView, fitViewBounds, moveSelection, positionClipboard, rectangle, selectRectangle, selectionBounds, type Bounds } from '../core/selection'
 import { inspectNet } from '../core/net-tools'
 import { nearestProbeTarget, nearestWireProbeTarget, probePoint, projectOnWire, wireProbeAngle, type ProbeTarget, type WireAnchor } from '../core/probe-placement'
 import { probeTypes, type ProbeType } from '../core/probes'
@@ -24,7 +24,7 @@ import BiasCanvasLayer from './BiasCanvasLayer'
 import { placeNetLabels } from '../core/schematic-layout'
 import { junctionAppearances } from '../core/junction-appearance'
 import { libraryPartById } from '../core/library'
-import { fitCanvasView, moveCanvasDiagrams, selectCanvasDiagrams, type CanvasDiagramGeometry } from '../core/canvas-diagrams'
+import { canvasFitBounds, moveCanvasDiagrams, selectCanvasDiagrams, type CanvasDiagramGeometry } from '../core/canvas-diagrams'
 import CanvasWaveformDiagram, { type CanvasDiagram } from './CanvasWaveformDiagram'
 import ComponentValueEditor, { hasQuickValue } from './ComponentValueEditor'
 export type { CanvasContextRequest } from '../core/context-menu'
@@ -43,7 +43,7 @@ export { DeviceSymbol } from './DeviceSymbol'
 
 interface Props {
   active?:boolean
-  drawing:Drawing; selection:string[]; onSelect:(ids:string[])=>void
+  drawing:Drawing; drawingCache?:ReturnType<typeof createDrawingRenderCache>; selection:string[]; onSelect:(ids:string[])=>void
   tool:EditorTool; onTool:(tool:EditorTool)=>void; rotation:Rotation
   onChange:(drawing:Drawing,preserveConnections?:boolean)=>void; onStatus:(message:string)=>void
   onEditDevice?:(id:string)=>void
@@ -115,12 +115,13 @@ export default function EditorCanvas(props:Props) {
   return <MemoCanvasScene {...stable}/>
 }
 const MemoCanvasScene=memo(EditorCanvasScene)
-function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,rotation,onChange,onStatus,zoom,onZoom,resetView,fitSelection,fitMode='manual',onFitModeChange,viewKey,showNodes,dcVoltages,biasMeasurements,biasPrefs,biasSelectedId,onBiasMove,onBiasSelect,onBiasPin,onBiasUndo,onBiasRedo,placingBiasWire,onBiasWire,onCancelBiasWire,onLabel,wireBend,onWireBendChange,clipboard,clipboardModels=NO_IMPORTED_MODELS,onPaste,highlightedNet,onInspectNet,onProbe,onProbeDevice,onProbeWire,onReverseProbe,onProbePair,onMoveProbeLabel,onRelocateProbe,onSelectProbe,probeMode='voltage',probeMarkers:givenProbeMarkers,showProbeMarkers=true,pendingProbe,placementValue,placementParams,placementGroundStyle,networkSymbol,onPlaceNetworkSymbol,importedModels=NO_IMPORTED_MODELS,onContextMenu,onEditDevice,canvasDiagrams=NO_CANVAS_DIAGRAMS,onDiagramChange,onDiagramExpand,selectedDiagramId,selectedDiagramIds,onDiagramSelect,onSheetSelect,onDiagramGroupChange,gridSize=20}:Props) {
+function EditorCanvasScene({active=true,drawing,drawingCache,selection,onSelect,tool,onTool,rotation,onChange,onStatus,zoom,onZoom,resetView,fitSelection,fitMode='manual',onFitModeChange,viewKey,showNodes,dcVoltages,biasMeasurements,biasPrefs,biasSelectedId,onBiasMove,onBiasSelect,onBiasPin,onBiasUndo,onBiasRedo,placingBiasWire,onBiasWire,onCancelBiasWire,onLabel,wireBend,onWireBendChange,clipboard,clipboardModels=NO_IMPORTED_MODELS,onPaste,highlightedNet,onInspectNet,onProbe,onProbeDevice,onProbeWire,onReverseProbe,onProbePair,onMoveProbeLabel,onRelocateProbe,onSelectProbe,probeMode='voltage',probeMarkers:givenProbeMarkers,showProbeMarkers=true,pendingProbe,placementValue,placementParams,placementGroundStyle,networkSymbol,onPlaceNetworkSymbol,importedModels=NO_IMPORTED_MODELS,onContextMenu,onEditDevice,canvasDiagrams=NO_CANVAS_DIAGRAMS,onDiagramChange,onDiagramExpand,selectedDiagramId,selectedDiagramIds,onDiagramSelect,onSheetSelect,onDiagramGroupChange,gridSize=20}:Props) {
   const svg=useRef<SVGSVGElement>(null)
   const itemActions=useRef<CanvasItemActions>(null!)
   const deviceViewCache=useRef(new WeakMap<Device,CanvasDeviceView>())
-  const geometryCache=useRef<ReturnType<typeof createDrawingRenderCache>|null>(null)
-  if(!geometryCache.current)geometryCache.current=createDrawingRenderCache()
+  const localDrawingCache=useRef<ReturnType<typeof createDrawingRenderCache>|null>(null)
+  const geometryCache=drawingCache??(localDrawingCache.current??=createDrawingRenderCache())
+  const drawingGeometry=geometryCache.snapshot(drawing)
   const diagramSelection=selectedDiagramIds??(selectedDiagramId?[selectedDiagramId]:[])
   const [diagramPreview,setDiagramPreview]=useState<{id:string;changes:CanvasDiagramGeometry[]}|null>(null)
   const [editingValue,setEditingValue]=useState<string|null>(null)
@@ -139,21 +140,25 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
   const [middleZooming,setMiddleZooming]=useState(false)
   const [middlePanning,setMiddlePanning]=useState(false)
   const suppressContextMenu=useRef(false),lastBendProp=useRef(wireBend)
-  const [viewport,setViewport]=useState(CANVAS)
   const viewportSize=useRef(CANVAS),initialFitDone=useRef(false),lastReset=useRef(resetView)
   const restoredView=useMemo(()=>readCanvasViewPreference(viewKey),[viewKey])
   const cameraPublished=useRef(false)
-  const biasFitBounds=useRef<ReturnType<typeof biasPlacementRect>[]>([])
-  const fitOptions=useRef({drawing,canvasDiagrams,fitMode,onFitModeChange})
-  fitOptions.current={drawing,canvasDiagrams,fitMode,onFitModeChange}
+  const fitOptions=useRef({drawing:drawingGeometry,canvasDiagrams,annotations:[] as Bounds[],fitMode,onFitModeChange})
+  const fitCache=useRef<{drawing:Drawing;diagrams:CanvasDiagram[];annotations:Bounds[];bounds:Bounds|null}|null>(null)
+  function fittedView(size=viewportSize.current,maxZoom=1.5){
+    const {drawing,canvasDiagrams:diagrams,annotations}=fitOptions.current
+    const cached=fitCache.current
+    if(cached?.drawing===drawing&&cached.diagrams===diagrams&&cached.annotations===annotations)return fitViewBounds(cached.bounds,size,maxZoom)
+    const bounds=canvasFitBounds(drawing,diagrams,annotations)
+    fitCache.current={drawing,diagrams,annotations,bounds}
+    return fitViewBounds(bounds,size,maxZoom)
+  }
   const acknowledgedZoom=useRef(zoom),priorZoom=useRef(zoom),priorFitMode=useRef(fitMode)
   function manualNavigation(){if(fitOptions.current.fitMode!=='manual'){fitOptions.current.fitMode='manual';fitOptions.current.onFitModeChange?.('manual')}}
   const baseGrid=[10,20,40,80].includes(gridSize)?gridSize:20
   const navigation=useCanvasNavigation(svg,zoom,value=>{acknowledgedZoom.current=value;onZoom(value)},viewportSize,baseGrid)
   const {center,zoom:viewZoom}=navigation.view
-  const viewWidth=viewport.width/viewZoom,viewHeight=viewport.height/viewZoom
-  const viewX=center.x-viewWidth/2,viewY=center.y-viewHeight/2
-  const [screenScale,setScreenScale]=useState(1),[probeHover,setProbeHover]=useState<ProbeTarget|null>(null)
+  const screenScale=viewZoom,[probeHover,setProbeHover]=useState<ProbeTarget|null>(null)
   // Persistent artwork uses sheet units, just like symbols and device text.
   // Only invisible interaction targets and temporary snap hints use screen units.
   const probeScale=1,probeScreenScale=screenScale
@@ -164,24 +169,25 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
   const visibleSource=wireDrag?.base===drawing?wireDrag.preview:drag?.base===drawing?drag.preview:working
   // Only these read-only render views share exact route geometry. All edits use
   // the original document, preserving mutable helper and transaction semantics.
-  const workingGeometry=geometryCache.current.snapshot(working)
-  const visible=geometryCache.current.snapshot(visibleSource)
+  const workingGeometry=geometryCache.snapshot(working)
+  const visible=geometryCache.snapshot(visibleSource)
   const probeMarkers=useMemo(()=>showProbeMarkers?layoutProbeMarkers(visible,givenProbeMarkers??measurementProbeMarkers(visible)):[],[visible,givenProbeMarkers,showProbeMarkers])
-  const marqueeIds=marquee?selectRectangle(drawing,rectangle(marquee.start,marquee.at),marquee.intersect):[]
+  const marqueeIds=marquee?selectRectangle(drawingGeometry,rectangle(marquee.start,marquee.at),marquee.intersect):[]
   const selected=useMemo(()=>new Set(marquee?marquee.additive?[...marquee.original,...marqueeIds]:marqueeIds:selection),[marquee,selection])
   const marqueeDiagrams=marquee?selectCanvasDiagrams(canvasDiagrams,rectangle(marquee.start,marquee.at),marquee.intersect):[]
   const selectedFrames=new Set(marquee?marquee.additive?[...marquee.originalDiagrams,...marqueeDiagrams]:marqueeDiagrams:diagramSelection)
   // Moving artwork does not change the electrical graph. Recompile only when
   // an edit is committed or an unfinished connection changes the working graph.
-  const topology=useMemo(()=>compileDrawing(working),[working])
+  const topology=useMemo(()=>compileDrawing(workingGeometry),[workingGeometry])
   const shortMessages=useMemo(()=>new Map(topology.shorts.map(short=>[short.deviceId,short.message])),[topology])
   const shortWireMessages=useMemo(()=>new Map(topology.shorts.flatMap(short=>short.wireIds.map(id=>[id,short.message] as const))),[topology])
   const annotations=useMemo(()=>showNodes?nodeAnnotations(visible,topology.nodes):[],[visible,topology,showNodes])
   const biasPlacements=useMemo(()=>biasMeasurements?.length&&biasPrefs&&working===drawing?layoutBiasMeasurements(visible,biasMeasurements,{prefs:biasPrefs,selected:selection,models:importedModels,probes:[],obstacles:[...canvasDiagrams.map(frame=>({left:frame.x,top:frame.y,right:frame.x+frame.width,bottom:frame.y+frame.height})),...probeMarkers.map(marker=>probeMarkerBounds(visible,marker))]}):[],[visible,biasMeasurements,biasPrefs,working,drawing,selection,importedModels,canvasDiagrams,probeMarkers])
-  biasFitBounds.current=biasPlacements.map(biasPlacementRect)
+  const biasFitBounds=useMemo(()=>biasPlacements.map(biasPlacementRect),[biasPlacements])
+  fitOptions.current={drawing:drawingGeometry,canvasDiagrams,annotations:biasFitBounds,fitMode,onFitModeChange}
   const netLabelPlacements=useMemo(()=>new Map(placeNetLabels(visible).map(item=>[item.label.id,item])),[visible])
   const labeledNets=useMemo(()=>new Set((visible.labels??[]).map(label=>topology.nodes.get(terminalKey(label.at)))),[visible.labels,topology])
-  const net=useMemo(()=>highlightedNet&&topology.nodes.has(terminalKey(highlightedNet))?inspectNet(working,highlightedNet,topology.nodes):null,[working,highlightedNet,topology])
+  const net=useMemo(()=>highlightedNet&&topology.nodes.has(terminalKey(highlightedNet))?inspectNet(workingGeometry,highlightedNet,topology.nodes):null,[workingGeometry,highlightedNet,topology])
   const highlightedTerminals=useMemo(()=>new Set(net?.terminalKeys),[net]),highlightedWires=useMemo(()=>new Set(net?.wireIds),[net]),highlightedLabels=useMemo(()=>new Set(net?.labelIds),[net])
   const linked=useMemo(()=>new Set(working.wires.flatMap(w=>[terminalKey(w.from),terminalKey(w.to)])),[working])
   const labelConnected=useMemo(()=>{
@@ -248,26 +254,27 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
     setWireSession(session=>session?{...session,bend:onWireBendChange?wireBend:session.bend==='hv'?'vh':'hv',manualBend:true}:session)
   },[wireBend,onWireBendChange])
   useEffect(()=>{
-    const update=()=>{
-      const bounds=svg.current?.getBoundingClientRect()
+    const update=(entries?:ResizeObserverEntry[])=>{
+      const bounds=entries?.[0]?.contentRect??svg.current?.getBoundingClientRect()
       // A mounted canvas may be hidden behind the netlist or waveform view.
       // Keep its last valid geometry until the host becomes visible again.
       if(!bounds||bounds.width<=0||bounds.height<=0)return
       const {width,height}=bounds
       const resized=Math.abs(viewportSize.current.width-width)>=.01||Math.abs(viewportSize.current.height-height)>=.01
+      if(initialFitDone.current&&!resized)return
       viewportSize.current={width,height}
-      setViewport(previous=>Math.abs(previous.width-width)<.01&&Math.abs(previous.height-height)<.01?previous:{width,height})
       // Automatic mode follows the actual host dimensions. Manual mode keeps
       // the camera's center and screen scale while revealing more/less world.
-      // Read current document data rather than the mount-time observer closure.
-      if(!initialFitDone.current||resized&&fitOptions.current.fitMode==='auto'&&!pan.current&&!middleZoom.current&&!dragRef.current&&!wireDragRef.current&&!probeDrag.current&&!marqueeRef.current){
+      if(!initialFitDone.current){
         const options=fitOptions.current
-        const restore=!initialFitDone.current&&restoredView?.mode==='manual'?restoredView:null
-        const view=restore??fitCanvasView(options.drawing,options.canvasDiagrams,{width,height},initialFitDone.current?undefined:1.2,biasFitBounds.current)
+        const restore=restoredView?.mode==='manual'?restoredView:null
+        const view=restore??fittedView(viewportSize.current,1.2)
         if(restore){options.fitMode='manual';options.onFitModeChange?.('manual')}
         initialFitDone.current=true;navigation.jump(view.center,view.zoom)
+        return
       }
-      const matrix=svg.current?.getScreenCTM?.();if(matrix?.a&&Number.isFinite(matrix.a))setScreenScale(Math.abs(matrix.a))
+      const canFit=fitOptions.current.fitMode==='auto'&&!pan.current&&!middleZoom.current&&!dragRef.current&&!wireDragRef.current&&!probeDrag.current&&!marqueeRef.current
+      navigation.resize(canFit?fittedView():undefined)
     }
     initialFitDone.current=false;cameraPublished.current=false
     update();const observer=typeof ResizeObserver!=='undefined'?new ResizeObserver(update):null
@@ -287,15 +294,14 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
   useEffect(()=>{
     if(priorFitMode.current===fitMode)return
     priorFitMode.current=fitMode
-    if(fitMode==='auto'&&initialFitDone.current){const view=fitCanvasView(drawing,canvasDiagrams,viewportSize.current,1.5,biasFitBounds.current);navigation.jump(view.center,view.zoom)}
+    if(fitMode==='auto'&&initialFitDone.current){const view=fittedView();navigation.jump(view.center,view.zoom)}
   },[fitMode])
-  useEffect(()=>{const m=svg.current?.getScreenCTM?.();if(m?.a&&Number.isFinite(m.a))setScreenScale(Math.abs(m.a))},[viewZoom,viewport])
-  useEffect(()=>{if(lastReset.current===resetView)return;lastReset.current=resetView;const bounds=svg.current?.getBoundingClientRect();const size=bounds&&bounds.width>0&&bounds.height>0?bounds:viewportSize.current;const view=fitCanvasView(drawing,canvasDiagrams,size,1.5,biasFitBounds.current);navigation.jump(view.center,view.zoom)},[resetView])
-  useEffect(()=>{if(fitSelection){manualNavigation();const view=fitView(drawing,selection,viewportSize.current);navigation.jump(view.center,view.zoom)}},[fitSelection])
+  useEffect(()=>{if(lastReset.current===resetView)return;lastReset.current=resetView;const bounds=svg.current?.getBoundingClientRect();const view=fittedView(bounds&&bounds.width>0&&bounds.height>0?bounds:viewportSize.current);navigation.jump(view.center,view.zoom)},[resetView])
+  useEffect(()=>{if(fitSelection){manualNavigation();const view=fitView(drawingGeometry,selection,viewportSize.current);navigation.jump(view.center,view.zoom)}},[fitSelection])
   const biasWasVisible=useRef(false)
   useEffect(()=>{
     const visible=biasPlacements.length>0
-    if(visible&&!biasWasVisible.current&&fitOptions.current.fitMode==='auto'){const view=fitCanvasView(drawing,canvasDiagrams,viewportSize.current,1.5,biasPlacements.map(biasPlacementRect));navigation.jump(view.center,view.zoom)}
+    if(visible&&!biasWasVisible.current&&fitOptions.current.fitMode==='auto'){const view=fittedView();navigation.jump(view.center,view.zoom)}
     biasWasVisible.current=visible
   },[biasPlacements])
   useEffect(()=>{if(tool!=='wire')setWireSession(null);cancelGesture();return()=>{cancelHoverFrame();cancelInteractionFrame()}},[tool,probeMode])
@@ -350,7 +356,7 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
     // Match the painted target instead of a geometrically overlapping, unrelated net.
     if(at&&!wireOnly)return{at,point:terminalPosition(visible,at),distance:0}
     const wireId=element.closest('[data-probe-wire]')?.getAttribute('data-probe-wire')
-    return wireId?projectOnWire(visible,wireId,point):(wireOnly?nearestWireProbeTarget:nearestProbeTarget)(visible,point,14/screenScale)
+    return wireId?projectOnWire(visible,wireId,point):(wireOnly?nearestWireProbeTarget:nearestProbeTarget)(visible,point,14/navigation.paintedZoom())
   }
   function pointerElement(e:PointerEvent<SVGSVGElement>):Element {
     // Pointer capture retargets events at the SVG; probe hover/release still need the actual hit.
@@ -384,15 +390,15 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
         request.wireId=wireId
         const wire=drawing.wires.find(w=>w.id===wireId)
         if(wire){
-          if(keyboard)raw=probePoint(drawing,wire.from,{wireId,fraction:.5})
-          const projected=projectOnWire(drawing,wireId,raw)
+          if(keyboard)raw=probePoint(drawingGeometry,wire.from,{wireId,fraction:.5})
+          const projected=projectOnWire(drawingGeometry,wireId,raw)
           request.terminal=wire.from;request.anchor=projected?.anchor
         }
       }
       if(pinDevice){request.deviceId=pinDevice;request.terminal=terminal(pinDevice,Number(hit!.getAttribute('data-pin-index')) as Pin);if(keyboard)raw=terminalPosition(drawing,request.terminal)}
       if(junctionId){request.junctionId=junctionId;request.terminal={junction:junctionId};if(keyboard)raw=terminalPosition(drawing,request.terminal)}
       if(labelId){const label=drawing.labels?.find(l=>l.id===labelId);request.labelId=labelId;request.terminal=label?.at;if(keyboard&&label)raw=terminalPosition(drawing,label.at)}
-      if(probeLabel){const marker=probeMarkers.find(m=>m.label===probeLabel);request.probeLabel=probeLabel;request.terminal=marker?.at;request.anchor=marker?.anchor;onSelectProbe?.(probeLabel);if(keyboard&&marker)raw=probePoint(drawing,marker.at,marker.anchor)}
+      if(probeLabel){const marker=probeMarkers.find(m=>m.label===probeLabel);request.probeLabel=probeLabel;request.terminal=marker?.at;request.anchor=marker?.anchor;onSelectProbe?.(probeLabel);if(keyboard&&marker)raw=probePoint(drawingGeometry,marker.at,marker.anchor)}
       request.at=wireGridPoint(raw)
       const id=deviceId??pinDevice??wireId??junctionId??labelId
       if(id&&!selection.includes(id))onSelect([id])
@@ -415,7 +421,7 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
     const pin=hit?.getAttribute('data-context-pin'),junction=hit?.getAttribute('data-context-junction'),wire=hit?.getAttribute('data-context-wire'),label=hit?.getAttribute('data-context-label')
     const direct:Terminal|undefined=pin?terminal(pin,Number(hit!.getAttribute('data-pin-index'))):junction?{junction}:drawing.labels?.find(item=>item.id===label)?.at
     if(direct){onPlaceNetworkSymbol(preset,direct,drawing,angle);return}
-    const target=nearestWireTarget(createWireSnapIndex(drawing),point,screenScale,wire??undefined)
+    const target=nearestWireTarget(working===drawing?wireIndex:createWireSnapIndex(drawingGeometry),point,navigation.paintedZoom(),wire??undefined)
     if(wire||target?.wireId){const joined=joinAtWire(drawing,wire??target!.wireId!,target?.point??point);onPlaceNetworkSymbol(preset,joined.terminal,joined.drawing,angle);return}
     if(target?.terminal){onPlaceNetworkSymbol(preset,target.terminal,drawing,angle);return}
     if(drawing.junctions.length>=100)throw new Error('连接点数量已达上限')
@@ -465,7 +471,7 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
         const raw=rawPosition(e.clientX,e.clientY),hit=(e.target as Element).closest('[data-context-pin], [data-context-junction], [data-context-wire], [data-context-label]')
         const pinDevice=hit?.getAttribute('data-context-pin'),junctionId=hit?.getAttribute('data-context-junction'),wireId=hit?.getAttribute('data-context-wire'),labelId=hit?.getAttribute('data-context-label')
         const direct=pinDevice?terminal(pinDevice,Number(hit!.getAttribute('data-pin-index')) as Pin):junctionId?{junction:junctionId}:working.labels?.find(label=>label.id===labelId)?.at??null
-        const target:WireSnapTarget|null=direct?{terminal:direct,point:terminalPosition(working,direct)}:nearestWireTarget(wireIndex,raw,screenScale,wireId??undefined)
+        const target:WireSnapTarget|null=direct?{terminal:direct,point:terminalPosition(working,direct)}:nearestWireTarget(wireIndex,raw,navigation.paintedZoom(),wireId??undefined)
         setHover(target?.point??canvasPoint(raw))
         if(target?.terminal){if('junction'in target.terminal)chooseJunction(target.terminal.junction);else chooseEndpoint(target.terminal)}
         else if(target?.wireId){const split=joinAtWire(working,target.wireId,target.point);chooseEndpoint(split.terminal,split.drawing)}
@@ -588,9 +594,9 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
     if(tool!=='select'){onTool('select');return}
     e.preventDefault()
     safe(()=>{
-      const start=rawPosition(e.clientX,e.clientY),segment=nearestWireSegment(drawing,id,start)
+      const start=rawPosition(e.clientX,e.clientY),segment=nearestWireSegment(drawingGeometry,id,start)
       if(!segment)return
-      const routeOrigin=corner===undefined?segment.from:wirePoints(drawing,drawing.wires.find(w=>w.id===id)!)[corner]
+      const routeOrigin=corner===undefined?segment.from:wirePoints(drawingGeometry,drawing.wires.find(w=>w.id===id)!)[corner]
       const state:WireDrag={base:drawing,preview:drawing,id,kind:ids.length>1?'group':corner===undefined?'segment':'corner',index:corner??segment.index,ids,start,client:{x:e.clientX,y:e.clientY},delta:{x:0,y:0},routeOrigin,horizontal:segment.from.y===segment.to.y,previewDelta:{x:0,y:0},started:false,pointerId:e.pointerId}
       wireDragRef.current=state;setWireDrag(state);svg.current?.setPointerCapture(e.pointerId)
     })
@@ -629,8 +635,9 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
         if(p.started){manualNavigation();navigation.navigate({x:p.center.x-(e.clientX-p.client.x)*p.sx,y:p.center.y-(e.clientY-p.client.y)*p.sy},undefined,false)}
         return
       }
-      const raw=rawPosition(e.clientX,e.clientY),at=wireGridPoint(raw)
       const probeState=probeDrag.current
+      if(!probeState&&!dragRef.current&&!marqueeRef.current&&tool!=='wire'&&tool!=='paste'&&!isDeviceTool(tool)&&tool!=='probe'&&!(tool==='label'&&networkSymbol))return
+      const raw=rawPosition(e.clientX,e.clientY),at=wireGridPoint(raw)
       if(probeState){
         if(e.pointerId!==probeState.pointerId)return
         if(!active||probeState.base!==drawing){cancelGesture();return}
@@ -712,7 +719,7 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
     if(state&&state.base===drawing)safe(()=>{const end=position(e.clientX,e.clientY),next=moveSelection(drawing,state.ids,{x:end.x-state.start.x,y:end.y-state.start.y});if(next!==drawing){onChange(next,true);onStatus(`已移动选区，连接保持不变；Ctrl+Z 可撤销。`)}else if(state.label&&Math.hypot(e.clientX-state.client.x,e.clientY-state.client.y)<5)onLabel?.(state.label)})
     if(box){
       const end=position(e.clientX,e.clientY),isClick=box.start.x===end.x&&box.start.y===end.y,area=rectangle(box.start,end)
-      const ids=isClick?[]:selectRectangle(drawing,area,box.intersect),frames=isClick?[]:selectCanvasDiagrams(canvasDiagrams,area,box.intersect)
+      const ids=isClick?[]:selectRectangle(drawingGeometry,area,box.intersect),frames=isClick?[]:selectCanvasDiagrams(canvasDiagrams,area,box.intersect)
       const next=[...new Set([...(box.additive?box.original:[]),...ids])],nextFrames=[...new Set([...(box.additive?box.originalDiagrams:[]),...frames])]
       if(onSheetSelect)onSheetSelect(next,nextFrames,nextFrames.at(-1)??null)
       else{onSelect(next);onDiagramSelect?.(nextFrames.at(-1)??null)}
@@ -738,7 +745,6 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
   }
   const pendingPoint=showProbeMarkers&&pendingProbe&&tool==='probe'&&probeMode==='differential'&&topology.nodes.has(terminalKey(pendingProbe.at))?probePoint(visible,pendingProbe.at,pendingProbe.anchor):null
   const previewType=probeDragView?.kind==='tip'?probeMarkers.find(marker=>marker.label===probeDragView.label)?.type??probeMode:probeMode
-  const gridStep=baseGrid*Math.pow(2,Math.max(0,Math.ceil(Math.log2(6/(baseGrid*screenScale)))))
   function activateDiagram(id:string,additive=false){
     cancelGesture();cancelHoverFrame();setHover(null);setWireSession(null)
     const ids=additive?diagramSelection.includes(id)?diagramSelection.filter(value=>value!==id):[...diagramSelection,id]:diagramSelection.includes(id)?diagramSelection:[id]
@@ -768,7 +774,7 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
     pinDown:(e,part,pin)=>{e.stopPropagation();if(e.button===0)chooseEndpoint(terminal(part.id,pin))},
     pinKeyDown:(e,part,pin)=>{if(e.key==='Enter'){e.stopPropagation();chooseEndpoint(terminal(part.id,pin))}},
   }
-  return <><svg ref={svg} className={`editor-canvas tool-${tool} ${middleZooming?'is-middle-zooming':''} ${middlePanning?'is-middle-panning':''} ${tool==='probe'?`tool-probe-${probeMode}`:''}`} role="group" tabIndex={0} aria-label="可编辑原理图画布" viewBox={`${viewX} ${viewY} ${viewWidth} ${viewHeight}`}
+  return <><svg ref={svg} className={`editor-canvas tool-${tool} ${middleZooming?'is-middle-zooming':''} ${middlePanning?'is-middle-panning':''} ${tool==='probe'?`tool-probe-${probeMode}`:''}`} role="group" tabIndex={0} aria-label="可编辑原理图画布" viewBox="0 0 1200 640"
     onPointerDownCapture={captureDown} onPointerDown={blankDown}
     onPointerMoveCapture={e=>{if(pan.current?.button===1){e.preventDefault();e.stopPropagation();move(e);return}if(!middleZoom.current)return;e.preventDefault();e.stopPropagation();zoomFromMiddleMove(middleZoom.current,e.clientY)}} onPointerMove={move}
     onPointerUpCapture={e=>{if(pan.current?.button===1){e.preventDefault();e.stopPropagation();finish(e);return}if(middleZoom.current){e.preventDefault();e.stopPropagation()}}} onPointerUp={finish} onPointerCancel={cancelGesture} onLostPointerCapture={()=>{if(pan.current||wireDragRef.current||dragRef.current||marqueeRef.current||probeDrag.current)cancelGesture()}}
@@ -776,9 +782,9 @@ function EditorCanvasScene({active=true,drawing,selection,onSelect,tool,onTool,r
     onContextMenuCapture={e=>{e.preventDefault();e.stopPropagation();if(middleZoom.current||pan.current?.button===2)return;if(suppressContextMenu.current){suppressContextMenu.current=false;return}if(active)showContextMenu(e.target as Element,e.clientX,e.clientY)}}
     onKeyDownCapture={e=>{if((e.target as Element).closest('[data-canvas-diagram]'))return;if(active&&tool==='select'&&e.key==='Enter')inspectSelectedTarget(e.target as Element);if(e.key==='ContextMenu'||e.key==='F10'&&e.shiftKey){e.preventDefault();e.stopPropagation();const target=e.target as Element,box=target.getBoundingClientRect();showContextMenu(target,box.left+box.width/2,box.top+box.height/2,true)}}}
     onPointerLeave={()=>{if(middleZoom.current)cancelGesture();cancelHoverFrame();setHover(null);if(!probeDrag.current)setProbeHover(null)}} onDragOver={e=>e.preventDefault()} onDrop={drop}>
-    <defs><pattern id="editor-dot-grid" width={gridStep} height={gridStep} patternUnits="userSpaceOnUse"><circle cx="0" cy="0" r={.7/screenScale} fill="var(--canvas-grid, #c9d8ce)"/></pattern></defs>
-    <rect className="canvas-viewport-background" x={viewX} y={viewY} width={viewWidth} height={viewHeight} fill="#fcfdfb"/>
-    <rect className="canvas-viewport-grid" x={viewX} y={viewY} width={viewWidth} height={viewHeight} fill="url(#editor-dot-grid)"/>
+    <defs><pattern id="editor-dot-grid" patternUnits="userSpaceOnUse"><circle cx="0" cy="0" fill="var(--canvas-grid, #c9d8ce)"/></pattern></defs>
+    <rect className="canvas-viewport-background" fill="#fcfdfb"/>
+    <rect className="canvas-viewport-grid" fill="url(#editor-dot-grid)"/>
     {!drawing.devices.length&&<g className="canvas-empty" pointerEvents="none"><text x="600" y="260" textAnchor="middle">从左侧放入第一个器件</text><text x="600" y="295" textAnchor="middle" className="canvas-empty-note">选择器件后点击画布，或直接拖入</text><text x="600" y="337" textAnchor="middle" className="canvas-empty-note">Shift 多选 · 拖空白处框选 · Ctrl+C / V 复制粘贴</text></g>}
     {groupBounds&&!marquee&&<rect className="selection-bounds" x={groupBounds.left-12} y={groupBounds.top-12} width={groupBounds.right-groupBounds.left+24} height={groupBounds.bottom-groupBounds.top+24} pointerEvents="none"/>}
     {/* Conductors paint above symbol bodies; terminal targets remain topmost. */}

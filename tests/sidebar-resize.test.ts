@@ -99,3 +99,54 @@ test('assistant splitter drag and keyboard use the available viewport width beyo
     for (const [key, descriptor] of original) { if (descriptor) Object.defineProperty(globalThis, key, descriptor); else Reflect.deleteProperty(globalThis, key) }
   }
 })
+
+test('splitter applies only the latest width each frame and saves the final width once', async () => {
+  const dom = new JSDOM('<!doctype html><div id="root"></div>')
+  const original = new Map<string, PropertyDescriptor | undefined>()
+  for (const [key, value] of Object.entries({ window: dom.window, document: dom.window.document, IS_REACT_ACT_ENVIRONMENT: true })) {
+    original.set(key, Object.getOwnPropertyDescriptor(globalThis, key)); Object.defineProperty(globalThis, key, { configurable: true, writable: true, value })
+  }
+  const callbacks = new Map<number, FrameRequestCallback>()
+  let sequence = 0
+  dom.window.requestAnimationFrame = callback => { const id = ++sequence; callbacks.set(id, callback); return id }
+  dom.window.cancelAnimationFrame = id => { callbacks.delete(id) }
+  Object.assign(dom.window.HTMLElement.prototype, { setPointerCapture() {}, hasPointerCapture: () => true, releasePointerCapture() {} })
+  const { createRoot } = await import('react-dom/client'), root = createRoot(dom.window.document.getElementById('root')!)
+  const applied: number[] = [], committed: number[] = []
+  function Harness() {
+    const [width, setWidth] = useState(300)
+    return createElement(SidebarResizeHandle, { label: '调整侧栏', controls: 'sidebar', width, min: 192, max: 480, direction: 1, hidden: false,
+      onResize: next => { applied.push(next); setWidth(next) }, onResizeCommit: next => committed.push(next), onReset: () => setWidth(300),
+    })
+  }
+  try {
+    await act(async () => root.render(createElement(Harness)))
+    const handle = dom.window.document.querySelector<HTMLElement>('[role="separator"]')!
+    const pointer = async (type: string, x: number) => {
+      const event = new dom.window.MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, button: 0, buttons: type === 'pointerup' ? 0 : 1 })
+      Object.defineProperty(event, 'pointerId', { value: 7 }); await act(async () => handle.dispatchEvent(event))
+    }
+    const paint = async () => { await act(async () => { for (const [id, fn] of callbacks) { callbacks.delete(id); fn(0) } }) }
+    await pointer('pointerdown', 100)
+    for (const x of [120, 150, 170]) await pointer('pointermove', x)
+    assert.deepEqual(applied, [])
+    assert.equal(callbacks.size, 1)
+    await paint()
+    assert.deepEqual(applied, [370])
+    for (const x of [800, 900]) await pointer('pointermove', x)
+    await paint()
+    assert.deepEqual(applied, [370, 480])
+    await pointer('pointermove', 1000)
+    assert.equal(callbacks.size, 0, 'a pointer beyond the same boundary need not schedule another render')
+    assert.deepEqual(committed, [])
+    await pointer('pointermove', 190)
+    await pointer('pointerup', 200)
+    assert.deepEqual(applied, [370, 480, 400])
+    assert.deepEqual(committed, [400])
+    assert.equal(callbacks.size, 0, 'release consumes and cancels the pending frame')
+    assert.equal(handle.getAttribute('aria-valuenow'), '400')
+  } finally {
+    await act(async () => root.unmount()); dom.window.close()
+    for (const [key, descriptor] of original) { if (descriptor) Object.defineProperty(globalThis, key, descriptor); else Reflect.deleteProperty(globalThis, key) }
+  }
+})

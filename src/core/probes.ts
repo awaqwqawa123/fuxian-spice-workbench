@@ -1,4 +1,4 @@
-import { compileDrawing, terminalKey, type Drawing, type Terminal } from './drawing'
+import { drawingNodeNames, terminalKey, type Drawing, type Terminal } from './drawing'
 import type { Complex, Result } from './results'
 import type { ProbeLayout } from './probe-placement'
 import { hasCurrentProbeDevice, resolveBranchCurrent } from './branch-currents'
@@ -50,7 +50,7 @@ export const probeColors=['#2676d8','#17886d','#c47b26','#9b54be','#ca5269','#38
 function measurementNodes(result:Result,measurement:Measurement):{positive:string;negative:string}|null {
   if(measurement.kind!=='voltage'||!result.project.drawing)return null
   try {
-    const nodes=compileDrawing(result.project.drawing).nodes
+    const nodes=drawingNodeNames(result.project.drawing)
     const positive=nodes.get(terminalKey(measurement.positive))
     const negative=measurement.negative?nodes.get(terminalKey(measurement.negative)):'0'
     return positive!==undefined&&negative!==undefined?{positive,negative}:null

@@ -9,6 +9,8 @@ import type { Result } from './results'
 import type { XY } from './drawing'
 import type { WireCurrentTarget } from './wire-currents'
 
+const NO_HISTORY: readonly Result[] = []
+
 export function useDcVoltages(project:Project,profileResults:Record<string,Result>,projectId='standalone') {
   const [prefs,setPrefs]=useState(()=>readBiasDisplayPreferences(projectId))
   const [displayPast,setDisplayPast]=useState<BiasDisplayPreferences[]>([]),[displayFuture,setDisplayFuture]=useState<BiasDisplayPreferences[]>([])
@@ -23,16 +25,19 @@ export function useDcVoltages(project:Project,profileResults:Record<string,Resul
   const preferences=useRef(prefs);preferences.current=prefs
   const savedRuns=useRef(saved);savedRuns.current=saved
   const completedProfiles=useRef(profileResults);completedProfiles.current=profileResults
-  const history=saved.projectId===projectId?saved.history:[]
+  const history=saved.projectId===projectId?saved.history:NO_HISTORY
   const latest=history[0]??null
-  const result=useMemo<Result|null>(()=>[...Object.values(profileResults),...history]
-    .filter(item=>dcVoltageResultMatches(item,project)&&(!prefs.current||!!item.terminalCurrents))
-    .sort((a,b)=>b.timestamp-a.timestamp)[0]??null,[project,profileResults,history,prefs.current])
+  // Camera, sidebar and display state do not change the electrical match.
+  const matches=useMemo(()=>new Set([...new Set([...Object.values(profileResults),...history])]
+    .filter(item=>dcVoltageResultMatches(item,project))),[project,profileResults,history])
+  const result=useMemo<Result|null>(()=>[...matches]
+    .filter(item=>!prefs.current||!!item.terminalCurrents)
+    .sort((a,b)=>b.timestamp-a.timestamp)[0]??null,[matches,prefs.current])
   const displayActive=prefs.voltage||prefs.current
   const usable=!!result&&!running&&!failure
   const measurements=useMemo(()=>biasMeasurements(usable?result:null,project,prefs.wireTargets??[]),[usable,result,project,prefs.wireTargets])
   const voltages=useMemo(()=>prefs.voltage&&usable?dcNodeVoltages(result!,project):undefined,[prefs.voltage,usable,result,project])
-  const stale=!!latest&&!dcVoltageResultMatches(latest,project)&&!result
+  const stale=!!latest&&!matches.has(latest)&&!result
   function stopWorker(){
     worker.current?.terminate();worker.current=null
     workerSnapshot.current=null

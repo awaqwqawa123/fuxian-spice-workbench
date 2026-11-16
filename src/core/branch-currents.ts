@@ -1,5 +1,5 @@
 import { circuitGraph, parseQuantity, type Project } from './circuit'
-import { compileDrawing } from './drawing'
+import { drawingNodeNames } from './drawing'
 import type { Complex, Result } from './results'
 export { branchCurrentSaveVectors, normalizeCurrentVector } from './branch-current-vectors'
 
@@ -28,10 +28,11 @@ export function resolveBranchCurrent(result: Result, id: string): { values: numb
   if (device.kind === 'D' || device.kind === 'I') return null
   if (device.kind === 'R' || device.kind === 'C') {
     try {
-      const nodes = result.project.drawing
-        ? compileDrawing(result.project.drawing).elements.find(element => element.device.id === id)?.nodes
+      const terminalNodes = result.project.drawing ? drawingNodeNames(result.project.drawing) : null
+      const nodes = terminalNodes
+        ? [terminalNodes.get(`${id}:0`), terminalNodes.get(`${id}:1`)]
         : circuitGraph(result.project).parts.find(part => part.id === id)?.nodes
-      if (!nodes || nodes.length !== 2 || result.x.length !== result.points || result.x.some(f => !Number.isFinite(f) || f <= 0)) return null
+      if (!nodes?.[0] || !nodes[1] || result.x.length !== result.points || result.x.some(f => !Number.isFinite(f) || f <= 0)) return null
       const node = (name: string) => name === '0' ? Array.from({ length: result.points }, () => ({ real: 0, img: 0 })) : result.complexVoltages?.[`v(${name.toLowerCase()})`]
       const positive = node(nodes[0]), negative = node(nodes[1])
       if (!completeComplex(positive, result.points) || !completeComplex(negative, result.points)) return null

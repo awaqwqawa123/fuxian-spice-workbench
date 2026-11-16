@@ -80,7 +80,20 @@
 .wave-workspace-embedded .wave-embedded-header > select { width: 60px; min-width: 0; }
 .wave-workspace-embedded .wave-embedded-header > [role=tablist] { flex: 1 1 auto; gap: 3px; }
 .wave-workspace-embedded .wave-embedded-header > [role=tablist] > button { flex: 0 0 28px; }
-.wave-embedded-quick-zoom { display: flex; flex: none; gap: 3px; }
+.wave-plot-tools { display: flex; align-items: center; flex: none; gap: 3px; }
+.wave-workspace .wave-plot-tools > .wave-plot-tool {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  min-width: 28px; min-height: 28px; padding: 2px 6px; font-size: 11px; white-space: nowrap;
+  border: 1px solid var(--ui-border); border-radius: 5px;
+  background: var(--ui-panel); color: var(--ui-ink);
+}
+.wave-workspace .wave-plot-tools > .wave-plot-tool:disabled { opacity: .45; }
+.wave-workspace .wave-plot-tools > .wave-plot-tool:hover:not(:disabled) { background: var(--ui-accent-soft); border-color: var(--ui-accent); }
+.wave-workspace .wave-plot-tools > .wave-plot-tool:focus-visible { outline: 2px solid var(--ui-accent); outline-offset: 2px; }
+.wave-plot-tool > svg { flex: none; }
+.wave-plot-tools-icon-only > .wave-plot-tool > span { display: none; }
+.wave-workspace-embedded .wave-embedded-header:has(> .wave-plot-tools-wrap) { flex-wrap: wrap; }
+.wave-embedded-header > .wave-plot-tools-wrap { order: 1; flex-basis: 100%; }
 .wave-toolbar-tools { flex: none; min-width: 0; }
 .wave-toolbar-tools > summary {
   display: flex;

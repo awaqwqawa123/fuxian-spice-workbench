@@ -1,6 +1,7 @@
-import { pinPosition, snap, terminalKey, type Device, type Drawing, type XY } from './drawing'
+import { GRID, pinPosition, snap, terminalKey, type Device, type Drawing, type XY } from './drawing'
 import { deviceLayoutObstacles } from './schematic-layout'
 import { terminalLeadDirection } from './wire-lead-route'
+import { pinsFor } from './devices'
 
 interface Links { net:Map<string,string>; groundNets:Set<string> }
 interface Step { device:Device; from:string; to:string; input:number; output:number }
@@ -23,11 +24,16 @@ export function arrangeSignalStructure(source:Drawing,links:Links,ids:readonly s
   const target=links.net.get(terminalKey(source.output))
   if(seedPins.length!==1||!target||grounded(target))return
   const start=net(seed,seedPins[0]),amps=devices.filter(amplifier)
-  if(amps.length>1)return
   const feedback=new Map<string,{amp:Device;input:number}>()
-  for(const amp of amps)for(const device of devices.filter(passive)){
-    const ends=[net(device,0),net(device,1)],out=net(amp,2)
-    for(const input of [0,1])if(!grounded(net(amp,input))&&net(amp,input)!==out&&ends.includes(out)&&ends.includes(net(amp,input)))feedback.set(device.id,{amp,input})
+  for(const device of devices.filter(passive)){
+    const ends=[net(device,0),net(device,1)],matches=amps.flatMap(amp=>[0,1].filter(input=>{
+      const inputNet=net(amp,input),out=net(amp,2)
+      return !grounded(inputNet)&&inputNet!==out&&ends.includes(out)&&ends.includes(inputNet)
+    }).map(input=>({amp,input})))
+    // A resistor in a cross-coupled/shared-input network can close more than
+    // one loop. It must not silently belong to the last amplifier visited.
+    if(matches.length>1)return
+    if(matches.length===1)feedback.set(device.id,matches[0])
   }
   const edges=new Map<string,Step[]>()
   const add=(step:Step)=>edges.set(step.from,[...(edges.get(step.from)??[]),step])
@@ -65,7 +71,11 @@ export function arrangeSignalStructure(source:Drawing,links:Links,ids:readonly s
     const at=ends[input]
     if(passive(device)&&pathNets.has(at)){shunts.push({device,input,at});continue}
     const supply=amps.flatMap(amp=>amp.kind==='OPA'?[3,4].filter(pin=>net(amp,pin)===at).map(pin=>({amp,pin})):[])
-    if(supply.length===1){supplies.push({device,input,...supply[0]});continue}
+    // A shared rail may feed several stages, but must remain a dedicated
+    // supply net. Mixed polarities or signal/feedback use are not a rail.
+    if(supply.length&&supply.every(item=>item.pin===supply[0].pin)&&!pathNets.has(at)){
+      supplies.push({device,input,...supply[0]});continue
+    }
     return
   }
   // Use the actual entry/exit pin vector. A vertical or reversed chain remains
@@ -78,10 +88,23 @@ export function arrangeSignalStructure(source:Drawing,links:Links,ids:readonly s
   const placed=new Map<string,Device>(),anchors=new Map<string,XY>()
   const at=(distance:number,offset:number):XY=>({x:snap(200+along.x*distance+cross.x*offset),y:snap(top+along.y*distance+cross.y*offset)})
   const move=(device:Device,point:XY)=>({...device,x:snap(point.x),y:snap(point.y)})
+  const pinChannels=(device:Device)=>pinsFor(device).flatMap(pin=>{
+    const point=pinPosition(device,pin),lead=terminalLeadDirection({...source,devices:[device]},{device:device.id,pin})
+    if(!lead)return []
+    const end={x:point.x+lead.x*GRID,y:point.y+lead.y*GRID}
+    return [{left:Math.min(point.x,end.x)-3,right:Math.max(point.x,end.x)+3,top:Math.min(point.y,end.y)-3,bottom:Math.max(point.y,end.y)+3}]
+  })
+  const overlaps=(a:ReturnType<typeof deviceLayoutObstacles>[number],b:typeof a)=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top
   const put=(device:Device,point:XY,direction=1,step=lane)=>{
     let candidate=move(device,point)
     for(let attempt=0;attempt<128;attempt++){
-      const collision=[...placed.values()].some(other=>deviceLayoutObstacles(candidate).some(a=>deviceLayoutObstacles(other).some(b=>a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top)))
+      const boxes=deviceLayoutObstacles(candidate),channels=pinChannels(candidate)
+      // Symbol/text separation alone can still seal an adjacent supply pin.
+      // Reserve a short real outward lead before placing the next group.
+      const collision=[...placed.values()].some(other=>{
+        const otherBoxes=deviceLayoutObstacles(other)
+        return boxes.some(a=>[...otherBoxes,...pinChannels(other)].some(b=>overlaps(a,b)))||channels.some(a=>otherBoxes.some(b=>overlaps(a,b)))
+      })
       if(!collision){placed.set(device.id,candidate);return candidate}
       candidate=move(candidate,{x:candidate.x+cross.x*step*direction,y:candidate.y+cross.y*step*direction})
     }
@@ -104,18 +127,28 @@ export function arrangeSignalStructure(source:Drawing,links:Links,ids:readonly s
     if(!candidate)return
     const end=pinPosition(candidate,step.output);anchors.set(step.to,end)
     offset=horizontal?end.y-top:end.x-200
-    if(amplifier(step.device))for(const pin of [0,1])anchors.set(net(step.device,pin),pinPosition(candidate,pin))
+    if(amplifier(step.device))for(const pin of [0,1]){
+      // A voltage follower's inverting input shares its output net. Keep the
+      // output anchor on the output side instead of relocating its load to
+      // the input edge merely because that pin is visited later.
+      if(net(step.device,pin)!==step.to)anchors.set(net(step.device,pin),pinPosition(candidate,pin))
+    }
   }
   for(const {device,input,at:name}of shunts){
-    const anchor=anchors.get(name)!,relative=originPin(device,input),distance=amps.some(amp=>[0,1].some(pin=>net(amp,pin)===name))?-spacing/3:spacing/2
+    const anchor=anchors.get(name)!,relative=originPin(device,input),distance=amps.some(amp=>net(amp,2)!==name&&[0,1].some(pin=>net(amp,pin)===name))?-spacing/3:spacing/2
     const point={x:anchor.x+along.x*distance+cross.x*lane/2,y:anchor.y+along.y*distance+cross.y*lane/2}
-    if(!put(device,{x:point.x-relative.x,y:point.y-relative.y}))return
+    // Local reference branches should clear a nearby caption/pin by the
+    // required grid amount, not jump an entire functional-stage row.
+    if(!put(device,{x:point.x-relative.x,y:point.y-relative.y},1,GRID))return
   }
   for(const [id,{amp,input}]of feedback){
     const device=devices.find(d=>d.id===id)!,actual=placed.get(amp.id)!,inputPin=pinPosition(actual,input),outputPin=pinPosition(actual,2)
     const side=Math.sign(horizontal?inputPin.y-outputPin.y:inputPin.x-outputPin.x)||-1
     if(!put(device,{x:snap((inputPin.x+outputPin.x)/2+cross.x*lane/2*side),y:snap((inputPin.y+outputPin.y)/2+cross.y*lane/2*side)},side,lane/2))return
   }
-  for(const [index,{device}]of supplies.entries())if(!put(device,at(index*spacing,0)))return
+  // The reserved supply region is outside the signal lane. Resolve a long
+  // source caption toward that exterior, never by pushing the source into
+  // a later stage or its feedback corridors.
+  for(const [index,{device}]of supplies.entries())if(!put(device,at(index*spacing,0),-1))return
   return placed
 }

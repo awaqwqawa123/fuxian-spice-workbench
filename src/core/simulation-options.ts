@@ -1,6 +1,6 @@
 import { parseQuantity, type Project } from './circuit'
 import { circuitGraph } from './circuit'
-import { compileDrawing, terminalKey, terminalPosition, type Drawing, type Terminal } from './drawing'
+import { drawingNodeNames, terminalKey, terminalPosition, type Drawing, type Terminal } from './drawing'
 export interface SolverOptions {
   method?: 'trap'|'gear'
   reltol?:string; abstol?:string; vntol?:string; chgtol?:string; gmin?:string; trtol?:string; itl1?:string; itl4?:string
@@ -53,7 +53,7 @@ export function parseNodeVoltageSettings(input:unknown,field:'initialConditions'
  })
 }
 function projectNodes(project:Project):Map<string,string>{
- if(project.template==='custom'&&project.drawing)return compileDrawing(project.drawing).nodes
+ if(project.template==='custom'&&project.drawing)return drawingNodeNames(project.drawing)
  const nodes=new Map<string,string>()
  for(const part of circuitGraph(project).parts)part.nodes.forEach((node,pin)=>nodes.set(`${part.id}:${pin}`,node))
  return nodes

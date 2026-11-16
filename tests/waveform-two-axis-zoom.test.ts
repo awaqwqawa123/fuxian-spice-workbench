@@ -19,7 +19,7 @@ for(const embedded of [true,false])test(`${embedded?'embedded':'full'} waveform 
   const signals=waveformSignals(result).signals,panels=defaultWaveformPanels(result,signals)
   panels[0]={...panels[0],ids:signals.filter(signal=>signal.kind==='voltage'||signal.kind==='current').map(signal=>signal.id)}
   panels[1]={...panels[1],axisRanges:{A:[-.002,.001]}}
-  let saved:WaveformViewState={analysis:'tran',layout:2,panels,domain:[0,1],cursors:{a:null,b:null},autoFit:false}
+  let saved:WaveformViewState={analysis:'tran',layout:2,panels,domain:[0,1],cursors:{a:.001,b:.003},autoFit:false}
   const {createRoot}=await import('react-dom/client'),root=createRoot(doc.getElementById('root')!)
   const pointer=async(element:Element,type:string,x:number,y:number,button=0)=>act(async()=>{const event=new dom.window.MouseEvent(type,{bubbles:true,cancelable:true,button,buttons:type==='pointerup'?0:button===1?4:1,clientX:x,clientY:y});Object.defineProperty(event,'pointerId',{value:7});element.dispatchEvent(event)})
   const wheel=async(element:Element,keys:{shiftKey?:boolean;altKey?:boolean}={},deltaY=-120)=>act(async()=>{const event=new dom.window.WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY,clientX:400,clientY:125,...keys});element.dispatchEvent(event);assert.equal(event.defaultPrevented,true)})
@@ -32,6 +32,13 @@ for(const embedded of [true,false])test(`${embedded?'embedded':'full'} waveform 
     const plots=[...doc.querySelectorAll<SVGSVGElement>('.wave-plot')];assert.equal(plots.length,2)
     const plot=plots[0];for(const plot of plots){Object.assign(plot,{getBoundingClientRect:()=>({left:0,top:0,width:800,height:260}),setPointerCapture(){},releasePointerCapture(){},hasPointerCapture:()=>false});await act(async()=>observers.get(plot)!(800,260))}
     const baseV=range(plot,'V'),baseA=range(plot,'A'),otherY=range(plots[1],plots[1].querySelector('[data-wave-axis]')!.getAttribute('data-wave-axis')!)
+    const shortcut=async(label:string)=>act(async()=>{const button=doc.querySelector<HTMLButtonElement>(`.wave-plot-tools [aria-label="${label}"]`);assert.ok(button,label);button.click()})
+    await shortcut('横向放大')
+    assert.deepEqual(saved.domain,[.25,.75]);assert.deepEqual(range(plot,'V'),baseV);assert.deepEqual(range(plot,'A'),baseA)
+    assert.deepEqual(range(plots[1],plots[1].querySelector('[data-wave-axis]')!.getAttribute('data-wave-axis')!),otherY)
+    assert.equal(plots[0].getAttribute('data-x-start'),plots[1].getAttribute('data-x-start'))
+    await shortcut('横向缩小');assert.deepEqual(saved.domain,[0,1]);assert.deepEqual(range(plot,'V'),baseV)
+    assert.deepEqual(saved.cursors,{a:.001,b:.003});assert.deepEqual(result.x,[0,.001,.002,.003,.004])
     await wheel(plot)
     assert.ok(span(range(plot,'V'))<span(baseV));assert.ok(span(range(plot,'A'))<span(baseA),'separate V and A axes both zoom in their own units')
     assert.ok(saved.domain[1]-saved.domain[0]<1);assert.equal(plots[0].getAttribute('data-x-start'),plots[1].getAttribute('data-x-start'))
@@ -62,7 +69,8 @@ for(const embedded of [true,false])test(`${embedded?'embedded':'full'} waveform 
     assert.deepEqual(saved.panels[0].axisRanges,beforeLens.ranges,'detail Y adjustments stay independent of overview Y')
     const restoreButton=doc.querySelector<HTMLButtonElement>('[aria-label="关闭局部细节窗"]')
     assert.ok(restoreButton);await act(async()=>restoreButton.click());assert.deepEqual(range(plot,'V'),beforeLensY)
-    const adapted=doc.querySelector<HTMLButtonElement>('[aria-label="适配所有波形"]');assert.ok(adapted);await act(async()=>adapted.click());assert.deepEqual(saved.domain,[0,1]);assert.equal(saved.panels[0].axisRanges,undefined)
+    await shortcut('适配波形');assert.deepEqual(saved.domain,[0,1]);assert.equal(saved.panels[0].axisRanges,undefined)
     assert.deepEqual(range(plot,'V'),baseV)
+    assert.deepEqual(saved.cursors,{a:.001,b:.003})
   }finally{await act(async()=>root.unmount());dom.window.close();for(const[key,value]of prior)if(value)Object.defineProperty(globalThis,key,value);else Reflect.deleteProperty(globalThis,key)}
 })

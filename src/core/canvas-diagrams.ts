@@ -1,6 +1,5 @@
 import { CANVAS, DRAWING_BOUNDS, type Drawing, type XY } from './drawing'
-import {clampCanvasZoom} from './canvas-zoom'
-import { fitView, selectionBounds, type Bounds } from './selection'
+import { fitViewBounds, selectionBounds, type Bounds } from './selection'
 
 /** Diagram geometry belongs to the sheet UI, never to the electrical netlist. */
 export interface CanvasDiagramGeometry { id:string; x:number; y:number; width:number; height:number }
@@ -80,10 +79,14 @@ export function moveCanvasDiagrams(diagrams:readonly CanvasDiagramGeometry[],ids
 
 /** Fit every visible sheet object without adding plot frames to circuit topology. */
 export function fitCanvasView(drawing:Drawing,diagrams:readonly CanvasDiagramGeometry[]=[],viewport=CANVAS,maxZoom=1.5,annotations:readonly Bounds[]=[]) {
-  const objects=[canvasDiagramBounds(diagrams),...annotations].filter((item):item is Bounds=>!!item)
-  const diagramBounds=objects.length?{left:Math.min(...objects.map(item=>item.left)),top:Math.min(...objects.map(item=>item.top)),right:Math.max(...objects.map(item=>item.right)),bottom:Math.max(...objects.map(item=>item.bottom))}:null
-  if(!diagramBounds)return fitView(drawing,undefined,viewport,maxZoom)
-  const circuit=selectionBounds(drawing)
-  const bounds=circuit?{left:Math.min(circuit.left,diagramBounds.left),top:Math.min(circuit.top,diagramBounds.top),right:Math.max(circuit.right,diagramBounds.right),bottom:Math.max(circuit.bottom,diagramBounds.bottom)}:diagramBounds
-  return {center:{x:(bounds.left+bounds.right)/2,y:(bounds.top+bounds.bottom)/2},zoom:clampCanvasZoom(Math.min(maxZoom,Math.max(80,viewport.width-128)/(bounds.right-bounds.left+60),Math.max(80,viewport.height-112)/(bounds.bottom-bounds.top+60)))}
+  return fitViewBounds(canvasFitBounds(drawing,diagrams,annotations),viewport,maxZoom)
+}
+
+/** World bounds are independent of the viewport and can be reused while it animates. */
+export function canvasFitBounds(drawing:Drawing,diagrams:readonly CanvasDiagramGeometry[],annotations:readonly Bounds[]):Bounds|null {
+  let bounds=selectionBounds(drawing)
+  for(const box of [canvasDiagramBounds(diagrams),...annotations])if(box){
+    bounds=bounds?{left:Math.min(bounds.left,box.left),top:Math.min(bounds.top,box.top),right:Math.max(bounds.right,box.right),bottom:Math.max(bounds.bottom,box.bottom)}:box
+  }
+  return bounds
 }

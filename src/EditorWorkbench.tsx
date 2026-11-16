@@ -13,7 +13,7 @@ import { readSidebarWidths, saveSidebarWidths, SIDEBAR_LIMITS, sizeWorkspace } f
 import SidebarResizeHandle from './components/SidebarResizeHandle'
 import { FolderOpen, Library, LoaderCircle, Maximize2, Minimize2, PanelRightClose, SlidersHorizontal, Sparkles, Network, ImageDown, ClipboardPaste, ClipboardList, Settings2, Tag, FlipHorizontal2, Search, Activity, ArrowDownToLine, BookOpen, Check, ChevronDown, CircleHelp, Code2, Copy, FilePlus2, Hand, Minus, MousePointer2, Pin, Play, Plus, Redo2, RotateCw, Save, ScanLine, Square, Trash2, Undo2, Upload, Waves, X, Zap, Boxes, BotMessageSquare, MoreHorizontal, WandSparkles } from 'lucide-react'
 import { dcSweep, generateNetlist, parseProject, validateProject, type Project, type TemplateId } from './core/circuit'
-import { compileDrawing, deviceNames, setNetLabel, sameTerminal, terminalKey, type Terminal, type Drawing, type Rotation, type XY, type NetLabelStyle } from './core/drawing'
+import { compileDrawing, createDrawingRenderCache, deviceNames, drawingNodeNames, setNetLabel, sameTerminal, terminalKey, type Terminal, type Drawing, type Rotation, type XY, type NetLabelStyle } from './core/drawing'
 import ConnectionWarnings from './components/ConnectionWarnings'
 import { allItems, moveSelection, removeSelection, transformSelection } from './core/selection'
 import { copySchematicSelection, pasteSchematicSelection, type SchematicClipboard } from './core/schematic-clipboard'
@@ -182,8 +182,12 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   function changeExamples(open:boolean){setLocalExamplesOpen(open);onExamplesOpenChange?.(open)}
   const [timeline,setTimeline] = useState<UndoState<EditorSnapshot>>(() => ({past:[],present:initialSnapshot(seed,projectId??'standalone'),future:[]}))
   const project = timeline.present.project, drawing = project.drawing!
+  const [drawingCache]=useState(createDrawingRenderCache)
+  const drawingGeometry=drawingCache.snapshot(drawing)
   const [electricalViewSnapshot]=useState(createElectricalViewSnapshot)
-  const electricalSnapshot=electricalViewSnapshot(project)
+  // Validation, netlist generation and the canvas share exact route geometry.
+  // Edits and undo continue to use the original drawing.
+  const electricalSnapshot=electricalViewSnapshot({...project,drawing:drawingGeometry})
   const namingProject=useRef(project);namingProject.current=project
   const waveformApplications=useRef<EditorCandidateUndo[]|null>(null)
   // Restoring up to twelve full project snapshots is only needed by AI
@@ -192,7 +196,8 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   const desktopCircuit = useDesktopCircuit(projectId, project)
   const [layout,dispatchLayout]=useReducer(workspaceLayoutReducer,undefined,()=>({...createWorkspaceLayout(),leftPanel:initialLeftPanel??'library'}))
   const workspaceBody=useRef<HTMLDivElement>(null)
-  const [sidebarWidths,setSidebarWidths]=useState(readSidebarWidths)
+  const [savedSidebarWidths,setSavedSidebarWidths]=useState(readSidebarWidths)
+  const [sidebarWidths,setSidebarWidths]=useState(savedSidebarWidths)
   const [sidebarTab,setSidebarTab]=useState<'waveform'|'properties'>('waveform')
   const [containerWidth,setContainerWidth]=useState(()=>typeof window==='undefined'?1440:window.innerWidth)
   const [compactLeftRequested,setCompactLeftRequested]=useState(false)
@@ -226,8 +231,12 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
     observer?.observe(element);window.addEventListener('resize',update)
     return()=>{observer?.disconnect();window.removeEventListener('resize',update)}
   },[])
-  useEffect(()=>saveSidebarWidths(sidebarWidths),[sidebarWidths])
-  function resizeHandle(id:SidebarId,label:string){return <SidebarResizeHandle label={label} controls={`workspace-${id}`} width={sizing.widths[id]} min={sizing.min[id]} max={sizing.max[id]} direction={id==='left'?1:-1} hidden={!sizing.visible[id] || id==='ai' && sizing.overlayAi} onResize={width=>setSidebarWidths(current=>({...current,[id]:width}))} onReset={()=>setSidebarWidths(current=>({...current,[id]:SIDEBAR_LIMITS[id].default}))}/>}
+  useEffect(()=>saveSidebarWidths(savedSidebarWidths),[savedSidebarWidths])
+  function resizeHandle(id:SidebarId,label:string){
+    const update=(width:number)=>setSidebarWidths(current=>current[id]===width?current:{...current,[id]:width})
+    const persist=(width:number)=>setSavedSidebarWidths(current=>current[id]===width?current:{...current,[id]:width})
+    return <SidebarResizeHandle label={label} controls={`workspace-${id}`} width={sizing.widths[id]} min={sizing.min[id]} max={sizing.max[id]} direction={id==='left'?1:-1} hidden={!sizing.visible[id] || id==='ai' && sizing.overlayAi} onResize={update} onResizeCommit={persist} onReset={()=>{const width=SIDEBAR_LIMITS[id].default;update(width);persist(width)}}/>
+  }
   const workspaceStyle={'--workspace-left-width':`${sizing.widths.left}px`,'--workspace-right-width':`${sizing.widths.right}px`,'--workspace-ai-width':`${sizing.widths.ai}px`} as CSSProperties
   const [showModels,setShowModels]=useState(false)
   const [modelLibraryInitialPage,setModelLibraryInitialPage]=useState<'local'|undefined>()
@@ -301,7 +310,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   const [help,setHelp] = useState(false), [showIssues,setShowIssues] = useState(false), [view,setView] = useState<'canvas'|'netlist'>('canvas')
   const diagramStorageId=projectId??'standalone'
   const waveformSetup=timeline.present.waveformSetup,simulationProfiles=waveformSetup.profiles,diagrams=waveformSetup.diagrams
-  const waveformWarnings=useMemo(()=>waveformSetupIssues(waveformSetup,project),[waveformSetup,project])
+  const waveformWarnings=useMemo(()=>waveformSetupIssues(waveformSetup,electricalSnapshot),[waveformSetup,electricalSnapshot])
   const diagramHistory={past:timeline.present.diagramPast,present:diagrams,future:timeline.present.diagramFuture}
   const setDiagramHistory=useCallback((update:(history:UndoState<CanvasWaveform[]>)=>UndoState<CanvasWaveform[]>,persist=true)=>{
     setTimeline(previous=>{
@@ -362,7 +371,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
     const match=signal.id.match(/^(voltage|current):[vi]\(([^)]+)\)$/i)
     if(!match)return
     if(match[1]==='current'){const part=drawing.devices.find(item=>item.id.toLowerCase()===match[2].toLowerCase());if(part)setSelection([part.id]);return}
-    const node=match[2].toLowerCase(),entry=[...compileDrawing(drawing).nodes.entries()].find(([,value])=>value.toLowerCase()===node)
+    const node=match[2].toLowerCase(),entry=[...drawingNodeNames(drawingGeometry)].find(([,value])=>value.toLowerCase()===node)
     if(!entry)return
     const key=entry[0];setHighlightedNet(key.includes(':')?{device:key.split(':')[0],pin:Number(key.split(':')[1])}:{junction:key})
   }
@@ -385,7 +394,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   const snapshotDiagram=useCallback((_id:string,_snapshot:WaveformSnapshot)=>{},[])
   function addDiagram(copy?:CanvasWaveform){
     if(diagrams.length>=MAX_CANVAS_WAVEFORMS){setStatus(`最多支持 ${MAX_CANVAS_WAVEFORMS} 个图组。`);return}
-    const next=newCanvasWaveform(drawing,copy?.profileId??simulationProfiles.activeId,diagrams,copy)
+    const next=newCanvasWaveform(drawingGeometry,copy?.profileId??simulationProfiles.activeId,diagrams,copy)
     setDiagramHistory(old=>remember(old,[...old.present,next]));setActiveProbeDiagramId(next.id);setExpandedDiagramId(next.id)
     setStatus(`已${copy?'复制':'新建'}图组 ${next.title}；电路视图保持。`)
   }
@@ -447,7 +456,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
     document.addEventListener('pointerdown',closeOutside)
     return()=>document.removeEventListener('pointerdown',closeOutside)
   },[])
-  const errors = useMemo(()=>validateProject(electricalSnapshot),[electricalSnapshot]), topology = useMemo(()=>compileDrawing(drawing),[drawing])
+  const errors = useMemo(()=>validateProject(electricalSnapshot),[electricalSnapshot]), topology = useMemo(()=>compileDrawing(drawingGeometry),[drawingGeometry])
   const device = drawing.devices.find(p => p.id === selected), selectedWire = drawing.wires.find(w => w.id === selected)
   const netInfo=useMemo(()=>highlightedNet&&topology.nodes.has(terminalKey(highlightedNet))?inspectNet(drawing,highlightedNet,topology.nodes):null,[drawing,highlightedNet,topology])
   const selectedDevices=drawing.devices.filter(p=>selection.includes(p.id))
@@ -809,7 +818,8 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
     const fail=(message:string)=>setProfileFailures(old=>({...old,[profileId]:message}))
     const profile=p.waveformSetup?.profiles.profiles.find(item=>item.id===profileId)??simulationProfiles.profiles.find(item=>item.id===profileId),warning=profile?simulationReferenceWarning(p,profile):null
     if(warning){fail(warning);setStatus('仿真未能开始，请修复配置中的器件或节点引用。');return}
-    const runIssues=validateProject(p)
+    const runDrawing=p.drawing?drawingCache.snapshot(p.drawing):drawingGeometry
+    const runIssues=validateProject(p.drawing?{...p,drawing:runDrawing}:p)
     if(runIssues.length){fail(runIssues.join('\n'));setStatus('仿真未能开始，请按错误提示完成连接或修改参数。');return}
     // Resolve the displayed configuration at launch, including saved-project warm-up.
     // Completion must never override a later selection or a collapsed sidebar.
@@ -819,7 +829,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
         ??(showResults?groups.find(item=>item.profileId===profileId):undefined)
       if(!target){
         if(groups.length>=MAX_CANVAS_WAVEFORMS){fail('图组已满，请将一个图组绑定到此配置，或删除不用的图组后重新运行。');setStatus('此配置尚无显示图组，请先调整右侧图组。');return}
-        target=newCanvasWaveform(p.drawing??drawing,profileId,groups)
+        target=newCanvasWaveform(runDrawing,profileId,groups)
         setDiagramHistory(old=>remember(old,[...old.present,target!]))
       }else if(showResults&&target.resultId)patchDiagram(target.id,{resultId:undefined})
     setActiveProbeDiagramId(target.id);setExpandedDiagramId(target.id)
@@ -853,7 +863,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
   useEffect(()=>{if(highlightedNet&&!topology.nodes.has(terminalKey(highlightedNet)))setHighlightedNet(null)},[drawing,highlightedNet])
   useEffect(() => {if(onProjectChange){try{onProjectChange(project);setStorageError(false)}catch{setStorageError(true)}return}try{localStorage.setItem(STORAGE,JSON.stringify(project));setStorageError(false)}catch{setStorageError(true)}},[project,onProjectChange])
   useEffect(() => {if(inspectorScroll.current)inspectorScroll.current.scrollTop=0},[selected,modelTarget,labelTarget,inspectorTab])
-  useEffect(() => {if(!started.current){started.current=true;if(!validateProject(project).length)run(project,false)};return () => {worker.current?.terminate();if(deadline.current)clearTimeout(deadline.current)}},[])
+  useEffect(() => {if(!started.current){started.current=true;if(!errors.length)run(project,false)};return () => {worker.current?.terminate();if(deadline.current)clearTimeout(deadline.current)}},[])
   useEffect(() => {
     const isCanvasTarget=(target:EventTarget|null)=>view==='canvas'&&(target===document.body||!!(target as Element|null)?.closest?.('.drawing-surface,.drawing-toolbar,.page-schematic-toolbar'))
     const key=(e:KeyboardEvent) => {
@@ -1051,7 +1061,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
       {resizeHandle('left','调整左侧栏宽度')}<main className="workspace-center"><SinglePageWorkspace sidebarScaleRequest={sidebarScaleRequest} layoutKey={projectId??'standalone'} mode={layout.maximized?'schematic':pageMode} onModeChange={setPageMode} sidebarTab={sidebarTab} onSidebarTabChange={changeSidebarTab} onFitBoth={fitBoth} onRestoreLayout={()=>setPageMode('split')} selectionKey={expandedDiagramId??undefined} schematicControls={<><small className="schematic-view-status"><span/>{circuitFitMode==='auto'?'自动适配':'手动视图'}</small><div className="schematic-view-actions" role="group" aria-label="电路视图操作"><button className="canvas-view-action" aria-label="适配电路" title="适配电路 · 显示完整原理图" onClick={()=>{setCircuitFitMode('auto');setResetView(v=>v+1)}}><ScanLine size={17} strokeWidth={1.75} aria-hidden="true"/></button><button className="canvas-view-action" disabled={!selection.length} aria-label="查看电路选区" title={selection.length?'查看选区 · 适配选中的器件':'查看选区 · 请先选择器件'} onClick={()=>setFitSelection(v=>v+1)}><MousePointer2 size={17} strokeWidth={1.75} aria-hidden="true"/></button></div></>} schematic={<>
         <section className="drawing-workspace">
           <ConnectionWarnings shorts={topology.shorts} onLocate={short=>{setView('canvas');chooseTool('select');selectItems(short.wireIds.length?short.wireIds:[short.deviceId]);setFitSelection(v=>v+1)}}/>
-          <div className="drawing-surface"><div className="workspace-canvas-host" hidden={view!=='canvas'}><DcVoltageNotice state={dcVoltages}/>{dcVoltages.tableOpen&&<BiasInspectionPanel state={dcVoltages} project={project} selection={selection} onLocate={locateBiasMeasurement} onExportSvg={exportBiasSvg}/>}<EditorCanvas viewKey={projectId??'standalone'} fitMode={circuitFitMode} onFitModeChange={setCircuitFitMode} gridSize={(previewAppearance??appearance).gridSize} active={view==='canvas'&&!showAppearance&&!editingModel} onContextMenu={setContextMenu} onEditDevice={openDeviceProperties} importedModels={project.models} placementValue={placement?.value} placementParams={placement?.params} placementGroundStyle={placement?.groundStyle} networkSymbol={networkSymbol??undefined} onPlaceNetworkSymbol={placeNetworkSymbol} onProbe={probeAt} onProbeDevice={probeDevice} onProbeWire={probeWire} onReverseProbe={reverseProbe} onProbePair={probePair} onMoveProbeLabel={moveProbeLabel} onRelocateProbe={relocateProbe} onSelectProbe={label=>selectProbe(markerIdentity(label).id)} probeMode={probeMode} showProbeMarkers={showProbeMarkers} probeMarkers={canvasProbeMarkers} pendingProbe={probePositive?{at:probePositive,anchor:probePositiveAnchor.current}:null} highlightedNet={netInfo?highlightedNet:null} onInspectNet={highlightNet} drawing={drawing} selection={selection} onSelect={selectItems} clipboard={clipboard?.drawing??null} clipboardModels={clipboard?.models} onPaste={paste} wireBend={wireBend} onWireBend={toggleWireBend} onWireBendChange={setWireBend} onZoom={setZoom} fitSelection={fitSelection} tool={tool} onTool={chooseTool} rotation={rotation} onChange={updateDrawing} onStatus={setStatus} zoom={zoom} resetView={resetView} showNodes={showNodes} dcVoltages={dcVoltages.voltages} biasMeasurements={dcVoltages.usable?dcVoltages.measurements:NO_BIAS_MEASUREMENTS} biasPrefs={dcVoltages.prefs} biasSelectedId={dcVoltages.selectedId} onBiasMove={dcVoltages.moveLabel} onBiasSelect={dcVoltages.setSelectedId} onBiasPin={dcVoltages.pin} onBiasUndo={dcVoltages.undoDisplay} onBiasRedo={dcVoltages.redoDisplay} placingBiasWire={dcVoltages.placingWire} onBiasWire={addBiasWire} onCancelBiasWire={()=>dcVoltages.setPlacingWire(false)} onLabel={openLabel}/></div><div className="editor-netlist" hidden={view!=='netlist'}><div><strong>由实际引脚连接生成</strong><button onClick={openNetlistEditor}><Code2 size={14}/>编辑 SPICE 网表</button><button disabled={!netlist} onClick={()=>download('fuxian-schematic.cir',netlist)}><ArrowDownToLine size={14}/>导出 .cir</button></div><pre>{netlist||errors.join('\n')}</pre></div></div>
+          <div className="drawing-surface"><div className="workspace-canvas-host" hidden={view!=='canvas'}><DcVoltageNotice state={dcVoltages}/>{dcVoltages.tableOpen&&<BiasInspectionPanel state={dcVoltages} project={project} selection={selection} onLocate={locateBiasMeasurement} onExportSvg={exportBiasSvg}/>}<EditorCanvas drawingCache={drawingCache} viewKey={projectId??'standalone'} fitMode={circuitFitMode} onFitModeChange={setCircuitFitMode} gridSize={(previewAppearance??appearance).gridSize} active={view==='canvas'&&!showAppearance&&!editingModel} onContextMenu={setContextMenu} onEditDevice={openDeviceProperties} importedModels={project.models} placementValue={placement?.value} placementParams={placement?.params} placementGroundStyle={placement?.groundStyle} networkSymbol={networkSymbol??undefined} onPlaceNetworkSymbol={placeNetworkSymbol} onProbe={probeAt} onProbeDevice={probeDevice} onProbeWire={probeWire} onReverseProbe={reverseProbe} onProbePair={probePair} onMoveProbeLabel={moveProbeLabel} onRelocateProbe={relocateProbe} onSelectProbe={label=>selectProbe(markerIdentity(label).id)} probeMode={probeMode} showProbeMarkers={showProbeMarkers} probeMarkers={canvasProbeMarkers} pendingProbe={probePositive?{at:probePositive,anchor:probePositiveAnchor.current}:null} highlightedNet={netInfo?highlightedNet:null} onInspectNet={highlightNet} drawing={drawing} selection={selection} onSelect={selectItems} clipboard={clipboard?.drawing??null} clipboardModels={clipboard?.models} onPaste={paste} wireBend={wireBend} onWireBend={toggleWireBend} onWireBendChange={setWireBend} onZoom={setZoom} fitSelection={fitSelection} tool={tool} onTool={chooseTool} rotation={rotation} onChange={updateDrawing} onStatus={setStatus} zoom={zoom} resetView={resetView} showNodes={showNodes} dcVoltages={dcVoltages.voltages} biasMeasurements={dcVoltages.usable?dcVoltages.measurements:NO_BIAS_MEASUREMENTS} biasPrefs={dcVoltages.prefs} biasSelectedId={dcVoltages.selectedId} onBiasMove={dcVoltages.moveLabel} onBiasSelect={dcVoltages.setSelectedId} onBiasPin={dcVoltages.pin} onBiasUndo={dcVoltages.undoDisplay} onBiasRedo={dcVoltages.redoDisplay} placingBiasWire={dcVoltages.placingWire} onBiasWire={addBiasWire} onCancelBiasWire={()=>dcVoltages.setPlacingWire(false)} onLabel={openLabel}/></div><div className="editor-netlist" hidden={view!=='netlist'}><div><strong>由实际引脚连接生成</strong><button onClick={openNetlistEditor}><Code2 size={14}/>编辑 SPICE 网表</button><button disabled={!netlist} onClick={()=>download('fuxian-schematic.cir',netlist)}><ArrowDownToLine size={14}/>导出 .cir</button></div><pre>{netlist||errors.join('\n')}</pre></div></div>
           <div className="drawing-status"><span>{isDeviceTool(tool)?`点击画布放置${deviceNames[tool]} · R 旋转 · Esc 取消`:tool==='paste'?'粘贴预览 · 点击放置 · Esc 取消':tool==='wire'?'接线 · Space 换方向 · Backspace 退一步 · 右键 / Esc 取消并退出':tool==='probe'?status:tool==='net'?`网络高亮 · ${netInfo?netInfo.name+' · ':''}点击引脚、导线或标签 · Esc 清除`:tool==='label'?'标签模式 · 点击引脚或导线，再输入节点名称':tool==='pan'?'拖动平移画布 · Esc 返回选择':status}</span><button className="workspace-check-status" title={errors[0]??topology.warnings[0]??'连接检查通过'} onClick={()=>setShowIssues(true)}><span className={`state-dot ${errors.length||topology.warnings.length?'amber':''}`}/>{errors.length||topology.warnings.length?`检查 · ${errors.length+topology.warnings.length}`:'连接正常'}</button><button className="workspace-run-status" data-state={runFeedback.state} title={runFeedback.detail} onClick={()=>{const diagram=diagrams.find(item=>item.profileId===simulationProfiles.activeId&&!item.resultId)??diagrams.find(item=>item.profileId===simulationProfiles.activeId);if(diagram){expandDiagram(diagram.id);showWaveformSidebar()}else openSimulation()}}><span className={`state-dot ${['failed','stale','interrupted','recovered','warning'].includes(runFeedback.state)?'amber':''}`}/>{runFeedback.label}</button><small>{drawing.devices.length} 器件 · {drawing.wires.length} 导线</small></div>
         </section>
         </>} waveform={<>{waveformStorageWarning&&<details className="page-storage-warning"><summary>图组恢复提示</summary><p role="alert">{waveformStorageWarning}</p></details>}<div className="page-group-toolbar"><label title="当前波形图组"><Boxes size={16} aria-hidden="true"/><select aria-label="当前波形图组" value={pageDiagram?.id??''} onChange={event=>expandDiagram(event.target.value)}>{diagrams.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}</select></label><button className="wave-icon-button" aria-label="撤销图组操作" title="撤销图组操作" disabled={!timeline.present.diagramPast.length} onClick={()=>setDiagramHistory(undo)}><Undo2 size={16}/></button><button className="wave-icon-button" aria-label="重做图组操作" title="重做图组操作" disabled={!timeline.present.diagramFuture.length} onClick={()=>setDiagramHistory(redo)}><Redo2 size={16}/></button><span className="page-group-target" title={`探针目标 · 视图 ${(pageDiagram?.view?.activePanel??0)+1}`} aria-label={`探针目标 · 视图 ${(pageDiagram?.view?.activePanel??0)+1}`}><Pin size={14} aria-hidden="true"/><small>{(pageDiagram?.view?.activePanel??0)+1}</small></span><button className="wave-icon-button" aria-label="新图组" title="新图组" disabled={diagrams.length>=MAX_CANVAS_WAVEFORMS} onClick={()=>addDiagram()}><Plus size={16}/></button></div>{!diagrams.length&&<div className="page-waveform-empty"><strong>添加波形图组</strong><button onClick={()=>addDiagram()}>新建图组</button></div>}
@@ -1064,7 +1074,7 @@ export default function EditorWorkbench({seed,projectId,initialCodexSessionId,in
         <div className="editor-inspector-heading"><strong>{inspectorTab==='model'&&modelTarget?.modelId?`工程模型 · ${modelTarget.modelId}`:selection.length>1?`${selection.length} 项已选`:device?`${device.id} · ${deviceNames[device.kind]}`:selectedWire?`导线 ${selectedWire.id}`:selected?.startsWith('J')?`连接点 ${selected}`:'器件参数'}</strong><small>{inspectorTab==='model'?'MODEL':device?`${device.rotation}°`:'PROPERTIES'}</small></div>
         <div className="editor-inspector-scroll" ref={inspectorScroll}>
           <div id="inspector-model-panel" className="inspector-tab-panel" role="tabpanel" aria-labelledby="inspector-model-tab" hidden={inspectorTab!=='model'}>
-            <SpiceCodeView onEditDeviceCode={modelTarget||device&&['D','Q','M','J'].includes(device.kind)?()=>openModelEditor(modelTarget??{deviceId:device!.id}):undefined} project={project} deviceId={device?.id} modelId={modelTarget?.modelId}/>
+            <SpiceCodeView onEditDeviceCode={modelTarget||device&&['D','Q','M','J'].includes(device.kind)?()=>openModelEditor(modelTarget??{deviceId:device!.id}):undefined} project={electricalSnapshot} deviceId={device?.id} modelId={modelTarget?.modelId}/>
             {modelTarget?.modelId&&project.models?.filter(model=>model.id===modelTarget.modelId).map(model=><div className="model-search-import-actions" key={model.id}><strong>{model.id} · {model.type}</strong><SaveToUserLibrary model={model}/><button onClick={()=>placeImportedModel(model)}>放置此型号</button>{device&&device.kind===model.kind&&<button onClick={()=>applyFoundModel(model)}>应用到 {device.id} · {model.type}</button>}</div>)}
               {modelTarget?<p className="inspector-draft-note">点击“编辑器件 SPICE 代码”在弹窗中修改；校验后应用，Ctrl+Z 可撤销。</p>:<div className="inspector-model-empty"><Code2 size={25}/><strong>{device?`${device.id} 使用器件参数`:selection.length>1?'请选择单个器件':'选择器件以编辑模型'}</strong><p>{device?`${deviceNames[device.kind]}目前通过「器件编辑」调整电气参数，没有独立的可编辑 .model 定义。`:'在画布中选择二极管、三极管、MOS 管或 JFET，即可查看并编辑其 SPICE 模型。'}</p><p>支持 D、NPN / PNP、NMOS / PMOS、VDMOS、NJF / PJF 模型，也可以从模型库选择已导入的工程模型。</p><button onClick={()=>openModelLibrary()}><BookOpen size={14}/>打开 SPICE 模型库</button></div>}
           </div>

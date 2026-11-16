@@ -3,7 +3,7 @@ import { resolveBranchCurrent } from './branch-currents'
 import { nodeAnnotations } from './canvas-annotations'
 import { dcNodeVoltages, dcVoltageResultMatches } from './dc-voltage'
 import { deviceCatalog, pinsFor } from './devices'
-import { compileDrawing, terminalKey, type Device, type Drawing, type Terminal, type XY } from './drawing'
+import { drawingNodeNames, terminalKey, type Device, type Drawing, type Terminal, type XY } from './drawing'
 import type { Result } from './results'
 import { hasWireCurrentTarget, type WireCurrentTarget } from './wire-currents'
 
@@ -65,11 +65,11 @@ export function biasWireCurrent(result:Result,drawing:Drawing,target:WireCurrent
 
 export function biasMeasurements(result:Result|null,project:Project,wires:readonly WireCurrentTarget[]=[]):BiasMeasurement[] {
   if(!project.drawing)return[]
-  const drawing=project.drawing,topology=compileDrawing(drawing),matches=!!result&&dcVoltageResultMatches(result,project)
+  const drawing=project.drawing,nodes=drawingNodeNames(drawing),matches=!!result&&dcVoltageResultMatches(result,project)
   const voltages=matches?dcNodeVoltages(result!,project):new Map<string,number>()
   const missing=matches?'本次工作点未提供此测量值':result?'电路已改变，请重新计算直流工作点':'尚未计算直流工作点'
-  const items:BiasMeasurement[]=nodeAnnotations(drawing,topology.nodes,{includeNamed:true}).map(annotation=>{
-    const terminals=drawing.devices.filter(device=>device.kind!=='GND').flatMap(device=>pinsFor(device).map(pin=>({device:device.id,pin}))).filter(at=>topology.nodes.get(terminalKey(at))===annotation.name).sort((a,b)=>terminalKey(a).localeCompare(terminalKey(b)))
+  const items:BiasMeasurement[]=nodeAnnotations(drawing,nodes,{includeNamed:true}).map(annotation=>{
+    const terminals=drawing.devices.filter(device=>device.kind!=='GND').flatMap(device=>pinsFor(device).map(pin=>({device:device.id,pin}))).filter(at=>nodes.get(terminalKey(at))===annotation.name).sort((a,b)=>terminalKey(a).localeCompare(terminalKey(b)))
     const value=voltages.get(annotation.name)??null
     return{id:`voltage:${terminals.map(terminalKey).join('|')||'ground'}`,kind:'voltage',label:`V(${annotation.name})`,value,unit:'V',at:terminals[0],point:annotation.point,node:annotation.name,direction:'对全局地 0',source:annotation.name==='0'?'参考地':'节点电压',...(value===null?{reason:missing}:{})}
   })

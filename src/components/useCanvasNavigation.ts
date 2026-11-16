@@ -13,6 +13,7 @@ export function useCanvasNavigation(svg:RefObject<SVGSVGElement|null>,zoom:numbe
   const current=useRef(view),pending=useRef(false),frame=useRef<number|null>(null),idle=useRef<ReturnType<typeof setTimeout>|null>(null)
   const wheelBounds=useRef<DOMRect|null>(null),publishedZoom=useRef(zoom),previousZoom=useRef(zoom)
   const layers=useRef<{canvas:SVGSVGElement;rects:Element[];pattern:Element|null}|null>(null)
+  const painted=useRef<{x:number;y:number;w:number;h:number;zoom:number;step:number}|null>(null)
   const options=useRef({onZoom,grid});options.current={onZoom,grid}
   function clearScheduled(){
     if(frame.current!==null)window.cancelAnimationFrame?.(frame.current)
@@ -21,16 +22,27 @@ export function useCanvasNavigation(svg:RefObject<SVGSVGElement|null>,zoom:numbe
   }
   function paint(){
     const canvas=svg.current;if(!canvas)return
-    if(layers.current?.canvas!==canvas)layers.current={canvas,rects:[...canvas.querySelectorAll('.canvas-viewport-background,.canvas-viewport-grid')],pattern:canvas.querySelector('#editor-dot-grid')}
+    if(layers.current?.canvas!==canvas){
+      layers.current={canvas,rects:[...canvas.querySelectorAll('.canvas-viewport-background,.canvas-viewport-grid')],pattern:canvas.querySelector('#editor-dot-grid')}
+      painted.current=null
+    }
     const {center,zoom:scale}=current.current,{width,height}=size.current
     const w=width/scale,h=height/scale,x=center.x-w/2,y=center.y-h/2
-    canvas.setAttribute('viewBox',`${x} ${y} ${w} ${h}`)
-    for(const rect of layers.current.rects){
-      rect.setAttribute('x',String(x));rect.setAttribute('y',String(y));rect.setAttribute('width',String(w));rect.setAttribute('height',String(h))
+    const last=painted.current,xChanged=last?.x!==x,yChanged=last?.y!==y,wChanged=last?.w!==w,hChanged=last?.h!==h
+    if(xChanged||yChanged||wChanged||hChanged){
+      canvas.setAttribute('viewBox',`${x} ${y} ${w} ${h}`)
+      for(const rect of layers.current.rects){
+        if(xChanged)rect.setAttribute('x',String(x))
+        if(yChanged)rect.setAttribute('y',String(y))
+        if(wChanged)rect.setAttribute('width',String(w))
+        if(hChanged)rect.setAttribute('height',String(h))
+      }
     }
     const base=options.current.grid,step=base*Math.pow(2,Math.max(0,Math.ceil(Math.log2(6/(base*scale)))))
     const pattern=layers.current.pattern
-    pattern?.setAttribute('width',String(step));pattern?.setAttribute('height',String(step));pattern?.firstElementChild?.setAttribute('r',String(.7/scale))
+    if(last?.step!==step){pattern?.setAttribute('width',String(step));pattern?.setAttribute('height',String(step))}
+    if(last?.zoom!==scale)pattern?.firstElementChild?.setAttribute('r',String(.7/scale))
+    if(xChanged||yChanged||wChanged||hChanged||last?.step!==step||last?.zoom!==scale)painted.current={x,y,w,h,zoom:scale,step}
   }
   function commit(){
     clearScheduled();wheelBounds.current=null
@@ -40,17 +52,33 @@ export function useCanvasNavigation(svg:RefObject<SVGSVGElement|null>,zoom:numbe
     setView(previous=>same(previous,next)?previous:next)
     if(publishedZoom.current!==next.zoom){publishedZoom.current=next.zoom;options.current.onZoom(next.zoom)}
   }
-  function navigate(center:XY,nextZoom=current.current.zoom,settle=true){
-    const next={center,zoom:nextZoom};if(same(current.current,next))return
+  function requestView(next:View,settle:boolean){
+    if(same(current.current,next))return false
     current.current=next;pending.current=true
+    if(idle.current!==null)clearTimeout(idle.current)
+    idle.current=settle?setTimeout(commit,140):null
+    return true
+  }
+  function navigate(center:XY,nextZoom=current.current.zoom,settle=true){
+    if(!requestView({center,zoom:nextZoom},settle))return
     if(frame.current===null){
       if(typeof window.requestAnimationFrame==='function')frame.current=window.requestAnimationFrame(()=>{frame.current=null;paint()})
       else paint()
     }
-    if(idle.current!==null)clearTimeout(idle.current)
-    idle.current=settle?setTimeout(commit,140):null
   }
-  function jump(center:XY,nextZoom:number){navigate(center,nextZoom,false);commit()}
+  function jump(center:XY,nextZoom:number){
+    requestView({center,zoom:nextZoom},false)
+    if(pending.current)commit()
+    else paint()
+  }
+  // ResizeObserver runs after layout and before paint, so update the viewBox in
+  // this frame without rendering the circuit or waiting an extra animation frame.
+  function resize(next?:View){
+    wheelBounds.current=null
+    if(next)requestView(next,true)
+    paint()
+  }
+  function paintedZoom(){return painted.current?.zoom??current.current.zoom}
   function wheel(clientX:number,clientY:number,delta:number){
     const canvas=svg.current;if(!canvas)return
     const bounds=wheelBounds.current??canvas.getBoundingClientRect()
@@ -76,9 +104,8 @@ export function useCanvasNavigation(svg:RefObject<SVGSVGElement|null>,zoom:numbe
     clearScheduled();pending.current=false;wheelBounds.current=null
     current.current={center:current.current.center,zoom};setView(current.current);paint()
   },[zoom])
-  useLayoutEffect(()=>{wheelBounds.current=null},[size.current.width,size.current.height])
-  // An unrelated selection/hover render or host resize must preserve the live camera.
+  // React leaves the camera attributes alone; this also picks up grid changes.
   useLayoutEffect(paint)
   useEffect(()=>()=>{clearScheduled();pending.current=false},[])
-  return{view,current,pending,navigate,jump,commit,wheel}
+  return{view,current,pending,navigate,jump,commit,wheel,resize,paintedZoom}
 }

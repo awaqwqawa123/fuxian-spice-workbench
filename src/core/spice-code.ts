@@ -13,7 +13,7 @@ export function spiceCodePreview(project:Project,deviceId?:string,modelId?:strin
     if(!model)throw new Error('该模型已不在当前工程中，请重新选择。')
     return{title:`${model.id} · SPICE 模型代码`,code:importedModelNetlist(model),note:'当前工程中保存的模型定义；可在下方编辑，修改经过验证后应用。',incomplete:false}
   }
-  const p=editableProject(project),drawing=p.drawing!,topology=compileDrawing(drawing)
+  const p=project.template==='custom'?project:editableProject(project),drawing=p.drawing!,topology=compileDrawing(drawing)
   const selected=deviceId?drawing.devices.find(part=>part.id===deviceId):undefined
   if(deviceId&&!selected)throw new Error('该器件已不在当前工程中，请重新选择。')
   if(selected?.kind==='GND')return{title:`${deviceId} · 接地参考`,code:`* ${deviceId} maps its connected net to SPICE node 0.`,note:'接地符号将相连网络指定为节点 0，没有独立的 .model 或器件语句。',incomplete:false}

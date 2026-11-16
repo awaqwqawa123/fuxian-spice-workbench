@@ -69,7 +69,7 @@ export function projectModelParameters(project:Project,deviceId?:string,modelId?
     return {...modelCodeParameters(model.spice,model.source.label),description:model.detail}
   }
   if(!deviceId)return null
-  const p=editableProject(project), drawing=p.drawing!, part=drawing.devices.find(item=>item.id===deviceId)
+  const p=project.template==='custom'?project:editableProject(project), drawing=p.drawing!, part=drawing.devices.find(item=>item.id===deviceId)
   if(!part)throw new Error('器件已不存在，请重新选择。')
   const model=modelFor(part.kind,part.value,p.models)
   if(model){

@@ -24,17 +24,33 @@ test('docked waveform scale and full splitter boundary resize the host while ret
     await act(async()=>root.render(createElement(Harness)))
     const host=dom.window.document.querySelector<HTMLElement>('.single-page-workspace')!
     const plot=dom.window.document.querySelector('.wave-plot'),canvas=dom.window.document.querySelector('.editor-canvas')!
-    const width=()=>parseFloat(dom.window.document.querySelector<HTMLElement>('.single-page-workspace')!.style.getPropertyValue('--page-schematic-width'))
+    const handle=host.querySelector<HTMLElement>('[role="separator"]')!
+    const width=()=>Number(dom.window.document.querySelector('[role="separator"]')!.getAttribute('aria-valuenow'))
+    const savedRatio=()=>JSON.parse(dom.window.localStorage.getItem('fuxian.single-page-layout:resize-test')!).ratio
     assert.equal(width(),450)
+    assert.equal(host.style.getPropertyValue('--page-schematic-width'),'45%', 'CSS follows the parent width without a pixel-width correction')
     await act(async()=>request(1.1));assert.ok(Math.abs(width()-395)<.01)
     await act(async()=>request(100));assert.equal(width(),300,'reserve a usable schematic width')
     await act(async()=>request(.001));assert.equal(width(),650,'respect the minimum waveform width')
-    const handle=host.querySelector<HTMLElement>('[role="separator"]')!
     async function pointer(type:string,x:number){const event=new dom.window.MouseEvent(type,{bubbles:true,cancelable:true,button:0,buttons:type==='pointerup'?0:1,clientX:x});Object.defineProperty(event,'pointerId',{value:4});await act(async()=>handle.dispatchEvent(event))}
-    await pointer('pointerdown',650);await pointer('pointermove',500);await pointer('pointerup',500)
+    await pointer('pointerdown',650);await pointer('pointermove',500)
     assert.equal(width(),500,'dragging separator background works, not just its icon')
+    assert.equal(savedRatio(),.65,'live drag does not write localStorage')
+    await pointer('pointerup',500)
+    assert.equal(savedRatio(),.5)
     await act(async()=>{request(.9);request(.9)})
     assert.ok(Math.abs(width()-595)<.001,'batched wheel events both resize the footprint')
+    const ratioStyle=host.style.getPropertyValue('--page-schematic-width')
+    let hostWidth=800
+    Object.defineProperty(host,'getBoundingClientRect',{configurable:true,value:()=>({width:hostWidth,height:500})})
+    const resize=async()=>{await act(async()=>dom.window.dispatchEvent(new dom.window.Event('resize')))}
+    await resize()
+    assert.equal(width(),476,'separator reports the new width after a side panel narrows the host')
+    assert.equal(host.style.getPropertyValue('--page-schematic-width'),ratioStyle,'host width changes do not rewrite the split preference')
+    assert.equal(savedRatio(),.595)
+    hostWidth=1000
+    await resize()
+    assert.equal(width(),595,'restoring the host width returns to the chosen split')
     assert.equal(dom.window.document.querySelector('.wave-plot'),plot)
     assert.equal(plot?.getAttribute('data-domain'),'0,1')
     assert.equal(canvas.getAttribute('viewBox'),'0 0 1200 600')

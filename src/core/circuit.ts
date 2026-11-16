@@ -283,8 +283,7 @@ export function generateNetlist(p: Project, instrumentation: NetlistInstrumentat
 }
 export function analysisSignals(p: Project) {
   if (p.template !== 'custom') return { inputNode:'vin',outputNode:'vout',sourceId:'V1' }
-  const { inputNode,outputNode,sourceId } = compileDrawing(p.drawing!)
-  return { inputNode,outputNode,sourceId }
+  return drawingAnalysisSignals(p.drawing!)
 }
 export function theoreticalFrequency(p: Project) {
   if (p.template === 'custom') return NaN
@@ -305,4 +304,4 @@ export function projectKey(p: Project) {
     wires:wires.map(({id,from,to}) => ({id,from,to})).sort((a,b) => a.id.localeCompare(b.id)),sourceId,output,
   } })
 }
-import { compileDrawing, parseDrawing, type Drawing, type Terminal } from './drawing'
+import { compileDrawing, drawingAnalysisSignals, parseDrawing, type Drawing, type Terminal } from './drawing'

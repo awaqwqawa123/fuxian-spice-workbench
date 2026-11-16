@@ -1,5 +1,5 @@
 import { newProject, type Project } from './circuit'
-import { compileDrawing } from './drawing'
+import { drawingNodeNames } from './drawing'
 import { layoutElectricallyEquivalent } from './layout-electrical-equivalence'
 import type { Result } from './results'
 
@@ -22,7 +22,7 @@ export function dcVoltageResultMatches(result:Result,project:Project):boolean {
 export function dcNodeVoltages(result:Result,project:Project):Map<string,number> {
   const values=new Map<string,number>()
   if(!project.drawing||!result.project.drawing||!dcVoltageResultMatches(result,project))return values
-  const before=compileDrawing(result.project.drawing).nodes,after=compileDrawing(project.drawing).nodes
+  const before=drawingNodeNames(result.project.drawing),after=drawingNodeNames(project.drawing)
   const vectors=new Map(Object.entries(result.voltages??{}).map(([name,samples])=>[name.toLowerCase(),samples]))
   for(const [terminal,node] of after){
     if(node==='0'){values.set(node,0);continue}

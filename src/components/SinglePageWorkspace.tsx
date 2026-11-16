@@ -34,6 +34,10 @@ export function readSinglePageLayout(key?: string): { ratio: number; mode: Singl
     }
   } catch { return { ratio: defaultRatio, mode: 'split' } }
 }
+const loadLayout = (key?: string) => {
+  const layout = readSinglePageLayout(key)
+  return { key, ...layout, committedRatio: layout.ratio }
+}
 
 export default function SinglePageWorkspace({ schematic, schematicControls, waveform, properties, sidebarTab = 'waveform', onSidebarTabChange, selectionKey, layoutKey, mode: controlledMode, onModeChange, onFitBoth, onRestoreLayout, sidebarScaleRequest }: SinglePageWorkspaceProps) {
   const host = useRef<HTMLDivElement>(null)
@@ -43,24 +47,33 @@ export default function SinglePageWorkspace({ schematic, schematicControls, wave
   const focusAfterChange = useRef<'schematic' | 'waveform' | null>(null)
   const [width, setWidth] = useState(1000)
   const [tab, setTab] = useState<'schematic' | 'waveform'>('waveform')
-  const [savedLayout, setSavedLayout] = useState(() => ({ key: layoutKey, ...readSinglePageLayout(layoutKey) }))
+  const [savedLayout, setSavedLayout] = useState(() => loadLayout(layoutKey))
   // Resolve project switches before effects so a former project's preference
   // cannot be written to the new project's storage by a stale effect.
-  const layout = savedLayout.key === layoutKey ? savedLayout : { key: layoutKey, ...readSinglePageLayout(layoutKey) }
+  const layout = savedLayout.key === layoutKey ? savedLayout : loadLayout(layoutKey)
   const mode = controlledMode ?? layout.mode
-  const ratio = layout.ratio
-  useEffect(() => { if (savedLayout.key !== layoutKey) setSavedLayout({ key: layoutKey, ...readSinglePageLayout(layoutKey) }) }, [layoutKey, savedLayout.key])
+  const { ratio, committedRatio } = layout
+  useEffect(() => { if (savedLayout.key !== layoutKey) setSavedLayout(loadLayout(layoutKey)) }, [layoutKey, savedLayout.key])
   useEffect(() => {
     const element = host.current
     if (!element) return
-    const update = () => { const next = element.getBoundingClientRect().width; if (next > 0) setWidth(next) }
-    update(); const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update)
-    observer?.observe(element); window.addEventListener('resize', update)
-    return () => { observer?.disconnect(); window.removeEventListener('resize', update) }
+    const setMeasuredWidth = (next: number) => { if (next > 0) setWidth(next) }
+    const update = () => setMeasuredWidth(element.getBoundingClientRect().width)
+    update()
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', update)
+      return () => window.removeEventListener('resize', update)
+    }
+    const observer = new ResizeObserver(entries => {
+      if (entries?.length) setMeasuredWidth(entries[0].contentRect.width)
+      else update()
+    })
+    observer.observe(element)
+    return () => observer.disconnect()
   }, [])
   useEffect(() => {
-    try { localStorage.setItem(storageKey(layoutKey), JSON.stringify({ ratio, mode })) } catch { /* Interaction remains available when storage is full. */ }
-  }, [layoutKey, ratio, mode])
+    try { localStorage.setItem(storageKey(layoutKey), JSON.stringify({ ratio: committedRatio, mode })) } catch { /* Interaction remains available when storage is full. */ }
+  }, [layoutKey, committedRatio, mode])
   useEffect(() => { if (mode === 'split') setTab('waveform') }, [selectionKey, sidebarTab, mode])
   useEffect(() => {
     const region = focusAfterChange.current === 'schematic' ? schematicHost.current : focusAfterChange.current === 'waveform' ? waveformHost.current : null
@@ -72,17 +85,26 @@ export default function SinglePageWorkspace({ schematic, schematicControls, wave
   const changeMode = (next: SinglePageWorkspaceMode) => {
     focusAfterChange.current = next === 'schematic' ? 'schematic' : 'waveform'
     setTab(next === 'schematic' ? 'schematic' : 'waveform')
-    setSavedLayout({ ...layout, mode: next })
+    setSavedLayout(current => ({ ...(current.key === layoutKey ? current : layout), mode: next }))
     onModeChange?.(next)
   }
   const restore = () => {
-    setSavedLayout({ key: layoutKey, ratio: defaultRatio, mode: 'split' })
+    setSavedLayout({ key: layoutKey, ratio: defaultRatio, committedRatio: defaultRatio, mode: 'split' })
     focusAfterChange.current = 'waveform'; setTab('waveform'); onModeChange?.('split'); onRestoreLayout?.()
   }
   const sharedSidebar = properties !== undefined
   const narrow = width < (sharedSidebar ? 560 : 768)
-  const min = Math.max(sharedSidebar ? 240 : 320, width * .3), max = Math.min(width - (sharedSidebar ? 320 : 448), width * .65)
+  const schematicMinimum = sharedSidebar ? 240 : 320, waveformReserve = sharedSidebar ? 320 : 448
+  const min = Math.max(schematicMinimum, width * .3), max = Math.min(width - waveformReserve, width * .65)
   const left = Math.max(min, Math.min(max, width * ratio))
+  const resizeSchematic = (next: number, commit = false) => {
+    const nextRatio = Math.max(.3, Math.min(.65, next / width))
+    setSavedLayout(current => {
+      const base = current.key === layoutKey ? current : layout
+      const saved = commit ? nextRatio : base.committedRatio
+      return base.ratio === nextRatio && base.committedRatio === saved ? base : { ...base, ratio: nextRatio, committedRatio: saved }
+    })
+  }
   const handledScale = useRef({ sequence: sidebarScaleRequest?.sequence ?? 0, logScale: sidebarScaleRequest?.logScale ?? 0 })
   useEffect(() => {
     if (!sidebarScaleRequest || handledScale.current.sequence === sidebarScaleRequest.sequence) return
@@ -91,10 +113,10 @@ export default function SinglePageWorkspace({ schematic, schematicControls, wave
     if (mode !== 'split' || narrow || !Number.isFinite(factor) || factor <= 0) return
     // Resize the dock itself; plotting coordinates and schematic camera are independent.
     setSavedLayout(current => {
-      const base = current.key === layoutKey ? current : { key: layoutKey, ...readSinglePageLayout(layoutKey) }
+      const base = current.key === layoutKey ? current : loadLayout(layoutKey)
       const actualLeft = Math.max(min, Math.min(max, width * base.ratio))
       const nextLeft = Math.max(min, Math.min(max, width - (width - actualLeft) * factor))
-      return nextLeft === actualLeft ? base : { ...base, ratio: nextLeft / width }
+      return nextLeft === actualLeft ? base : { ...base, ratio: nextLeft / width, committedRatio: nextLeft / width }
     })
   }, [sidebarScaleRequest, mode, narrow, layoutKey, width, min, max])
   const schematicHidden = mode === 'waveform' || mode === 'split' && narrow && tab !== 'schematic'
@@ -109,7 +131,9 @@ export default function SinglePageWorkspace({ schematic, schematicControls, wave
   const SidebarIcon = sidebarTab === 'properties' ? SlidersHorizontal : ChartNoAxesCombined
   const ModeIcon = mode === 'schematic' ? CircuitBoard : mode === 'waveform' ? SidebarIcon : Columns2
   const iconProps = { size: 16, strokeWidth: 1.75, 'aria-hidden': true as const }
-  return <div ref={host} className={`single-page-workspace v2-workspace${sharedSidebar ? ' has-shared-sidebar' : ''}${narrow ? ' is-compact' : ''} is-${mode}`} data-page-tab={tab} data-sidebar-tab={sidebarTab} data-workspace-mode={mode} style={{ '--page-schematic-width': `${left}px` } as CSSProperties}>
+  // The split follows its available width in the same layout pass as an outer
+  // sidebar toggle. Only the separator's limits and compact mode need JS sizes.
+  return <div ref={host} className={`single-page-workspace v2-workspace${sharedSidebar ? ' has-shared-sidebar' : ''}${narrow ? ' is-compact' : ''} is-${mode}`} data-page-tab={tab} data-sidebar-tab={sidebarTab} data-workspace-mode={mode} style={{ '--page-schematic-width': `${ratio * 100}%`, '--page-schematic-min': `${schematicMinimum}px`, '--page-waveform-reserve': `${waveformReserve}px` } as CSSProperties}>
     <nav className="page-workspace-controls page-layout-toolbar" aria-label="工作区视图">
       <strong className="page-view-caption"><ModeIcon {...iconProps} /><span>{mode === 'schematic' ? '原理图' : mode === 'waveform' ? sidebarLabel : sidebarTab === 'properties' ? '电路与属性' : '电路与波形'}</span></strong>
       {!schematicHidden && schematicControls && <div className="page-schematic-controls">{schematicControls}</div>}
@@ -125,7 +149,7 @@ export default function SinglePageWorkspace({ schematic, schematicControls, wave
     {narrow && mode === 'split' && <nav className="page-compact-tabs" aria-label="窄窗口工作区"><button className="page-view-action" aria-label="电路与参数" title="电路与参数" aria-pressed={tab === 'schematic'} onClick={() => setTab('schematic')}><CircuitBoard {...iconProps} /><span className="page-view-sr-only">电路与参数</span></button><button className="page-view-action" aria-label="波形与测量" title="波形与测量" aria-pressed={tab === 'waveform'} onClick={() => setTab('waveform')}><SidebarIcon {...iconProps} /><span className="page-view-sr-only">波形与测量</span></button><small>加宽窗口可同时查看</small></nav>}
     <div className="page-workspace-body">
       <div ref={schematicHost} className="page-schematic-host" tabIndex={-1} hidden={schematicHidden}>{schematic}</div>
-      <SidebarResizeHandle label="调整电路与波形比例" controls="page-waveform-host" width={left} min={min} max={Math.max(min, max)} direction={1} hidden={narrow || mode !== 'split'} onResize={value => setSavedLayout({ ...layout, ratio: value / width })} onReset={() => setSavedLayout({ ...layout, ratio: defaultRatio })} />
+      <SidebarResizeHandle key={layoutKey} label="调整电路与波形比例" controls="page-waveform-host" width={left} min={min} max={Math.max(min, max)} direction={1} hidden={narrow || mode !== 'split'} onResize={resizeSchematic} onResizeCommit={value => resizeSchematic(value, true)} onReset={() => setSavedLayout(current => ({ ...(current.key === layoutKey ? current : layout), ratio: defaultRatio, committedRatio: defaultRatio }))} />
       <aside ref={waveformHost} className="page-waveform-host" id="page-waveform-host" aria-label={sharedSidebar ? '波形与器件属性侧边栏' : '页面波形工作区'} tabIndex={-1} hidden={waveformHidden}>
         {sharedSidebar && <nav className="page-sidebar-tabs" role="tablist" aria-label="右侧栏内容" onKeyDown={event => {
           if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return

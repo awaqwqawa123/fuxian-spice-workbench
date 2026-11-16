@@ -37,7 +37,8 @@ test('compact header keeps secondary tools accessible and preserves multi-view, 
     for (const width of [980,520,360,260,220,200]) {
       await act(async()=>resize.get(region)!(width,260))
       assert.equal(region.dataset.embeddedSize,`${width}x260`)
-      assert.equal(header.querySelector('.wave-embedded-quick-zoom')!==null,width>=500)
+      const shortcuts=header.querySelector(':scope > .wave-plot-tools')!
+      for(const label of ['适配波形','横向放大','横向缩小'])assert.ok(shortcuts.contains(get(label)))
       assert.equal(tools.contains(get('局部放大')),width<320)
       assert.equal(tools.contains(get('自动适配视图')),width<260)
       assert.ok(tools.contains(get('数学'))&&tools.contains(get('坐标'))&&tools.contains(get('信息')))

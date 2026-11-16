@@ -1,5 +1,5 @@
 import type { Project } from './circuit'
-import { compileDrawing, terminalKey, type Drawing, type Pin, type Terminal } from './drawing'
+import { drawingNodeNames, terminalKey, type Drawing, type Pin, type Terminal } from './drawing'
 import { pinsFor } from './devices'
 import { canProbeCurrent } from './branch-currents'
 import { MAX_MEASUREMENT_PROBES, deletedProbeAttachment, type Measurement } from './probes'
@@ -18,7 +18,7 @@ export function parseProjectProbes(input: unknown, drawing?: Drawing): Measureme
   if (input === undefined) return undefined
   if (!Array.isArray(input) || input.length > MAX_MEASUREMENT_PROBES) throw new Error(`project.probes：需要最多 ${MAX_MEASUREMENT_PROBES} 个探针的数组`)
   if (input.length && !drawing) throw new Error('project.probes：探针需要自由原理图的真实端点')
-  const ids = new Set<string>(), nodes = drawing ? compileDrawing(drawing).nodes : new Map<string, string>()
+  const ids = new Set<string>(), nodes = drawing ? drawingNodeNames(drawing) : new Map<string, string>()
   const terminal = (value: unknown, path: string): Terminal => {
     const at = object(value, path)
     if (typeof at.junction === 'string' && at.device === undefined && at.pin === undefined && drawing!.junctions.some(junction => junction.id === at.junction)) return { junction: at.junction }

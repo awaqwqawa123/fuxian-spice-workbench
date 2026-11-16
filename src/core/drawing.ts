@@ -35,12 +35,14 @@ interface DrawingRenderRouteCache {
   explicit:WeakMap<Wire,{from:Device|Junction|undefined;to:Device|Junction|undefined;points:XY[]}>
   devices:Map<string,Device>;junctions:Map<string,Junction>
   stats:DrawingRenderCacheStats
+  nodes?:ReturnType<typeof resolveDrawingNodesUncached>
+  compiled?:ReturnType<typeof compileDrawingUncached>
 }
 const drawingRenderRoutes=new WeakMap<Drawing,DrawingRenderRouteCache>()
 
 /** Exact geometry reuse for one mounted renderer. Sources and nested objects
  * must be immutable snapshots. Only the returned shallow, read-only view is
- * cached; normal Drawing inputs and mutation/solver helpers remain uncached.
+ * cached; normal mutable Drawing inputs remain uncached across calls.
  * Weak keys allow former drag previews and undo snapshots to be collected. */
 export function createDrawingRenderCache() {
   const snapshots=new WeakMap<Drawing,Drawing>(),explicit:DrawingRenderRouteCache['explicit']=new WeakMap()
@@ -79,8 +81,7 @@ export function wirePoints(d:Drawing,w:Wire):XY[] {
   return result
 }
 export function wirePath(d: Drawing, w: Wire): string { return wirePoints(d,w).map((p,i) => `${i ? 'L' : 'M'} ${p.x} ${p.y}`).join(' ') }
-function onWire(d:Drawing,w:Wire,p:XY) {
-  const points=wirePoints(d,w)
+function onWirePath(points:readonly XY[],p:XY) {
   return points.some((b,i)=>{if(!i)return false;const a=points[i-1];return a.x===b.x?p.x===a.x&&p.y>=Math.min(a.y,b.y)&&p.y<=Math.max(a.y,b.y):p.y===a.y&&p.x>=Math.min(a.x,b.x)&&p.x<=Math.max(a.x,b.x)})
 }
 export function addDevice(d: Drawing, kind: DeviceKind, at: XY, rotation?: Rotation): { drawing: Drawing; id: string } {
@@ -135,7 +136,7 @@ export function joinAtWire(d:Drawing,wireId:string,at:XY):{drawing:Drawing;termi
   const first=splitWire(d,wireId,at), point=terminalPosition(first.drawing,first.terminal)
   let next=first.drawing
   for(const wire of d.wires){
-    if(wire.id===wireId||!onWire(d,wire,point))continue
+    if(wire.id===wireId||!onWirePath(wirePoints(d,wire),point))continue
     const split=splitWire(next,wire.id,point)
     next=connect(split.drawing,first.terminal,split.terminal)
   }
@@ -214,7 +215,7 @@ export function setNetLabel(d:Drawing, at:Terminal, name:string, appearance:Pick
   const existing=(d.labels ?? []).find(l=>sameTerminal(l.at,at))
   return {...d,labels:[...remaining,{...(existing??{}),id:existing?.id ?? nextId('N',d.labels ?? []),name,at,...(appearance.style!==undefined?{style:appearance.style}:{}),...(appearance.rotation!==undefined?{rotation:appearance.rotation}:{})}]}
 }
-export function compileDrawing(d: Drawing) {
+function resolveDrawingNodesUncached(d: Drawing) {
   const errors: string[] = [], parent = new Map<string,string>(), connections = new Set<string>()
   const terminals: Terminal[] = d.devices.flatMap(p => pinsFor(p).map(pin=>terminal(p.id,pin))).concat(d.junctions.map(j => ({ junction:j.id })))
   terminals.forEach(t => parent.set(terminalKey(t),terminalKey(t)))
@@ -262,7 +263,37 @@ export function compileDrawing(d: Drawing) {
     assign(key,`n${nodeId++}`)
   }
   const nodes=new Map(terminals.map(t=>[terminalKey(t),names.get(root(terminalKey(t)))!]))
-  for(const j of d.junctions)if(d.wires.some(w=>nodes.get(terminalKey(w.from))!==nodes.get(j.id)&&onWire(d,w,j)))errors.push(`${j.id} 与未连接导线重叠，请在接线模式点击交点连接，或调整走线`)
+  return {errors,nodes,connections,inputNode:inputRoot?names.get(inputRoot)!:'vin',outputNode:outRoot?names.get(outRoot)!:'vout',sourceId:source?.id??'V1'}
+}
+
+function resolveDrawingNodes(d: Drawing) {
+  const cache=drawingRenderRoutes.get(d)
+  return cache?(cache.nodes??=resolveDrawingNodesUncached(d)):resolveDrawingNodesUncached(d)
+}
+
+/** Resolve electrical node names without calculating routes or running full diagnostics. */
+export function drawingNodeNames(d: Drawing): Map<string,string> {
+  const {nodes}=resolveDrawingNodes(d)
+  return drawingRenderRoutes.has(d)?new Map(nodes):nodes
+}
+
+/** Simulation and waveform labels only need the reference nodes and source. */
+export function drawingAnalysisSignals(d: Drawing) {
+  const {inputNode,outputNode,sourceId}=resolveDrawingNodes(d)
+  return {inputNode,outputNode,sourceId}
+}
+
+function compileDrawingUncached(d: Drawing) {
+  const resolved=resolveDrawingNodes(d),{nodes,connections,inputNode,outputNode,sourceId}=resolved,errors=[...resolved.errors]
+  // A route depends on the whole drawing, but not on the junction being tested.
+  // Resolve it on first use and retain the exact points for this check.
+  if(d.junctions.length){
+    const routes=d.wires.map(wire=>({wire,node:nodes.get(terminalKey(wire.from)),points:undefined as XY[]|undefined}))
+    for(const junction of d.junctions){
+      const node=nodes.get(junction.id)
+      if(routes.some(route=>route.node!==node&&onWirePath(route.points??=wirePoints(d,route.wire),junction)))errors.push(`${junction.id} 与未连接导线重叠，请在接线模式点击交点连接，或调整走线`)
+    }
+  }
   const elements=d.devices.filter(p=>p.kind!=='GND').map(device=>({device,nodes:pinsFor(device).map(pin=>nodes.get(`${device.id}:${pin}`)!)}))
   const graph=new Map<string,Set<string>>()
   for(const {device,nodes:ns} of elements){
@@ -276,5 +307,18 @@ export function compileDrawing(d: Drawing) {
   if(elements.some(e=>e.nodes.some(n=>!reached.has(n))))errors.push('存在与接地电路分离的器件，请检查连线')
   const shorts=connectionShorts(d,nodes)
   const warnings=shorts.filter(short=>!d.devices.some(device=>device.id===short.deviceId&&device.kind==='V')).map(short=>short.message)
-  return {errors:[...new Set(errors)],warnings,shorts,nodes,elements,inputNode:inputRoot?names.get(inputRoot)!:'vin',outputNode:outRoot?names.get(outRoot)!:'vout',sourceId:source?.id??'V1'}
+  return {errors:[...new Set(errors)],warnings,shorts,nodes,elements,inputNode,outputNode,sourceId}
+}
+
+export function compileDrawing(d: Drawing): ReturnType<typeof compileDrawingUncached> {
+  const cache=drawingRenderRoutes.get(d)
+  if(!cache)return compileDrawingUncached(d)
+  const compiled=cache.compiled??=compileDrawingUncached(d)
+  // Keep the caller's arrays and node map independent of the cached result.
+  return {
+    ...compiled,
+    errors:[...compiled.errors],warnings:[...compiled.warnings],nodes:new Map(compiled.nodes),
+    shorts:compiled.shorts.map(short=>({...short,pins:[...short.pins],wireIds:[...short.wireIds]})),
+    elements:compiled.elements.map(element=>({...element,nodes:[...element.nodes]})),
+  }
 }

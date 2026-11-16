@@ -1,5 +1,5 @@
 .single-page-workspace{display:flex;flex:1;min-height:0;min-width:0;height:100%;overflow:hidden;background:var(--ui-panel)}
-.page-schematic-host{display:flex;flex-direction:column;flex:0 0 var(--page-schematic-width);min-width:0;min-height:0;overflow:hidden}
+.page-schematic-host{display:flex;flex-direction:column;flex:0 0 clamp(max(var(--page-schematic-min),30%),var(--page-schematic-width),min(calc(100% - var(--page-waveform-reserve)),65%));min-width:0;min-height:0;overflow:hidden}
 .page-schematic-host>.drawing-workspace{flex:1;min-height:0;height:0}
 .page-waveform-host{display:flex;flex:1;flex-direction:column;min-width:0;min-height:0;overflow:hidden;border-left:1px solid var(--ui-border)}
 .page-schematic-toolbar,.page-group-toolbar,.page-result-toolbar,.page-device-summary,.page-result-tabs{display:flex;align-items:center;gap:6px;flex:none;padding:6px 8px;border-bottom:1px solid var(--ui-border);min-width:0}

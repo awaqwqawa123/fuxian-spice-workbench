@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
-import { ChevronDown, Columns2, Grid2X2, Maximize2, Minus, Plus, RotateCcw, Ruler, ScanSearch, X, ArrowLeft, ArrowRight, ChartNoAxesCombined, SlidersHorizontal, FunctionSquare, Axis3D, Crosshair, Info, ScanLine, Expand } from 'lucide-react'
+import { ChevronDown, Columns2, Grid2X2, Maximize2, Minus, Plus, RotateCcw, Ruler, ScanSearch, X, ArrowLeft, ArrowRight, ChartNoAxesCombined, SlidersHorizontal, FunctionSquare, Axis3D, Crosshair, Info, ScanLine, Expand, ZoomIn, ZoomOut } from 'lucide-react'
 import { formatSI } from '../core/circuit'
 import { nearestSample } from '../core/measurements'
-import { waveformLinearAxis } from '../core/waveform-axis'
+import { waveformLinearAxis, waveformLogAxis } from '../core/waveform-axis'
 import type { Measurement } from '../core/probes'
 import { resultXAxisUnit, type Result } from '../core/results'
 import type { WaveformViewState } from '../core/canvas-waveform-store'
@@ -105,7 +105,6 @@ function SignalPlot({ index, result, traces, primaryId, shared, interactive=true
   const units = useMemo(() => [...new Set(traces.map(t => t.unit))].sort((a,b)=>axisOrder?axisOrder.indexOf(a)-axisOrder.indexOf(b):0), [traces,axisOrder])
   const l = 68, r = units.length > 1||reserveRightAxis ? 70 : 22, top = 25, bottom = 36
   const plotWidth=Math.max(1,W-l-r),plotHeight=Math.max(1,H-top-bottom)
-  const xTickCount=Math.max(2,Math.min(20,Math.floor(plotWidth/90)+1))
   const span = Math.max(shared.bounds[1] - shared.bounds[0], 1e-12)
   const xDomain: WaveformDomain = useMemo(() => [shared.bounds[0] + span * shared.domain[0], shared.bounds[0] + span * shared.domain[1]], [shared.bounds, shared.domain, span])
   const yDomains = useMemo(() => new Map(units.map(unit => [unit, axisRanges?.[unit] ?? waveformYBounds(traces, unit, xDomain, ac)])), [units, traces, xDomain, ac, axisRanges])
@@ -116,13 +115,9 @@ function SignalPlot({ index, result, traces, primaryId, shared, interactive=true
     const [min, max] = yDomains.get(unit)!
     return top + (max - y) / (max - min) * plotHeight
   }
-  const xAxis = useMemo(() => {
-    if (!ac) return waveformLinearAxis(xDomain, plotWidth, xUnit)
-    const major = Array.from({ length: xTickCount }, (_, i) => xDomain[0] + (xDomain[1] - xDomain[0]) * i / (xTickCount - 1))
-    const upper = 10 ** xDomain[1], spacing = (upper - 10 ** xDomain[0]) / (xTickCount - 1)
-    const digits = Math.max(3, Math.min(12, Math.ceil(Math.log10(upper / spacing)) + 1))
-    return { major, minor: [], labels: major.map(value => formatSI(10 ** value, xUnit, digits)) }
-  }, [ac, xDomain, plotWidth, xTickCount, xUnit])
+  const xAxis = useMemo(() => (ac ? waveformLogAxis : waveformLinearAxis)(xDomain, plotWidth, xUnit), [ac, xDomain, plotWidth, xUnit])
+  const xTitle = ac ? '频率' : xUnit === 's' ? '时间' : '扫描'
+  const xTickPosition = (value: number) => l + (value - xDomain[0]) / (xDomain[1] - xDomain[0]) * plotWidth
   const paths = useMemo(() => new Map(traces.map(trace => [trace.id, waveformPath(trace, px, y => py(y, trace.unit), Math.ceil(plotWidth), { left: l, right: W - r })])), [traces, xDomain, yDomains, W, H, l, r])
   const sampleMarks = useMemo(() => {
     const range:WaveformDomain=ac?[10**xDomain[0],10**xDomain[1]]:xDomain
@@ -154,10 +149,8 @@ function SignalPlot({ index, result, traces, primaryId, shared, interactive=true
       const rect = entries[0].contentRect
       // A hidden plot reports zero while a dialog opens. Wait for usable layout.
       if(rect.width<=0||rect.height<=0)return
-      setSize({
-        width: Math.max(1, Math.round(rect.width)),
-        height: Math.max(1, Math.round(rect.height || 260)),
-      })
+      const width = Math.max(1, Math.round(rect.width)), height = Math.max(1, Math.round(rect.height))
+      setSize(old => old.width === width && old.height === height ? old : { width, height })
     })
     observer.observe(svg.current)
     return () => observer.disconnect()
@@ -262,12 +255,12 @@ function SignalPlot({ index, result, traces, primaryId, shared, interactive=true
           </g>)}
         </g>
       })}
-      {xAxis.minor.map(value => <line key={value} data-wave-x-minor="true" x1={px(value)} x2={px(value)} y1={top} y2={H - bottom} className="wave-grid wave-grid-minor" />)}
+      {xAxis.minor.map(value => <line key={value} data-wave-x-minor="true" x1={xTickPosition(value)} x2={xTickPosition(value)} y1={top} y2={H - bottom} className="wave-grid wave-grid-minor" />)}
       {xAxis.major.map((value, i) => <g key={value} data-wave-x-tick="true" data-wave-x-value={value}>
-        <line x1={ac ? px(10 ** value) : px(value)} x2={ac ? px(10 ** value) : px(value)} y1={top} y2={H - bottom} className="wave-grid" />
-        <text className="wave-axis" x={ac ? px(10 ** value) : px(value)} y={H - 17} textAnchor={i===0?'start':i===xAxis.major.length-1?'end':'middle'}>{xAxis.labels[i]}</text>
+        <line x1={xTickPosition(value)} x2={xTickPosition(value)} y1={top} y2={H - bottom} className="wave-grid" />
+        <text className="wave-axis" x={xTickPosition(value)} y={H - 17} textAnchor={i===0?'start':i===xAxis.major.length-1?'end':'middle'}>{xAxis.labels[i]}</text>
       </g>)}
-      <text className="wave-axis wave-axis-unit" data-wave-x-unit={xUnit} x={W-r} y={H-3} textAnchor="end">{xUnit}</text>
+      {xAxis.displayUnit && <text className="wave-axis wave-axis-unit" data-wave-x-unit={xUnit} data-wave-x-display-unit={xAxis.displayUnit} x={l+plotWidth/2} y={H-3} textAnchor="middle">{xTitle} ({xAxis.displayUnit})</text>}
       <g clipPath={`url(#${clipId})`}>
         {displaySelection&&<rect data-wave-range="true" className="wave-range-selection" x={selectionX(displaySelection[0])} y={top+plotHeight*(selectionY?.[0]??0)} width={Math.max(0,selectionX(displaySelection[1])-selectionX(displaySelection[0]))} height={plotHeight*((selectionY?.[1]??1)-(selectionY?.[0]??0))}/>}
         {traces.map(trace => <g key={trace.id}>
@@ -356,7 +349,10 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
   const [navigationPage,setNavigationPage]=useState(0)
   useEffect(()=>{
     if(!workspaceActive||!embedded||!embeddedRegion.current||typeof ResizeObserver==='undefined')return
-    const observer=new ResizeObserver(entries=>{const rect=entries[0].contentRect;setEmbeddedSize({width:rect.width,height:rect.height})})
+    const observer=new ResizeObserver(entries=>{
+      const rect=entries[0].contentRect,width=Math.round(rect.width),height=Math.round(rect.height)
+      if(width>0&&height>0)setEmbeddedSize(old=>old.width===width&&old.height===height?old:{width,height})
+    })
     observer.observe(embeddedRegion.current);return()=>observer.disconnect()
   },[embedded,workspaceActive])
   const catalogueCache=useRef<ReturnType<typeof waveformSignals>>({signals:[],unavailable:[]})
@@ -425,7 +421,7 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
   useEffect(()=>{
     if(workspaceActive)onInspectionChange?.({resultId:result.id,panelIndex:selectedPanel,domain:visibleRange,signal:selectedSignal,lensRange,cursors})
   },[workspaceActive,result.id,selectedPanel,domain,bounds,selectedSignal,lens,cursors,onInspectionChange])
-  function fitCoordinates(kind:'fit'|'reset'|'return'='fit') {
+  function fitCoordinates(kind:'fit'|'fit-all'|'reset'|'return'='fit') {
     if(kind==='return'){
       if(!previousCoordinates)return
       setDomain(previousCoordinates.domain);setLens(previousCoordinates.lens)
@@ -437,7 +433,7 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
       const span=bounds[1]-bounds[0]
       setDomain(includeComparison?[0,1]:[(mainBounds[0]-bounds[0])/span,(mainBounds[1]-bounds[0])/span])
       setLens(null);setHover(null)
-      setPanels(old=>old.map((panel,i)=>kind==='fit'||i===selectedPanel?{...panel,axisRanges:undefined}:panel))
+      if(kind!=='fit')setPanels(old=>old.map((panel,i)=>kind==='fit-all'||i===selectedPanel?{...panel,axisRanges:undefined}:panel))
     }
     if(embedded)setEmbeddedTab('plot')
   }
@@ -505,15 +501,31 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
     return next.primary!==undefined&&!next.ids.includes(next.primary)?{...next,primary:next.ids[0]}:next
   }))
   const zoom = (factor: number, anchor = .5) => setDomain(old => zoomWaveformDomain(old, factor, anchor))
+  const currentYRanges=(index:number,range:WaveformDomain,fixed:WaveformAxisRanges|undefined)=>{
+    const traces=traceGroups[index],span=bounds[1]-bounds[0]
+    const visibleX:WaveformDomain=[bounds[0]+span*range[0],bounds[0]+span*range[1]]
+    return Object.fromEntries([...new Set(traces.map(trace=>trace.unit))].map(unit=>[unit,fixed?.[unit]??waveformYBounds(traces,unit,visibleX,frequency)]))
+  }
+  const embeddedLens=embedded&&lens?.panel===selectedPanel?lens:null
+  const navigationDomain=embeddedLens?.domain??domain
+  function zoomHorizontal(factor:number) {
+    if(embedded)setEmbeddedTab('plot')
+    if(embeddedLens){
+      const axisRanges=currentYRanges(selectedPanel,embeddedLens.domain,embeddedLens.axisRanges??panels[selectedPanel].axisRanges)
+      setLens({...embeddedLens,domain:zoomWaveformDomain(embeddedLens.domain,factor),axisRanges})
+      return
+    }
+    // Freeze the visible vertical range before narrowing X. Otherwise the
+    // per-window Y autoscaler would make an X-only command appear to zoom Y.
+    setPanels(old=>old.map((panel,index)=>index<layout&&traceGroups[index].length
+      ?{...panel,axisRanges:currentYRanges(index,domain,panel.axisRanges)}:panel))
+    setAutoFitExplicit(true);setAutoFit(false)
+    zoom(factor)
+  }
   const zoomAll = (factor:number) => {
     zoom(factor);setAutoFitExplicit(true);setAutoFit(false)
-    const visibleX:WaveformDomain=[bounds[0]+(bounds[1]-bounds[0])*domain[0],bounds[0]+(bounds[1]-bounds[0])*domain[1]]
-    setPanels(old=>old.map((panel,index)=>{
-      if(index>=layout)return panel
-      const traces=traceGroups[index],units=[...new Set(traces.map(trace=>trace.unit))]
-      const ranges=Object.fromEntries(units.map(unit=>[unit,panel.axisRanges?.[unit]??waveformYBounds(traces,unit,visibleX,frequency)]))
-      return {...panel,axisRanges:zoomWaveformAxisRanges(ranges,factor)}
-    }))
+    setPanels(old=>old.map((panel,index)=>index<layout
+      ?{...panel,axisRanges:zoomWaveformAxisRanges(currentYRanges(index,domain,panel.axisRanges),factor)}:panel))
   }
   const pan = (fraction: number) => setDomain(old => panWaveformDomain(old, fraction))
   const shared: SharedView = { domain, bounds, hover, cursors, active, onHover: setHover, onZoom: zoom, onPan: pan,
@@ -549,7 +561,7 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
     if(autoFit){
       setPanels(old=>old.map((panel,i)=>{const range=lens?.panel===i?lens.domain:domain,xDomain=range.map(value=>bounds[0]+value*(bounds[1]-bounds[0])) as unknown as WaveformDomain;return {...panel,axisRanges:Object.fromEntries([...new Set((traceGroups[i]??[]).map(trace=>trace.unit))].map(unit=>[unit,waveformYBounds(traceGroups[i]??[],unit,xDomain,frequency)]))}}))
       setAutoFit(false)
-    }else{setAutoFit(true);setPanels(old=>old.map(panel=>({...panel,axisRanges:undefined})));fitCoordinates()}
+    }else{setAutoFit(true);fitCoordinates('fit-all')}
   }
   const updateSplit=(event:ReactPointerEvent<HTMLDivElement>)=>{
     const bounds=event.currentTarget.parentElement?.getBoundingClientRect()
@@ -559,6 +571,12 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
     const offset=splitDirection==='rows'?event.clientY-bounds.top:event.clientX-bounds.left
     setSplitRatio(Math.max(25,Math.min(75,Math.round(offset/length*100))))
   }
+  const compactPlotTools=embedded&&embeddedSize.width<284
+  const plotTools=<div className={`wave-plot-tools${embedded&&embeddedSize.width<560&&!compactPlotTools?' wave-plot-tools-icon-only':''}${compactPlotTools?' wave-plot-tools-wrap':''}`} role="group" aria-label="波形缩放快捷操作">
+    <button type="button" className="wave-plot-tool" title="适配波形：显示完整横轴和各视图纵轴" aria-label="适配波形" onClick={()=>fitCoordinates('fit-all')}><Expand size={15}/><span>适配波形</span></button>
+    <button type="button" className="wave-plot-tool" title="横向放大：仅缩放横轴" aria-label="横向放大" onClick={()=>zoomHorizontal(2)} disabled={navigationDomain[1]-navigationDomain[0]<=1e-6}><ZoomIn size={15}/><span>横向放大</span></button>
+    <button type="button" className="wave-plot-tool" title="横向缩小：仅缩放横轴" aria-label="横向缩小" onClick={()=>zoomHorizontal(.5)} disabled={navigationDomain[1]-navigationDomain[0]>=1}><ZoomOut size={15}/></button>
+  </div>
   if(embedded) {
     // A short results region keeps inspection actions on an in-place page,
     // leaving plot space intact without shrinking labels or creating a dialog.
@@ -583,20 +601,20 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
     const infoTotal=Math.max(1,Math.ceil(infoItems.length/infoPageSize)),page=Math.min(infoPage,infoTotal-1)
     return <section ref={embeddedRegion} className="wave-workspace wave-workspace-embedded" aria-label="波形工作台" data-embedded-waveform="true" data-embedded-condensed={condensed} data-embedded-size={`${embeddedSize.width}x${embeddedSize.height}`} onKeyDown={event=>{if((event.target as HTMLElement).closest('input,select,textarea,button,[role=tab]'))event.stopPropagation()}}>
       <div className="wave-embedded-tabs wave-embedded-header" aria-label="波形顶部控件">
-        <select hidden={layout===1||embeddedSize.width<320} aria-label="当前波形视图" value={index} onChange={event=>setActivePanel(Number(event.target.value))}>{Array.from({length:layout},(_,i)=><option key={i} value={i}>视图 {i+1}</option>)}</select>
+        <select hidden={layout===1||embeddedSize.width<400} aria-label="当前波形视图" value={index} onChange={event=>setActivePanel(Number(event.target.value))}>{Array.from({length:layout},(_,i)=><option key={i} value={i}>视图 {i+1}</option>)}</select>
         <div role="tablist" aria-label="波形工作区页面">{([['plot','绘图',ChartNoAxesCombined],['curves','曲线',SlidersHorizontal],['cursor','游标',Crosshair]] as const).map(([value,label,Icon])=><button key={value} type="button" className="wave-page-tab" role="tab" aria-label={label} title={label} aria-selected={embeddedTab===value} aria-controls={`wave-embedded-page-${result.id}`} onClick={()=>setEmbeddedTab(value)}><Icon size={14}/><span>{label}</span></button>)}</div>
         {embeddedSize.width>=320&&<button type="button" className="wave-icon-button" title="局部放大：框选横轴和纵轴矩形范围" aria-label="局部放大" aria-pressed={inspectMode==='zoom'} onClick={()=>inspectMode==='zoom'?setInspectMode(null):startInspect('zoom')}><ScanSearch size={16}/></button>}
         {embeddedSize.width>=260&&<button type="button" className="wave-icon-button" title={autoFit?'自动适配已开启：新结果适配横轴，纵轴跟随可见曲线；点击固定当前视图':'开启自动适配视图'} aria-label="自动适配视图" aria-pressed={autoFit} onClick={toggleAutoFit}><ScanLine size={16}/></button>}
-        {embeddedSize.width>=500&&<div className="wave-embedded-quick-zoom" role="group" aria-label="快捷缩放"><button type="button" className="wave-icon-button" title="放大横轴和各视图纵轴" aria-label="放大所有波形" onClick={()=>zoomAll(2)} disabled={domain[1]-domain[0]<=1e-6}><Plus size={16}/></button><button type="button" className="wave-icon-button" title="缩小横轴和各视图纵轴" aria-label="缩小所有波形" onClick={()=>zoomAll(.5)} ><Minus size={16}/></button></div>}
+        {plotTools}
         <WaveformTools active={!['plot','curves','cursor'].includes(embeddedTab)}>
           <div className="wave-toolbar-tools-heading">视图与显示</div>
-          {layout>1&&embeddedSize.width<320&&<label>当前视图<select aria-label="切换波形视图" value={index} onChange={event=>setActivePanel(Number(event.target.value))}>{Array.from({length:layout},(_,i)=><option key={i} value={i}>视图 {i+1}</option>)}</select></label>}
+          {layout>1&&embeddedSize.width<400&&<label>当前视图<select aria-label="切换波形视图" value={index} onChange={event=>setActivePanel(Number(event.target.value))}>{Array.from({length:layout},(_,i)=><option key={i} value={i}>视图 {i+1}</option>)}</select></label>}
           <div className="wave-toolbar-tools-row"><select aria-label="波形视图布局" value={layout} onChange={event=>{const value=Number(event.target.value) as 1|2|4;setLayout(value);setActivePanel(old=>Math.min(old,value-1))}}><option value="1">单图</option><option value="2">双图</option><option value="4">四图</option></select>{ac&&<button type="button" aria-label="设置 Bode 增益相位双图" onClick={event=>{setLayout(2);setActivePanel(0);setEmbeddedTab('plot');setPanels(old=>old.map((item,i)=>i<2?{...item,source:'transfer',display:i===0?'magnitude':'phase'}:item));event.currentTarget.closest('details')!.open=false}}>Bode 双图</button>}</div>
           <div role="tablist" aria-label="波形详细工具">{([['expression','数学',FunctionSquare],['axes','坐标',Axis3D],['info',`信息${notices.length?` ${notices.length}`:''}`,Info]] as const).map(([value,label,Icon])=><button key={value} type="button" role="tab" aria-label={label} aria-selected={embeddedTab===value} aria-controls={`wave-embedded-page-${result.id}`} onClick={event=>{setEmbeddedTab(value);event.currentTarget.closest('details')!.open=false}}><Icon size={16}/>{label}</button>)}</div>
           <div className="wave-toolbar-tools-heading">共享横轴 / 游标</div>
           {embeddedSize.width<260&&<button type="button" aria-label="自动适配视图" aria-pressed={autoFit} onClick={toggleAutoFit}><ScanLine size={16}/>自动适配视图</button>}
           {embeddedSize.width<320&&<button type="button" aria-label="局部放大" aria-pressed={inspectMode==='zoom'} onClick={event=>{inspectMode==='zoom'?setInspectMode(null):startInspect('zoom');setEmbeddedTab('plot');event.currentTarget.closest('details')!.open=false}}><ScanSearch size={16}/>局部放大</button>}
-          <div className="wave-embedded-zoom" role="group" aria-label="共享波形横轴"><button type="button" className="wave-icon-button" title="波形向左平移" aria-label="波形向左平移" disabled={domain[0]<=0} onClick={()=>pan(-.5)}><ArrowLeft size={16}/></button>{embeddedSize.width<500&&<><button type="button" className="wave-icon-button" title="放大横轴和各视图纵轴" aria-label="放大所有波形" onClick={()=>zoomAll(2)} disabled={domain[1]-domain[0]<=1e-6}><Plus size={16}/></button><button type="button" className="wave-icon-button" title="缩小横轴和各视图纵轴" aria-label="缩小所有波形" onClick={()=>zoomAll(.5)} ><Minus size={16}/></button></>}<button type="button" className="wave-icon-button" title="波形向右平移" aria-label="波形向右平移" disabled={domain[1]>=1} onClick={()=>pan(.5)}><ArrowRight size={16}/></button><button type="button" className="wave-icon-button" title="适配所有波形" aria-label="适配所有波形" onClick={()=>fitCoordinates()}><Expand size={16}/></button><button type="button" className="wave-icon-button" title="返回原范围" aria-label="返回原范围" disabled={!previousCoordinates} onClick={()=>fitCoordinates('return')}><RotateCcw size={16}/></button></div>
+          <div className="wave-embedded-zoom" role="group" aria-label="波形坐标操作"><button type="button" className="wave-icon-button" title="波形向左平移" aria-label="波形向左平移" disabled={domain[0]<=0} onClick={()=>pan(-.5)}><ArrowLeft size={16}/></button><button type="button" className="wave-icon-button" title="放大横轴和各视图纵轴" aria-label="放大所有波形" onClick={()=>zoomAll(2)} disabled={domain[1]-domain[0]<=1e-6}><Plus size={16}/></button><button type="button" className="wave-icon-button" title="缩小横轴和各视图纵轴" aria-label="缩小所有波形" onClick={()=>zoomAll(.5)}><Minus size={16}/></button><button type="button" className="wave-icon-button" title="波形向右平移" aria-label="波形向右平移" disabled={domain[1]>=1} onClick={()=>pan(.5)}><ArrowRight size={16}/></button><button type="button" className="wave-icon-button" title="返回原范围" aria-label="返回原范围" disabled={!previousCoordinates} onClick={()=>fitCoordinates('return')}><RotateCcw size={16}/></button></div>
           <div className="wave-toolbar-tools-row"><button type="button" aria-label="A/B 测量" onClick={event=>{startInspect('measure');setEmbeddedTab('plot');event.currentTarget.closest('details')!.open=false}}><Ruler size={16}/>A/B 测量</button><button type="button" className="wave-embedded-navigation-toggle" aria-label="视图操作" aria-pressed={embeddedTab==='navigation'} onClick={event=>{setEmbeddedTab(embeddedTab==='navigation'?'plot':'navigation');event.currentTarget.closest('details')!.open=false}}>视图操作</button></div>
         </WaveformTools>
       </div>
@@ -630,6 +648,7 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
         <button type="button" aria-label="A/B 测量" title="A/B 测量" aria-pressed={inspectMode==='measure'} onClick={()=>startInspect('measure')}><Ruler size={14}/><span>A/B 测量</span></button>
       </div>
       <button className="wave-icon-button" title="自动适配视图" aria-label="自动适配视图" aria-pressed={autoFit} onClick={toggleAutoFit}><ScanLine size={16}/></button>
+      {plotTools}
       <WaveformTools>
         <div className="wave-layout-buttons" role="group" aria-label="波形视图布局">
           {([1, 2, 4] as const).map(n => <button key={n} aria-pressed={layout === n} onClick={() => {setLayout(n);setActivePanel(old=>Math.min(old,n-1))}} title={`${n} 个视图`}>{n === 1 ? <Maximize2 size={13} /> : n === 2 ? <Columns2 size={13} /> : <Grid2X2 size={13} />}{n} 图</button>)}
@@ -642,7 +661,6 @@ function Workspace({ result, comparison, sweepComparisons=noSweepComparisons, me
           <button onClick={() => zoomAll(2)} disabled={domain[1] - domain[0] <= 1e-6} aria-label="放大所有波形"><Plus size={13} /></button>
           <button onClick={() => zoomAll(.5)}  aria-label="缩小所有波形"><Minus size={13} /></button>
           <button onClick={() => pan(.5)} disabled={domain[1] >= 1} aria-label="波形向右平移">→</button>
-          <button aria-label="适配所有波形" onClick={() => fitCoordinates()}><RotateCcw size={12} />适配</button>
           <button onClick={() => fitCoordinates('reset')}>重置坐标</button>
           <button disabled={!previousCoordinates} onClick={() => fitCoordinates('return')}>返回原范围</button>
           <label><input type="checkbox" checked={includeComparison} onChange={event=>setIncludeComparison(event.target.checked)}/>包含对比运行</label>

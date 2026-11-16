@@ -184,7 +184,10 @@ export function pasteSelection(d:Drawing,fragment:Drawing,at:XY):{drawing:Drawin
 }
 
 export function fitView(d:Drawing,ids?:string[],viewport=CANVAS,maxZoom=ids?.length?MAX_CANVAS_ZOOM:1.5) {
-  const b=selectionBounds(d,ids)
+  return fitViewBounds(selectionBounds(d,ids),viewport,maxZoom)
+}
+
+export function fitViewBounds(b:Bounds|null,viewport=CANVAS,maxZoom=1.5) {
   if(!b)return {center:{x:600,y:320},zoom:1}
   // Padding is in screen pixels, so fitting remains legible on a narrow canvas.
   return {center:{x:(b.left+b.right)/2,y:(b.top+b.bottom)/2},zoom:clampCanvasZoom(Math.min(maxZoom,Math.max(80,viewport.width-128)/(b.right-b.left+60),Math.max(80,viewport.height-112)/(b.bottom-b.top+60)))}

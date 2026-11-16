@@ -1,5 +1,5 @@
 import { deviceCatalog } from './devices'
-import { compileDrawing, terminalKey, terminalPosition, type Drawing, type Terminal } from './drawing'
+import { drawingNodeNames, terminalKey, terminalPosition, type Drawing, type Terminal } from './drawing'
 
 /** Change an instance reference without disconnecting its pins, labels or probe. */
 export function renameDevice(d: Drawing, id: string, newId: string): Drawing {
@@ -29,7 +29,7 @@ export interface InspectedNet {
 }
 
 /** Use the solver's connectivity, including remote labels and all ground symbols. */
-export function inspectNet(d: Drawing, at: Terminal, nodes=compileDrawing(d).nodes): InspectedNet {
+export function inspectNet(d: Drawing, at: Terminal, nodes=drawingNodeNames(d)): InspectedNet {
   terminalPosition(d, at)
   const name = nodes.get(terminalKey(at))
   if(name===undefined)throw new Error(`网络端点 ${terminalKey(at)} 不存在，请重新选择真实引脚或连接点`)

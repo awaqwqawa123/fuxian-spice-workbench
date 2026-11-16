@@ -3,7 +3,7 @@ import { analysisSignals, circuitGraph, parseQuantity, type Project, type Quanti
 import { CANVAS_DIAGRAM_MAX, CANVAS_DIAGRAM_MIN } from './canvas-diagrams'
 import { MAX_CANVAS_WAVEFORMS, validWaveformView, type CanvasWaveform, type WaveformViewState } from './canvas-waveform-store'
 import { applySimulationProfile, parseSwitchStates, simulationReferenceWarning, type SimulationProfile, type SimulationProfiles } from './simulation-profiles'
-import { compileDrawing, DRAWING_BOUNDS, terminalKey, type Pin, type Terminal } from './drawing'
+import { drawingNodeNames, DRAWING_BOUNDS, terminalKey, type Pin, type Terminal } from './drawing'
 import { branchCurrentSaveVectors, normalizeCurrentVector } from './branch-current-vectors'
 import { canProbeCurrent } from './branch-currents'
 import { parseProjectProbes } from './project-probes'
@@ -150,7 +150,8 @@ export function parseWaveformSetup(input: unknown, _project: Project): WaveformS
 export function availableWaveformSignalIds(project: Project, profile: SimulationProfile): string[] {
   const configured = applySimulationProfile(project, profile), drawing = configured.drawing, custom = configured.template === 'custom'
   if (configured.analysis === 'noise') return ['noise:output', 'noise:input']
-  const nodes = custom && drawing ? [...compileDrawing(drawing).nodes.values()] : custom ? [] : circuitGraph(configured).parts.flatMap(part => part.nodes)
+  const terminalNodes = drawing ? drawingNodeNames(drawing) : new Map<string, string>()
+  const nodes = custom ? [...terminalNodes.values()] : circuitGraph(configured).parts.flatMap(part => part.nodes)
   const nodeNames = new Set(nodes.map(name => name.toLowerCase())), devices = drawing?.devices ?? (custom ? [] : circuitGraph(configured).parts)
   const ids = nodes.filter(node => node !== '0' && /^[a-z_][a-z0-9_]*$/i.test(node)).map(node => `voltage:v(${node.toLowerCase()})`)
   const vectors = [...devices.filter(device => device.kind === 'V').map(device => `i(${device.id.toLowerCase()})`), ...branchCurrentSaveVectors(configured)]
@@ -163,8 +164,8 @@ export function availableWaveformSignalIds(project: Project, profile: Simulation
         if (probe.wire) { const cut = wireCurrentCut(drawing!, probe.wire); if (!cut.ok || !cut.plans.some(plan => plan.every(term => currentSupported(term.device)))) continue }
         else if (!currentSupported(probe.device)) continue
       } else {
-        const topology = compileDrawing(drawing!), terminals = [probe.positive, ...(probe.negative ? [probe.negative] : [])]
-        if (terminals.some(at => { const node = topology.nodes.get(terminalKey(at)); return !node || node !== '0' && !/^[a-z_][a-z0-9_]*$/i.test(node) })) continue
+        const terminals = [probe.positive, ...(probe.negative ? [probe.negative] : [])]
+        if (terminals.some(at => { const node = terminalNodes.get(terminalKey(at)); return !node || node !== '0' && !/^[a-z_][a-z0-9_]*$/i.test(node) })) continue
       }
       ids.push(`probe:${probe.id}`)
     } catch { /* Missing measurement identities remain explicit issues in their referencing panels. */ }
